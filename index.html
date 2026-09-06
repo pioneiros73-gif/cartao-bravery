@@ -9,12 +9,12 @@
 <script>
 /* ===== CONFIGURAÇÃO: colar aqui os dados do projeto Firebase (Consola Firebase > Definições do projeto > As tuas apps > Web) ===== */
 const FIREBASE_CONFIG = {
-  apiKey: "COLAR_AQUI",
-  authDomain: "COLAR_AQUI.firebaseapp.com",
-  projectId: "COLAR_AQUI",
-  storageBucket: "COLAR_AQUI.appspot.com",
-  messagingSenderId: "COLAR_AQUI",
-  appId: "COLAR_AQUI"
+  apiKey: "AIzaSyA6vew5tY5ubHtVgim88ti2JH0923yRu1c",
+  authDomain: "cartao-bravery-online.firebaseapp.com",
+  projectId: "cartao-bravery-online",
+  storageBucket: "cartao-bravery-online.firebasestorage.app",
+  messagingSenderId: "80313961277",
+  appId: "1:80313961277:web:bccf94b42257b7dc709354"
 };
 </script>
 <style>
@@ -198,6 +198,29 @@ textarea{resize:vertical;min-height:64px}
 .cmt .by{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
 .cmt p{margin:4px 0 0;font-size:14px}
 
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat div{background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:30px;color:var(--azul);line-height:1}
+.stat span{font-size:12px;color:var(--ink-2)}
+/* ASSIDUIDADE */
+.sess{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg)}
+.sess .dt{width:46px;text-align:center;font-family:"Barlow Condensed",sans-serif;font-weight:900;line-height:1;color:var(--azul)}
+.sess .dt b{display:block;font-size:20px}.sess .dt span{font-size:11px;text-transform:uppercase}
+.sess .ti{flex:1 1 140px;min-width:0}.sess .ti .nm{font-weight:800;font-size:14px}.sess .ti .meta{font-size:12px;color:var(--ink-2)}
+.pres{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.pres.P{background:#D7F3E1;color:#136B3A}.pres.F{background:#FDE0E0;color:#9B1C1C}.pres.J{background:#FDF1C7;color:#6E5300}.pres.N{background:var(--line);color:var(--ink-2)}
+.pres.V::after{content:" ✓"}
+.pbtns{display:flex;gap:4px}
+.pbtns button{border:1.5px solid var(--line);background:var(--card);border-radius:8px;width:34px;height:30px;font-weight:900;cursor:pointer;color:var(--ink-2)}
+.pbtns button.P[aria-pressed="true"]{background:#2E9E5B;border-color:#2E9E5B;color:#fff}
+.pbtns button.F[aria-pressed="true"]{background:#D9483B;border-color:#D9483B;color:#fff}
+.pbtns button.J[aria-pressed="true"]{background:var(--amarelo);border-color:var(--amarelo);color:var(--azul-ink)}
+.pbtns button:disabled{opacity:.5;cursor:default}
+.mrow{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.mrow .nm{flex:1;font-weight:700;font-size:14px}
+.lock{font-size:12px;color:var(--ink-2)}
+.tabs button{font-size:9.5px}
+
 /* LOGIN + PAINEL */
 .login{position:fixed;inset:0;z-index:50;background:linear-gradient(160deg,var(--hero-a),var(--hero-b));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
 .login h1{font-size:64px;line-height:.9}
@@ -256,6 +279,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <span class="pill g" id="hTeam">Equipa</span>
       <span class="pill o" id="hGoal">Insígnia de Mérito</span>
       <span class="pill g" id="hEtapa">Etapa</span>
+      <span class="pill g" id="hAssid"></span>
     </div>
     <div class="progress">
       <div class="bar"><i id="pBar"></i></div>
@@ -363,7 +387,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <h2>Mérito <small id="meritSub">Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas</small></h2>
       <div class="merit">
         <svg class="ring" id="ring" viewBox="0 0 100 100" aria-hidden="true"></svg>
-        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para ver as tuas Especialidades. Concluídas ficam a amarelo.</span></div>
+        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para adicionar. Uma Especialidade só conta para o Mérito depois de validada pela Equipa de Animação.</span></div>
       </div>
       <div class="hexgrid" id="hexgrid" style="margin-top:14px"></div>
     </div>
@@ -390,6 +414,31 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <div class="addrow"><input id="in-aprender" placeholder="Ex.: primeiros socorros"><button class="btn sm o" data-add="aprender">+</button></div>
       <h3>Posso ensinar</h3><div class="chips" id="c-ensinar"></div>
       <div class="addrow"><input id="in-ensinar" placeholder="Ex.: nós e amarrações"><button class="btn sm y" data-add="ensinar">+</button></div>
+    </div>
+  </section>
+
+  <!-- ===== ASSIDUIDADE ===== -->
+  <section class="panel" id="p-assid">
+    <div class="card">
+      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, a Equipa de Animação valida.</small></h2>
+      <div class="stat" id="assStats"></div>
+      <div class="progress" style="margin-top:10px"><div class="bar" style="background:var(--line)"><i id="assBar" style="background:linear-gradient(90deg,#2E9E5B,#F6C544)"></i></div><div class="lbl" style="color:var(--ink-2)"><span id="assTxt"></span><span>só sessões validadas</span></div></div>
+    </div>
+    <div class="card" id="assMapCard" style="display:none">
+      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só a Equipa de Animação altera.</small></h2>
+      <div class="field"><label>Sessão</label><select id="assSel"></select></div>
+      <div id="assMap" style="margin-top:8px"></div>
+      <div class="row" id="assMapActs" style="margin-top:10px"></div>
+    </div>
+    <div class="card" id="assNewCard" style="display:none">
+      <h2>Sessões <small>Só a Equipa de Animação cria sessões</small></h2>
+      <div class="grid2"><div class="field"><label>Data</label><input type="date" id="nsDate"></div><div class="field"><label>Tipo</label><select id="nsType"><option>Reunião</option><option>Atividade</option><option>Acampamento</option><option>Raide</option></select></div></div>
+      <div class="field"><label>Título</label><input id="nsTitle" placeholder="Ex.: Reunião de Comunidade"></div>
+      <div class="row"><button class="btn sm" id="nsAdd">Criar sessão</button><button class="btn sm ghost" id="nsGen">Gerar sábados até Julho</button></div>
+    </div>
+    <div class="card">
+      <h2>As minhas sessões <small>Presenças registadas pelo Guia. Se souberes que vais faltar, avisa aqui.</small></h2>
+      <div class="list" id="assList"></div>
     </div>
   </section>
 
@@ -473,6 +522,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     <button role="tab" aria-selected="false" data-tab="bravery"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9L9.5 8z"/></svg>Bravery</button>
     <button role="tab" aria-selected="false" data-tab="faceis"><svg viewBox="0 0 24 24"><path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"/><path d="M12 8v8M8 10l8 4M16 10l-8 4"/></svg>FACEIS</button>
     <button role="tab" aria-selected="false" data-tab="esp"><svg viewBox="0 0 24 24"><path d="M12 2l4 2.3v4.6L12 11 8 8.9V4.3z"/><path d="M5 10l4 2.3v4.6L5 19l-4-2.1v-4.6z"/><path d="M19 10l4 2.3v4.6L19 19l-4-2.1v-4.6z"/></svg>Especial.</button>
+    <button role="tab" aria-selected="false" data-tab="assid"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M8 15l2.5 2.5L16 12"/></svg>Assid.</button>
     <button role="tab" aria-selected="false" data-tab="equipa"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6M16 15c3 0 6 1.5 6 5"/></svg>Equipa</button>
   </nav></div>
   <div class="toast" id="toast"></div>
@@ -721,7 +771,18 @@ function paintRadar(){
 }
 
 /* Specialties */
-function areasDone(){const s=new Set();S.esp.forEach(e=>{if(e.st>=3)s.add(e.area);});return s;}
+function areasDone(){const s=new Set();S.esp.forEach(e=>{if(espLocked(e))s.add(e.area);});return s;}
+/* validação da Especialidade pela EA: só conta para o Mérito depois de validada; depois só a EA altera */
+function espLocked(e){return (REV.e.espv||{})[e.id]||null;}
+function espActions(e,box,locked){
+  if(mode!=='ea') return;
+  const b=document.createElement('button');b.type='button';b.className='btn sm '+(locked?'ghost':'y');b.textContent=locked?'Reabrir':'Validar Especialidade concluída';
+  b.onclick=()=>{const ref=db.collection('cards').doc(VIEW).collection('reviews').doc('ea');
+    if(locked){ref.set({espv:{[e.id]:firebase.firestore.FieldValue.delete()}},{merge:true});}
+    else{if(e.st<3&&!confirm('Ainda não chegou a "Demonstrar". Validar mesmo assim?'))return;ref.set({espv:{[e.id]:{vd:new Date().toLocaleDateString('pt-PT'),by:PROFILE.nome}}},{merge:true}).then(()=>toast('Especialidade validada'));}
+  };
+  box.appendChild(b);
+}
 function paintEsp(){
   const done=areasDone(); const grid=$('#hexgrid'); grid.innerHTML='';
   AREAS.forEach((a,i)=>{
@@ -734,27 +795,100 @@ function paintEsp(){
   const n=done.size, pct=Math.min(1,n/6);
   const r=42,c=2*Math.PI*r;
   $('#ring').innerHTML=`<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${n>=6?'#F6C544':'#F2842B'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c*pct} ${c}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="26" fill="var(--ink)">${n}/6</text>`;
-  $('#meritTxt').textContent=n>=6?'Insígnia de Mérito ao alcance!':n+' de 6 áreas com Especialidade concluída';
+  $('#meritTxt').textContent=n>=6?'Insígnia de Mérito ao alcance!':n+' de 6 áreas com Especialidade validada';
   const sel=$('#espArea'); if(!sel.options.length){ AREAS.forEach((a,i)=>{const o=document.createElement('option');o.value=i;o.textContent=a;sel.appendChild(o);}); const fillEsp=()=>{const es=$('#espSel');es.innerHTML='';ESP_CAT[+sel.value].forEach(x=>{const o=document.createElement('option');o.value=x[0];o.textContent=x[0];es.appendChild(o);});const o=document.createElement('option');o.value='__outra';o.textContent='Outra...';es.appendChild(o);descEsp();}; const descEsp=()=>{const es=$('#espSel');const x=ESP_CAT[+sel.value].find(y=>y[0]===es.value);$('#espNome').style.display=es.value==='__outra'?'':'none';$('#espDesc').innerHTML=x?`${esc(x[1])} · <a href="https://especialidades.escutismo.pt/${espSlug(x[0])}/" target="_blank" rel="noopener">requisitos oficiais</a>`:'';}; sel.onchange=fillEsp; $('#espSel').onchange=descEsp; fillEsp(); window._fillEsp=fillEsp; }
   const list=$('#espList'); list.innerHTML='';
   if(!S.esp.length) list.innerHTML='<p class="note">Ainda sem Especialidades. Começa por uma que ligue ao teu Bravery ou ao teu Cargo.</p>';
   S.esp.forEach((e,idx)=>{
     const d=document.createElement('div'); d.className='item';
-    const cat=(ESP_CAT[e.area]||[]).find(x=>x[0]===e.nome);
-    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div></div><button class="del" title="Remover">×</button></div><div class="stage"></div>`;
+    const cat=(ESP_CAT[e.area]||[]).find(x=>x[0]===e.nome); const lockedE=espLocked(e);
+    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div>${lockedE?'<div class="note"><b>Validada pela Equipa de Animação</b> · '+esc(lockedE.vd||'')+'</div>':''}</div>${(mode==='eu'&&!lockedE)?'<button class="del" title="Remover">×</button>':''}</div><div class="stage"></div><div class="acts row" style="margin-top:6px"></div>`;
     const sg=d.querySelector('.stage');
-    STAGES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=s;if(i<=e.st)b.className=i>=3?'fin':'on';b.onclick=()=>{e.st=i;save();paintEsp();};sg.appendChild(b);});
-    d.querySelector('.del').onclick=()=>{if(confirm('Remover '+e.nome+'?')){S.esp.splice(idx,1);save();paintEsp();}};
+    STAGES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=s;if(i<=e.st)b.className=i>=3?'fin':'on';if(mode==='eu'&&!lockedE)b.onclick=()=>{e.st=i;save();paintEsp();};else b.disabled=true;sg.appendChild(b);});
+    const del=d.querySelector('.del');if(del)del.onclick=()=>{if(confirm('Remover '+e.nome+'?')){S.esp.splice(idx,1);save();paintEsp();}};
+    espActions(e,d.querySelector('.acts'),lockedE);
     list.appendChild(d);
   });
   paintHeader();
 }
-$('#espAdd').onclick=()=>{const es=$('#espSel');const n=es.value==='__outra'?$('#espNome').value.trim():es.value;if(!n)return toast('Escolhe a Especialidade');S.esp.push({nome:n,area:+$('#espArea').value,mentor:$('#espMentor').value.trim(),onde:$('#espOnde').value.trim(),st:0});$('#espNome').value='';$('#espMentor').value='';$('#espOnde').value='';save();paintEsp();toast('Especialidade adicionada');};
+$('#espAdd').onclick=()=>{const es=$('#espSel');const n=es.value==='__outra'?$('#espNome').value.trim():es.value;if(!n)return toast('Escolhe a Especialidade');S.esp.push({id:'e'+Date.now().toString(36),nome:n,area:+$('#espArea').value,mentor:$('#espMentor').value.trim(),onde:$('#espOnde').value.trim(),st:0});$('#espNome').value='';$('#espMentor').value='';$('#espOnde').value='';save();paintEsp();toast('Especialidade adicionada');};
 
 /* competências chips */
 function paintChips(){['sei','aprender','ensinar'].forEach(k=>{const box=$('#c-'+k);box.innerHTML='';(S.comp[k]||[]).forEach((c,i)=>{const s=document.createElement('span');s.className='chip '+(k==='aprender'?'o':k==='ensinar'?'y':'');s.innerHTML=`${esc(c)} <button title="remover">×</button>`;s.querySelector('button').onclick=()=>{S.comp[k].splice(i,1);save();paintChips();};box.appendChild(s);});});}
 $$('[data-add]').forEach(b=>b.onclick=()=>{const k=b.dataset.add,inp=$('#in-'+k),v=inp.value.trim();if(!v)return;S.comp[k]=S.comp[k]||[];S.comp[k].push(v);inp.value='';save();paintChips();});
 $$('.addrow input').forEach(inp=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.nextElementSibling.click();}}));
+
+/* ===== ASSIDUIDADE ===== */
+/* Camada de dados (versão demo: guardado neste telemóvel). A versão online usa o Firebase. */
+const ATT={
+  _unsubs:[],
+  subscribe(cb){this._cb=cb;this._d={sessions:[],eq:{},just:{}};
+    const role=PROFILE.role, eq=PROFILE.equipa||'-';
+    this._unsubs.push(db.collection('sessions').onSnapshot(sn=>{this._d.sessions=sn.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this._d);},e=>toast('Sessões: '+e.code)));
+    const eqq=role==='ea'?db.collection('presencas'):db.collection('presencas').where('equipa','==',eq);
+    this._unsubs.push(eqq.onSnapshot(sn=>{const m={};sn.docs.forEach(d=>{const x=d.data();m[x.sid+'|'+x.equipa]=x;});this._d.eq=m;cb(this._d);},e=>toast('Presenças: '+e.code)));
+    const jq=role==='ea'?db.collection('avisos'):role==='guia'?db.collection('avisos').where('equipa','==',eq):db.collection('avisos').where('uid','==',ME.uid);
+    this._unsubs.push(jq.onSnapshot(sn=>{const m={};sn.docs.forEach(d=>{const x=d.data();(m[x.sid]=m[x.sid]||{})[x.uid]=x.txt;});this._d.just=m;cb(this._d);},()=>{}));
+  },
+  createSession(o){return db.collection('sessions').add(Object.assign({by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},o)).catch(e=>toast('Erro: '+e.code));},
+  mark(sid,equipa,uid,p){const ref=db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-'));
+    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só a Equipa de Animação altera':'Erro: '+e.code));},
+  validate(sid,equipa,on){db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-')).set({sid,equipa,validated:on,vby:PROFILE.nome,vat:new Date().toLocaleDateString('pt-PT')},{merge:true}).then(()=>toast(on?'Validado':'Reaberto')).catch(e=>toast('Erro: '+e.code));},
+  justify(sid,uid,txt){db.collection('avisos').doc(sid+'_'+uid).set({sid,uid,equipa:PROFILE.equipa||'',txt,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>toast('Erro: '+e.code));},
+  members(){return USERS.filter(u=>u.role!=='ea');},
+  me(){return ME.uid;},
+  myEquipa(){return PROFILE.equipa||'';},
+  canMark(equipa){return PROFILE.role==='ea'||(PROFILE.role==='guia'&&equipa===PROFILE.equipa);},
+  canValidate(){return PROFILE.role==='ea';},
+  canCreate(){return PROFILE.role==='ea';},
+  canMap(){return PROFILE.role!=='jovem';}
+};
+let ATTD={sessions:[],eq:{},just:{}};
+function eqDoc(sid,equipa){return ATTD.eq[sid+'|'+equipa]||{pres:{}};}
+function fmtDate(d){if(!d)return '';const x=new Date(d+'T00:00:00');return {d:x.getDate(),m:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][x.getMonth()],full:x.toLocaleDateString('pt-PT')};}
+function paintAssid(){
+  const me=ATT.me(), eq=ATT.myEquipa();
+  const sess=[...ATTD.sessions].sort((a,b)=>a.date<b.date?-1:1);
+  const today=new Date().toISOString().slice(0,10);
+  let P=0,F=0,J=0,V=0;
+  sess.forEach(x=>{const e=eqDoc(x.id,eq);if(e.validated){V++;const p=e.pres[me];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
+  const pct=V?Math.round(100*P/V):0;
+  $('#assStats').innerHTML=`<div><b>${P}</b><span>presenças</span></div><div><b>${J}</b><span>justificadas</span></div><div><b>${F}</b><span>faltas</span></div>`;
+  $('#assBar').style.width=pct+'%';$('#assTxt').textContent=V?pct+'% de assiduidade em '+V+' sessões validadas':'Ainda sem sessões validadas';
+  const hp=$('#hAssid');if(hp)hp.textContent=V?pct+'% assiduidade':'';
+  // my sessions
+  const list=$('#assList');list.innerHTML='';
+  if(!sess.length)list.innerHTML='<p class="note">Ainda não há sessões criadas pela Equipa de Animação.</p>';
+  [...sess].reverse().forEach(x=>{const e=eqDoc(x.id,eq);const p=e.pres[me];const fd=fmtDate(x.date);const just=(ATTD.just[x.id]||{})[me];
+    const d=document.createElement('div');d.className='sess';
+    const lbl=p==='P'?'Presente':p==='F'?'Falta':p==='J'?'Justificada':'Por registar';
+    d.innerHTML=`<div class="dt"><b>${fd.d}</b><span>${fd.m}</span></div><div class="ti"><div class="nm">${esc(x.title)}</div><div class="meta">${esc(x.type||'')}${just?' · avisei: '+esc(just):''}</div></div><span class="pres ${p||'N'} ${e.validated?'V':''}">${lbl}</span>`;
+    if(mode==='eu'&&x.date>=today&&!e.validated){const b=document.createElement('button');b.className='btn sm ghost';b.textContent=just?'Editar aviso':'Vou faltar';b.style.marginLeft='6px';b.onclick=()=>{const t=prompt('Motivo (fica visível ao Guia e à Equipa de Animação):',just||'');if(t!==null)ATT.justify(x.id,me,t.trim());};d.appendChild(b);}
+    list.appendChild(d);});
+  // map (guia / ea)
+  const canMap=ATT.canMap(); $('#assMapCard').style.display=canMap?'':'none'; $('#assNewCard').style.display=ATT.canCreate()?'':'none';
+  if(!canMap) return;
+  const sel=$('#assSel'); const cur=sel.value; sel.innerHTML='';
+  [...sess].reverse().forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=fmtDate(x.date).full+' · '+x.title;sel.appendChild(o);});
+  if(cur&&sess.find(x=>x.id===cur))sel.value=cur; else{const past=[...sess].reverse().find(x=>x.date<=today);if(past)sel.value=past.id;}
+  sel.onchange=paintAssid;
+  const sid=sel.value; const box=$('#assMap'); box.innerHTML=''; const acts=$('#assMapActs'); acts.innerHTML='';
+  if(!sid){box.innerHTML='<p class="note">Sem sessões.</p>';return;}
+  const members=ATT.members(); const byEq={}; members.forEach(m=>{(byEq[m.equipa||'Sem Equipa']=byEq[m.equipa||'Sem Equipa']||[]).push(m);});
+  Object.keys(byEq).sort().forEach(equipa=>{
+    const e=eqDoc(sid,equipa); const locked=!!e.validated; const editable=ATT.canMark(equipa)&&(!locked||ATT.canValidate());
+    const h=document.createElement('div');h.innerHTML=`<h3>${esc(equipa)} <span class="lock">${locked?'· validado pela Equipa de Animação '+esc(e.vat||''):(e.by?'· registado pelo '+esc(e.by):'· por registar')}</span></h3>`;box.appendChild(h);
+    byEq[equipa].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(m=>{const p=e.pres[m.uid];const just=(ATTD.just[sid]||{})[m.uid];
+      const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(m.nome)}${just?`<div class="note">avisou: ${esc(just)}</div>`:''}</div><div class="pbtns"></div>`;
+      const pb=r.querySelector('.pbtns');['P','F','J'].forEach(k=>{const b=document.createElement('button');b.type='button';b.className=k;b.textContent=k;b.setAttribute('aria-pressed',p===k);b.disabled=!editable;b.title=k==='P'?'Presente':k==='F'?'Falta':'Falta justificada';b.onclick=()=>ATT.mark(sid,equipa,m.uid,k);pb.appendChild(b);});
+      box.appendChild(r);});
+    if(ATT.canValidate()){const b=document.createElement('button');b.className='btn sm '+(locked?'ghost':'y');b.textContent=(locked?'Reabrir ':'Validar ')+equipa;b.onclick=()=>ATT.validate(sid,equipa,!locked);acts.appendChild(b);}
+  });
+  if(mode==='guia'){const n=document.createElement('p');n.className='note';n.textContent='Depois de validado pela Equipa de Animação, o registo fica bloqueado para ti.';acts.appendChild(n);}
+}
+$('#nsAdd').onclick=()=>{const dt=$('#nsDate').value,t=$('#nsTitle').value.trim();if(!dt||!t)return toast('Data e título são precisos');ATT.createSession({date:dt,title:t,type:$('#nsType').value});$('#nsTitle').value='';toast('Sessão criada');};
+$('#nsGen').onclick=()=>{if(!confirm('Criar uma sessão "Reunião de Comunidade" em cada sábado de 3 Out 2026 a 24 Jul 2027 que ainda não exista?'))return;const have=new Set(ATTD.sessions.map(x=>x.date));let d=new Date('2026-10-03T00:00:00'),n=0;while(d<=new Date('2027-07-24T00:00:00')){const iso=d.toISOString().slice(0,10);if(!have.has(iso)){ATT.createSession({date:iso,title:'Reunião de Comunidade',type:'Reunião'});n++;}d.setDate(d.getDate()+7);}toast(n+' sessões criadas');};
+
 
 /* ladder + autotest */
 function paintLadder(){const box=$('#ladder');box.innerHTML='';LADDER.forEach((l,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',S.cargo.fase===i+1);b.innerHTML=`<span class="k">${i+1}</span><span><div class="t">${l[0]}</div><div class="s">${l[1]}</div></span>`;b.onclick=()=>{S.cargo.fase=i+1;save();paintLadder();};box.appendChild(b);});}
@@ -779,7 +913,7 @@ $('#btnOut').onclick=()=>auth.signOut().then(()=>location.reload());
 $('#btnBack').onclick=()=>{openCard(ME.uid);showTab('painel');};
 function clearSubs(){unsubs.forEach(u=>u());unsubs=[];}
 function fillFields(){ $$('[data-path]').forEach(el=>{const v=get(el.dataset.path);el.value=v!=null?v:'';}); $$('[data-choice]').forEach(box=>box._paint&&box._paint()); if(window._syncCargo)window._syncCargo(); }
-function paintAll(){fillFields();paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();roleUI();paintHeader();}
+function paintAll(){fillFields();paintAssid();paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();roleUI();paintHeader();}
 function openCard(uid){
   clearSubs(); VIEW=uid; const own=uid===ME.uid; REV={g:{},e:{}}; CMTS=[];
   setMode(own?'eu':(PROFILE.role==='ea'?'ea':'guia'));
@@ -787,7 +921,7 @@ function openCard(uid){
   let first=true;
   unsubs.push(db.collection('cards').doc(uid).onSnapshot(snap=>{ if(snap.metadata.hasPendingWrites) return; const d=snap.exists?snap.data():{}; if(first||!own){ S=Object.assign(blank(),d); S.tri=S.tri||{}; if(own&&!S.id.nome){S.id.nome=PROFILE.nome;} if(own){S.id.equipa=PROFILE.equipa||S.id.equipa||'';} paintAll(); if(!own)$('#viewingTxt').textContent='A ver o cartão de '+(d.nome||'?'); first=false; } },e=>toast('Sem acesso a este cartão')));
   unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('guia').onSnapshot(sn=>{REV.g=sn.exists?sn.data():{};paintFaceis();paintHeader();},()=>{}));
-  unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('ea').onSnapshot(sn=>{REV.e=sn.exists?sn.data():{};paintFaceis();paintHeader();},()=>{}));
+  unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('ea').onSnapshot(sn=>{REV.e=sn.exists?sn.data():{};paintFaceis();paintEsp();paintHeader();},()=>{}));
   unsubs.push(db.collection('cards').doc(uid).collection('comments').orderBy('at','desc').onSnapshot(sn=>{CMTS=sn.docs.map(x=>x.data());paintCmts();},()=>{}));
   showTab(own?'mapa':'bravery');
 }
@@ -832,6 +966,7 @@ async function boot(user){
     const cq=PROFILE.role==='ea'?db.collection('cards'):db.collection('cards').where('equipa','==',PROFILE.equipa||'-');
     cq.onSnapshot(sn=>{CARDS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPainel();},()=>{});
   }
+  ATT.subscribe(d=>{ATTD=d;paintAssid();});
   openCard(user.uid); if(PROFILE.role!=='jovem') showTab('painel');
 }
 auth.getRedirectResult().catch(e=>{$('#loginMsg').textContent='Não entrou: '+e.message;});
