@@ -186,6 +186,7 @@ textarea{resize:vertical;min-height:64px}
 .step.camp .mat .resp{background:rgba(255,255,255,.15);color:#fff}
 .req{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
 .pay .st{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--line);color:var(--ink-2)}.pay .st.p{background:var(--amarelo);color:var(--ink)}.pay .st.v{background:#2E9E5B;color:#fff}.pay .val{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;color:var(--azul)}
+.req .grp{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--azul)}
 .req.done{border-color:var(--amarelo);background:linear-gradient(90deg,rgba(246,197,68,.18),transparent)}
 .req .top{display:flex;gap:8px;align-items:flex-start}
 .req .nm{font-weight:800}.req .meta{font-size:12px;color:var(--laranja);font-weight:800}
@@ -411,6 +412,24 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
   </section>
 
   <!-- ===== BRAVERY ===== -->
+  <!-- ===== ADESÃO (Noviços) ===== -->
+  <section class="panel" id="p-ades">
+    <div class="card" style="background:linear-gradient(160deg,var(--hero-a),var(--hero-b));color:#fff;border:0">
+      <h2 style="color:#fff">Etapa de Adesão <small style="color:#D7E3F7">Desprendimento. O caminho até à Promessa, previsto para Fevereiro.</small></h2>
+      <div class="stat" id="adesStats" style="margin-top:8px"></div>
+      <div class="progress"><div class="bar"><i id="adesBar"></i></div><div class="lbl"><span id="adesTxt"></span><span id="adesPromessa"></span></div></div>
+    </div>
+    <div class="card">
+      <h2>As provas <small>Marca cada prova quando a tiveres feito e escreve como. O Guia confirma; a Viriato valida. Com tudo validado, marca-se a Promessa.</small></h2>
+      <div class="list" id="adesList"></div>
+    </div>
+    <div class="card" id="adesAdmin" style="display:none">
+      <h2>Gerir as provas <small>Só a Viriato. Igual para todos os Noviços.</small></h2>
+      <div class="field"><label>Uma por linha: Grupo | Prova | Como se demonstra</label><textarea id="adesTxt2" style="min-height:160px"></textarea></div>
+      <button class="btn sm" id="adesSave">Guardar provas</button>
+    </div>
+  </section>
+
   <section class="panel" id="p-bravery">
     <div class="card">
       <h2>Quem sou <small>Identificação no cartão</small></h2>
@@ -609,6 +628,9 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
         <p>Em cada atividade tens: <b>Materiais da Viriato</b> (fichas, ementas, mapas); a <b>Resposta da Equipa</b>, escrita pelo Guia; e as <b>Propostas dos Pioneiros</b>: envia ideias ou ficheiros e escolhe quem vê (a tua Equipa, todos os Guias e Subguias, ou só a Viriato). Quem vê pode responder.</p>
         <p>No topo, <b>Novidades</b> mostra-te as respostas e registos que te dizem respeito. O número no separador indica o que está por ler.</p>
         <p><span class="r v">Viriato</span> publica materiais em cada atividade e vê todas as propostas e respostas.</p>
+      </details>
+      <details><summary>Adesão (só Noviços): as provas até à Promessa</summary>
+        <p>Enquanto fores Noviço tens o separador <b>Adesão</b> com as provas da Etapa de Adesão (Conhecer, Fazer, Ser). Marca cada prova quando a fizeres e escreve como a demonstraste. O <span class="r g">Guia</span> confirma e a <span class="r v">Viriato</span> valida. Com todas validadas, marca-se a Promessa (prevista para Fevereiro); depois muda o teu papel para Pioneiro e entras na etapa Conhecimento.</p>
       </details>
       <details><summary>Bravery: a dificuldade que treino</summary>
         <p>Escolhe uma dificuldade treinável no escutismo (falar em público, pedir ajuda, não desistir, delegar...). Não a maior: a que aceitas trabalhar este ano. Define o objetivo, o primeiro passo, como saberás que evoluíste e quem te apoia. "A luz que levo" preenche-se no raide de 23-24 de Outubro.</p>
@@ -837,6 +859,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
   <div class="tabs"><nav role="tablist">
     <button role="tab" aria-selected="false" data-tab="painel" id="tabPainel" style="display:none"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Painel</button>
     <button role="tab" aria-selected="true" data-tab="mapa"><svg viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>Caminhada</button>
+    <button role="tab" aria-selected="false" data-tab="ades" id="tabAdes" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9L9.5 8z"/></svg>Adesão</button>
     <button role="tab" aria-selected="false" data-tab="bravery"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9L9.5 8z"/></svg>Bravery</button>
     <button role="tab" aria-selected="false" data-tab="faceis"><svg viewBox="0 0 24 24"><path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"/><path d="M12 8v8M8 10l8 4M16 10l-8 4"/></svg>FACEIS</button>
     <button role="tab" aria-selected="false" data-tab="esp"><svg viewBox="0 0 24 24"><path d="M12 2l4 2.3v4.6L12 11 8 8.9V4.3z"/><path d="M5 10l4 2.3v4.6L5 19l-4-2.1v-4.6z"/><path d="M19 10l4 2.3v4.6L19 19l-4-2.1v-4.6z"/></svg>Especial.</button>
@@ -970,6 +993,7 @@ function paintHeader(){ paintFoto();
   const trd=Object.keys(S.tri||{}).filter(k=>effState(k)===5).length;$('#pTrail').textContent=done+'/'+TRAIL.length+' marcos · '+trd+' Trilhos validados';
 }
 function roleUI(){
+  paintAdes();
   $('#cardNovico').style.display=S.id.papel==='Noviço'?'':'none';
   $('#cardGuia').style.display=S.id.papel==='Guia'?'':'none';
   paintHeader();
@@ -1207,7 +1231,7 @@ function paintEtapas(et){
     d.innerHTML=`${img}<div class="n">${e.n}</div><div class="s">${st==='cur'?'insígnia atual':st==='done'?'concluída':'a seguir'}</div>`;
     row.appendChild(d);});
   const info=$('#etapaInfo'); const cur=ET_INFO[et];
-  if(S.id.papel==='Noviço'){info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}${S.nov&&S.nov.promessa?' Promessa prevista: '+new Date(S.nov.promessa).toLocaleDateString('pt-PT')+'.':''}</p><p class="note">Depois da Promessa, muda o teu papel para Pioneiro e recebes a insígnia de Conhecimento.</p>`;return;}
+  if(S.id.papel==='Noviço'){info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}${S.nov&&S.nov.promessa?' Promessa prevista: '+new Date(S.nov.promessa).toLocaleDateString('pt-PT')+'.':''}</p><p class="note">As provas da Etapa de Adesão estão no separador Adesão. Depois da Promessa, muda o teu papel para Pioneiro e recebes a insígnia de Conhecimento.</p>`;return;}
   if(allDone){info.innerHTML=`<p><b>Sistema de Progresso concluído.</b> Os 18 Trilhos estão validados: Anilha de Mérito.</p>`;return;}
   const need=et; const falta=FACEIS.filter(f=>areaDone(f.k)<need);
   info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}</p><p class="note" style="margin-top:6px">Para concluir esta etapa e receber a insígnia de <b>${ET_INFO[Math.min(3,et+1)].n}</b>, falta um Trilho validado em:</p><div class="falta">${falta.length?falta.map(f=>`<span class="chip o">${f.n}</span>`).join(''):'<span class="chip y">todas as áreas concluídas</span>'}</div>`;
@@ -1400,6 +1424,54 @@ function paintJam(){const box=$('#jamList');if(!box)return;box.innerHTML='';S.ja
     box.appendChild(d);});
   const adm=$('#jamAdmin');if(adm){adm.style.display=isAdmin()?'':'none';if(isAdmin()&&document.activeElement!==$('#jamTxt'))$('#jamTxt').value=jamList().map(r=>[r.t,r.p||'',r.d||''].join(' | ')).join('\n');}}
 
+/* ===== ADESÃO (Noviços) ===== */
+const ADES_DEFAULT=[
+ {id:'a1',g:'Conhecer',t:'A Lei e os Princípios do Escuteiro',d:'Sei dizê-los por palavras minhas e dar um exemplo vivido de cada artigo.'},
+ {id:'a2',g:'Conhecer',t:'A Promessa',d:'Sei o texto e explico o que me comprometo a fazer.'},
+ {id:'a3',g:'Conhecer',t:'Baden-Powell e o Escutismo',d:'Conto em 2 minutos quem foi B.-P., como nasceu o Escutismo e o CNE.'},
+ {id:'a4',g:'Conhecer',t:'O Agrupamento 73 e a Comunidade 25',d:'Sei quem é a Viriato, as Equipas, os Guias e o meu padrinho/madrinha.'},
+ {id:'a5',g:'Conhecer',t:'Símbolos, saudação, lema e uniforme',d:'Faço a saudação, sei o lema, uso o uniforme e o lenço corretamente e conheço as insígnias.'},
+ {id:'a6',g:'Fazer',t:'Participar em 6 atividades',d:'Estive presente em pelo menos 6 sessões ou atividades desde a entrada (a Assiduidade mostra).'},
+ {id:'a7',g:'Fazer',t:'Um raide ou acampamento',d:'Participei num raide ou acampamento com a Equipa (por exemplo, o de Natal).'},
+ {id:'a8',g:'Fazer',t:'Uma responsabilidade real na Equipa',d:'Assumi uma tarefa concreta (Função ou Cargo) e cumpri-a.'},
+ {id:'a9',g:'Fazer',t:'Técnica básica',d:'Sei 4 nós, orientar um mapa com bússola e os primeiros socorros essenciais.'},
+ {id:'a10',g:'Fazer',t:'Um serviço',d:'Fiz uma boa ação ou serviço à Comunidade ou a alguém, e conto o que aprendi.'},
+ {id:'a11',g:'Ser',t:'O meu Bravery',d:'Identifiquei a dificuldade que aceito treinar e o primeiro passo (separador Bravery).'},
+ {id:'a12',g:'Ser',t:'Conversa com o padrinho e com a Viriato',d:'Falei sobre o que significa fazer a Promessa e porque a quero fazer.'}];
+function adesList(){return (typeof CONFIG!=='undefined'&&CONFIG.adesao&&CONFIG.adesao.length)?CONFIG.adesao:ADES_DEFAULT;}
+function adesLocked(id){return (typeof REV!=='undefined'&&REV.e&&REV.e.adesv&&REV.e.adesv[id])||(S.adesv&&S.adesv[id])||null;}
+function adesGuia(id){return (typeof REV!=='undefined'&&REV.g&&REV.g.adesg&&REV.g.adesg[id])||(S.adesg&&S.adesg[id])||null;}
+function paintAdes(){const tab=$('#tabAdes');const nov=S.id.papel==='Noviço';if(tab)tab.style.display=nov?'':'none';const box=$('#adesList');if(!box)return;
+  if(!nov){if($('#p-ades').classList.contains('on'))showTabId('bravery');return;}
+  box.innerHTML='';S.ades=S.ades||{};const list=adesList();let done=0,val=0;let grp='';
+  list.forEach(r=>{const st=S.ades[r.id]||{};const lk=adesLocked(r.id);const gg=adesGuia(r.id);if(st.ok)done++;if(lk)val++;
+    if(r.g!==grp){grp=r.g;const h=document.createElement('h3');h.textContent=grp;h.style.margin='8px 0 2px';box.appendChild(h);}
+    const d=document.createElement('div');d.className='req'+(lk?' done':'');
+    d.innerHTML=`<div class="top"><label class="chk"><input type="checkbox" ${st.ok?'checked':''} ${(mode!=='eu'||lk)?'disabled':''}></label><div style="flex:1"><div class="nm">${esc(r.t)}</div><div class="d">${esc(r.d||'')}</div>
+      ${st.ok&&!lk&&mode==='eu'?`<input class="como" placeholder="Como demonstrei (data, onde, com quem)" value="${esc(st.como||'')}" style="margin-top:6px;width:100%;border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px">`:st.como?`<div class="note" style="margin-top:4px">${esc(st.como)}</div>`:''}
+      ${gg?`<div class="note" style="margin-top:4px"><b>Guia:</b> ${gg.ok?'confirmo':'ainda não'}${gg.txt?' · '+esc(gg.txt):''}</div>`:''}
+      ${lk?`<div class="note" style="margin-top:4px"><b>Validado pela Viriato</b> · ${esc(lk.vd||'')}</div>`:st.ok?'<div class="note" style="margin-top:4px">Marcado por mim · aguarda o Guia e a Viriato</div>':''}</div></div>`;
+    d.querySelector('input[type=checkbox]').onchange=e=>{S.ades[r.id]=Object.assign({},st,{ok:e.target.checked,at:new Date().toLocaleDateString('pt-PT')});save();paintAdes();};
+    const como=d.querySelector('.como');if(como)como.oninput=e=>{S.ades[r.id]=Object.assign({},S.ades[r.id]||{},{como:e.target.value});save();};
+    const acts=document.createElement('div');acts.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:6px';
+    if(mode==='guia'&&st.ok&&!lk){const b=document.createElement('button');b.className='btn sm';b.textContent=gg&&gg.ok?'Retirar confirmação':'Confirmo esta prova';b.onclick=()=>adesGuiaSet(r.id,!(gg&&gg.ok));acts.appendChild(b);}
+    if(mode==='ea'&&st.ok){const b=document.createElement('button');b.className='btn sm '+(lk?'ghost':'y');b.textContent=lk?'Reabrir':'Validar prova';b.onclick=()=>adesValidate(r.id,!lk);acts.appendChild(b);}
+    if(acts.children.length)d.appendChild(acts);box.appendChild(d);});
+  const n=list.length,pct=n?Math.round(100*val/n):0;
+  $('#adesStats').innerHTML=`<div><b>${done}</b><span>marcadas</span></div><div><b>${val}</b><span>validadas</span></div><div><b>${n-val}</b><span>em falta</span></div>`;
+  $('#adesBar').style.width=pct+'%';$('#adesTxt').textContent=val===n&&n?'Etapa de Adesão concluída: pronto para a Promessa':val+' de '+n+' provas validadas';
+  $('#adesPromessa').textContent=S.nov&&S.nov.promessa?'Promessa: '+new Date(S.nov.promessa).toLocaleDateString('pt-PT'):'Promessa prevista: Fevereiro';
+  const adm=$('#adesAdmin');if(adm){adm.style.display=isAdmin()?'':'none';if(isAdmin()&&document.activeElement!==$('#adesTxt2'))$('#adesTxt2').value=list.map(r=>[r.g,r.t,r.d||''].join(' | ')).join('\n');}}
+function showTabId(id){const b=$$('.tabs button').find(x=>x.dataset.tab===id);if(b)b.click();}
+$('#adesSave').onclick=()=>{const list=$('#adesTxt2').value.split('\n').map(l=>l.trim()).filter(Boolean).map((l,i)=>{const [g,t,d]=l.split('|').map(x=>(x||'').trim());const old=adesList().find(x=>x.t.toLowerCase()===t.toLowerCase());return {id:old?old.id:'ad'+Date.now().toString(36)+i,g:g||'Provas',t,d};});adesSaveList(list);};
+/* adesão online */
+function adesValidate(id,on){const ref=db.collection('cards').doc(VIEW).collection('reviews').doc('ea');const r=adesList().find(x=>x.id===id);
+  if(on)ref.set({adesv:{[id]:{vd:new Date().toLocaleDateString('pt-PT'),by:PROFILE.nome}}},{merge:true}).then(()=>{toast('Prova validada');logEvent('Adesão','Prova "'+(r?r.t:id)+'" validada no cartão de '+(S.id.nome||''),{notify:[VIEW,'guia:'+(S.id.equipa||'')],ea:true});
+    const all=adesList().every(x=>x.id===id||((REV.e.adesv||{})[x.id]));if(all)logEvent('Adesão concluída',(S.id.nome||'')+' concluiu a Etapa de Adesão: pronto para a Promessa',{notify:[VIEW,'guia:'+(S.id.equipa||'')],ea:true});});
+  else ref.set({adesv:{[id]:firebase.firestore.FieldValue.delete()}},{merge:true});}
+function adesGuiaSet(id,ok){const r=adesList().find(x=>x.id===id);db.collection('cards').doc(VIEW).collection('reviews').doc('guia').set({adesg:{[id]:{ok,by:PROFILE.nome,at:new Date().toLocaleDateString('pt-PT')}}},{merge:true}).then(()=>{toast(ok?'Prova confirmada':'Confirmação retirada');if(ok)logEvent('Adesão','O Guia confirmou a prova "'+(r?r.t:id)+'" de '+(S.id.nome||''),{notify:[VIEW]});}).catch(e=>toast('Erro: '+e.code));}
+function adesSaveList(list){db.collection('config').doc('app').set({adesao:list},{merge:true}).then(()=>toast('Provas guardadas para todos os Noviços'));}
+
 /* ===== FINANCEIRO ===== */
 function isAdmin(){return !!(PROFILE&&PROFILE.role==='ea');}
 const PAG_DEFAULT=[
@@ -1529,7 +1601,7 @@ function openCard(uid){
   $('#viewing').style.display=own?'none':'';
   let first=true;
   unsubs.push(db.collection('cards').doc(uid).onSnapshot(snap=>{ if(snap.metadata.hasPendingWrites) return; const d=snap.exists?snap.data():{}; if(first||!own){ S=Object.assign(blank(),d); S.tri=S.tri||{}; if(own&&!S.id.nome){S.id.nome=PROFILE.nome;} if(own){S.id.equipa=PROFILE.equipa||S.id.equipa||'';} paintAll(); if(!own)$('#viewingTxt').textContent='A ver o cartão de '+(d.nome||'?'); first=false; } },e=>toast('Sem acesso a este cartão')));
-  unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('guia').onSnapshot(sn=>{REV.g=sn.exists?sn.data():{};paintFaceis();paintHeader();},()=>{}));
+  unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('guia').onSnapshot(sn=>{REV.g=sn.exists?sn.data():{};paintFaceis();paintAdes();paintHeader();},()=>{}));
   unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('ea').onSnapshot(sn=>{REV.e=sn.exists?sn.data():{};paintFaceis();paintEsp();paintJam();paintFin();paintHeader();},()=>{}));
   medLoad();
   unsubs.push(db.collection('cards').doc(uid).collection('comments').orderBy('at','desc').onSnapshot(sn=>{CMTS=sn.docs.map(x=>x.data());paintCmts();},()=>{}));
@@ -1607,7 +1679,7 @@ async function buildRows(){
     const espv=ea.espv||{}; const esps=(c.esp||[]).map(e=>e.nome+(espv[e.id]?' ✓':'')).join(', ');
     const eq=u.role==='ea'?'Viriato':(u.equipa||''); let P=0,V=0,F=0,J=0;
     sess.forEach(x=>{const d=ATTD.eq[x.id+'|'+eq];if(d&&d.validated){V++;const p=(d.pres||{})[u.uid];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
-    rows.push({Nome:u.nome||'','Nome completo':(c.id&&c.id.nomeCompleto)||'','Data de nascimento':(c.id&&c.id.nascimento)?new Date(c.id.nascimento).toLocaleDateString('pt-PT'):'',Totem:(c.id&&c.id.totem)||'',Equipa:eq,Estado:u.role==='ea'?'Viriato':papel,'Último ano':(c.id&&c.id.ultimoAno)?'Sim':'','Meta':u.role==='ea'?'':((c.id&&c.id.ultimoAno)?'Anilha de Mérito':'Insígnia de Mérito'),Cargo:(c.id&&c.id.cargo)||'',Etapa:etapa,'Trilhos validados':Object.values(done).reduce((s,n)=>s+n,0),'F':done.F,'A':done.A,'C':done.C,'E':done.E,'I':done.I,'S':done.S,'Bravery':(c.brv&&c.brv.dificuldade)||'','Especialidades':esps,'Áreas Mérito':new Set((c.esp||[]).filter(e=>espv[e.id]).map(e=>e.area)).size,'Presenças':P,'Justificadas':J,'Faltas':F,'Assiduidade %':V?Math.round(100*P/V):'' ,'Pagamentos em falta':u.role==='ea'?'':pagList().filter(p=>!((ea.pagv||{})[p.id])).map(p=>p.ativ+(((c.pag||{})[p.id]||{}).pago?' (registado)':'')).join('; '),'Sessões validadas':V,_foto:(c.id&&c.id.foto)||''});
+    rows.push({Nome:u.nome||'','Nome completo':(c.id&&c.id.nomeCompleto)||'','Data de nascimento':(c.id&&c.id.nascimento)?new Date(c.id.nascimento).toLocaleDateString('pt-PT'):'',Totem:(c.id&&c.id.totem)||'',Equipa:eq,Estado:u.role==='ea'?'Viriato':papel,'Último ano':(c.id&&c.id.ultimoAno)?'Sim':'','Meta':u.role==='ea'?'':((c.id&&c.id.ultimoAno)?'Anilha de Mérito':'Insígnia de Mérito'),Cargo:(c.id&&c.id.cargo)||'',Etapa:etapa,'Adesão':(papel==='Noviço')?(adesList().filter(r=>(ea.adesv||{})[r.id]).length+'/'+adesList().length):'','Trilhos validados':Object.values(done).reduce((s,n)=>s+n,0),'F':done.F,'A':done.A,'C':done.C,'E':done.E,'I':done.I,'S':done.S,'Bravery':(c.brv&&c.brv.dificuldade)||'','Especialidades':esps,'Áreas Mérito':new Set((c.esp||[]).filter(e=>espv[e.id]).map(e=>e.area)).size,'Presenças':P,'Justificadas':J,'Faltas':F,'Assiduidade %':V?Math.round(100*P/V):'' ,'Pagamentos em falta':u.role==='ea'?'':pagList().filter(p=>!((ea.pagv||{})[p.id])).map(p=>p.ativ+(((c.pag||{})[p.id]||{}).pago?' (registado)':'')).join('; '),'Sessões validadas':V,_foto:(c.id&&c.id.foto)||''});
   }
   return rows.sort((a,b)=>a.Equipa.localeCompare(b.Equipa)||a.Nome.localeCompare(b.Nome));
 }
@@ -1669,6 +1741,7 @@ function paintPend(){const box=$('#pendList');if(!box||!isStaff())return;const r
     const jm=jamList().filter(r=>!((ea.jam||{})[r.id]));const jmark=jm.filter(r=>(c.jam||{})[r.id]).length;if(jm.length)m.push({k:'Jamboree',t:(jm.length-jmark)+' requisito(s) por cumprir'+(jmark?', '+jmark+' por validar':'')});
     const pg=pagList().filter(p=>!((ea.pagv||{})[p.id]));const preg=pg.filter(p=>((c.pag||{})[p.id]||{}).pago);if(pg.length)m.push({k:'Financeiro',t:(pg.length-preg.length)+' pagamento(s) em falta'+(preg.length?', '+preg.length+' por confirmar':'')});
     if(id.papel==='Noviço'&&!(c.nov&&c.nov.promessa))m.push({k:'Noviço',t:'sem data prevista da Promessa'});
+    if(id.papel==='Noviço'){const al=adesList();const av=ea.adesv||{};const falta=al.filter(r=>!av[r.id]);const marc=falta.filter(r=>((c.ades||{})[r.id]||{}).ok).length;if(falta.length)m.push({k:'Adesão',t:(falta.length-marc)+' prova(s) por fazer'+(marc?', '+marc+' por validar':''),w:marc?1:0});else m.push({k:'Adesão',t:'concluída: marcar a Promessa',w:1});}
     return {u,m};}).sort((a,b)=>b.m.length-a.m.length||(a.u.nome||'').localeCompare(b.u.nome||''));
   box.innerHTML='';if(!rows.length){box.innerHTML='<p class="note">Sem elementos.</p>';}
   rows.forEach(r=>{const d=document.createElement('div');d.className='req'+(r.m.length?'':' done');
