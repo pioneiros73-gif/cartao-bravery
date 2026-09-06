@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1C4E9E">
+<title>Cartão BRAVERY</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800;900&family=Nunito:wght@400;600;700;800&display=swap">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ===== CONFIGURAÇÃO: colar aqui os dados do projeto Firebase (Consola Firebase > Definições do projeto > As tuas apps > Web) ===== */
+const FIREBASE_CONFIG = {
+  apiKey: "COLAR_AQUI",
+  authDomain: "COLAR_AQUI.firebaseapp.com",
+  projectId: "COLAR_AQUI",
+  storageBucket: "COLAR_AQUI.appspot.com",
+  messagingSenderId: "COLAR_AQUI",
+  appId: "COLAR_AQUI"
+};
+</script>
+<style>
+:root{
+  --azul:#1C4E9E; --azul-2:#2F6BD0; --azul-esc:#0E2A55; --azul-ink:#0B1F42;
+  --amarelo:#F6C544; --laranja:#F2842B; --cinza:#6F7A8C; --cinza-2:#A7B0BF;
+  --bg:#EEF2F8; --card:#FFFFFF; --ink:#132039; --ink-2:#4A5568; --line:#D6DDE8;
+  --sel:#E3ECFB; --ok:#2E9E5B; --shadow:0 6px 18px rgba(14,42,85,.10);
+  --hero-a:#1C4E9E; --hero-b:#0E2A55;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --azul:#4C86E8; --azul-2:#6AA0F5; --azul-esc:#0B1626; --azul-ink:#08142B;
+    --bg:#0B1626; --card:#152540; --ink:#EEF2F8; --ink-2:#B7C2D3; --line:#2A3C5C;
+    --sel:#1F3560; --cinza:#9AA5B7; --cinza-2:#5F6C82; --shadow:0 6px 18px rgba(0,0,0,.35);
+    --hero-a:#173F82; --hero-b:#0A1A36;
+  }
+}
+:root[data-theme="dark"]{
+  --azul:#4C86E8; --azul-2:#6AA0F5; --azul-esc:#0B1626; --azul-ink:#08142B;
+  --bg:#0B1626; --card:#152540; --ink:#EEF2F8; --ink-2:#B7C2D3; --line:#2A3C5C;
+  --sel:#1F3560; --cinza:#9AA5B7; --cinza-2:#5F6C82; --shadow:0 6px 18px rgba(0,0,0,.35);
+  --hero-a:#173F82; --hero-b:#0A1A36;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+body{padding-bottom:84px;overflow-x:hidden}
+h1,h2,h3,.disp{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif;text-transform:uppercase;letter-spacing:.02em;text-wrap:balance;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+textarea{resize:vertical;min-height:64px}
+.app{max-width:560px;margin:0 auto;min-height:100vh}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,var(--hero-a),var(--hero-b));color:#fff;padding:14px 16px 16px;position:relative;overflow:hidden}
+.hero .hexbg{position:absolute;right:-30px;top:-20px;width:190px;opacity:.16}
+.hero .eyebrow{font-weight:800;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--amarelo)}
+.hero h1{font-size:44px;line-height:.9;font-weight:900;margin-top:4px}
+.hero h1 span{color:var(--amarelo)}
+.hero .sub{margin-top:6px;font-size:13px;color:#D7E3F7;max-width:36ch}
+.hero .who{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hero .who .name{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;text-transform:uppercase}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.pill.y{background:var(--amarelo);color:var(--azul-ink)}
+.pill.o{background:var(--laranja);color:#fff}
+.pill.g{background:rgba(255,255,255,.16);color:#fff}
+.progress{margin-top:10px}
+.progress .bar{height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden}
+.progress .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--amarelo),var(--laranja));width:0;transition:width .5s ease}
+.progress .lbl{display:flex;justify-content:space-between;font-size:12px;margin-top:6px;color:#D7E3F7;font-weight:700}
+
+/* MODE */
+.modebar{display:flex;gap:6px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;align-items:center}
+.modebar .lbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--cinza);margin-right:4px}
+.seg{display:flex;background:var(--bg);border-radius:999px;padding:3px;gap:2px;flex:1}
+.seg button{flex:1;border:0;background:transparent;border-radius:999px;padding:6px 6px;font-weight:800;font-size:13px;white-space:nowrap;color:var(--ink-2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--azul);color:#fff}
+.seg button:focus-visible{outline:3px solid var(--amarelo)}
+
+/* PANELS */
+.panel{display:none;padding:14px 14px 20px}
+.panel.on{display:block}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px;border:1px solid var(--line)}
+.card h2{font-size:26px;font-weight:800;color:var(--azul);line-height:1}
+.card h2 small{display:block;font-family:"Nunito",sans-serif;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink-2);font-weight:600;margin-top:4px}
+.card h3{font-size:18px;font-weight:800;color:var(--ink);margin:14px 0 6px}
+.quote{border-left:4px solid var(--amarelo);padding:6px 12px;font-weight:700;color:var(--ink);background:var(--sel);border-radius:0 10px 10px 0;margin:10px 0}
+.field{margin-top:10px}
+.field label{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--azul-2);box-shadow:0 0 0 3px rgba(47,107,208,.2)}
+.field .hint{font-size:12px;color:var(--ink-2);margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ro input:not(.tr *),.ro select:not(.tr *),.ro textarea:not(.tr *),.ro .tr .hd2 input,.ro .tr .hd2 select{opacity:.85;pointer-events:none;background:transparent}
+.ro .field label::after{content:" · só leitura";font-weight:600;letter-spacing:0;text-transform:none;color:var(--cinza-2)}
+
+/* CHOICE CHIPS */
+.choices{display:flex;flex-wrap:wrap;gap:6px}
+.choices button{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-weight:700;font-size:13px;cursor:pointer;color:var(--ink-2)}
+.choices button[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+.choices button.o[aria-pressed="true"]{background:var(--laranja);border-color:var(--laranja)}
+.choices button.y[aria-pressed="true"]{background:var(--amarelo);border-color:var(--amarelo);color:var(--azul-ink)}
+.choices button:focus-visible{outline:3px solid var(--amarelo)}
+
+/* BUTTONS */
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;display:inline-flex;align-items:center;gap:8px}
+.btn.y{background:var(--amarelo);color:var(--azul-ink)}
+.btn.o{background:var(--laranja)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn:focus-visible{outline:3px solid var(--amarelo)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--azul-ink);color:#fff;padding:10px 16px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
+.toast.on{opacity:1}
+
+/* TRAIL */
+.trail{position:relative;padding-left:44px}
+.trail::before{content:"";position:absolute;left:17px;top:8px;bottom:8px;width:4px;border-radius:4px;background:linear-gradient(var(--azul-2),var(--laranja))}
+.step{position:relative;margin-bottom:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 12px 12px 14px;box-shadow:var(--shadow)}
+.step .dot{position:absolute;left:-36px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--card);border:4px solid var(--azul-2);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--azul)}
+.step.done .dot{background:var(--amarelo);border-color:var(--amarelo);color:var(--azul-ink)}
+.step.big .dot{border-color:var(--laranja)}
+.step .when{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--laranja)}
+.step .ttl{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;line-height:1.05;margin-top:2px}
+.step .what{font-size:14px;color:var(--ink-2);margin-top:4px}
+.step .foot{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.step .foot input:not([type=checkbox]){flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:10px;padding:7px 10px;background:var(--bg);font-size:14px;color:var(--ink)}
+.chk{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--azul)}
+
+/* FACEIS */
+.faceis-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.fa{border:1.5px solid var(--line);border-radius:14px;padding:12px;background:var(--bg);min-width:0;overflow:hidden}
+.fa .hd>div{min-width:0}
+.fa .hd{display:flex;align-items:center;gap:10px}
+.fa .letter{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-size:26px;font-weight:900;color:#fff;background:var(--azul)}
+.fa .nm{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:800;text-transform:uppercase}
+.fa .q{font-size:13px;color:var(--ink-2)}
+.radar{display:block;margin:0 auto;max-width:300px}
+
+/* TRILHOS */
+.trilhos{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.tr{border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:8px 10px}
+.tr.work{border-color:var(--azul-2)}
+.tr.prop{border-color:var(--laranja)}
+.tr.done{border-color:var(--amarelo);background:linear-gradient(90deg,rgba(246,197,68,.18),transparent)}
+.tr .hd2{display:flex;gap:8px;align-items:center}
+.tr .hd2 input{flex:1;border:0;border-bottom:1.5px dashed var(--line);background:transparent;padding:4px 2px;font-weight:800;color:var(--ink);min-width:0}
+.tr .hd2 input:focus{outline:none;border-bottom-color:var(--azul-2)}
+.tr .hd2 select{border:1.5px solid var(--line);border-radius:8px;padding:3px 6px;font-size:12px;background:var(--bg);color:var(--ink)}
+.tr .st{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:3px 8px;background:var(--line);color:var(--ink-2)}
+.tr.work .st{background:var(--sel);color:var(--azul)}
+.tr.prop .st{background:#FDE7D2;color:#9A4A0E}
+.tr.done .st{background:var(--amarelo);color:var(--azul-ink)}
+.tr .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tr .rev{margin-top:6px;font-size:13px;border-left:3px solid var(--laranja);padding:4px 8px;background:var(--bg);border-radius:0 8px 8px 0}
+.tr .rev.ea{border-color:var(--azul)}
+.tr .rev b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);display:block}
+.tr .hd2 .k{flex:none;width:22px;text-align:center}
+.tr textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);font-size:13px;min-height:44px;margin-top:4px}
+
+/* SPECIALTIES */
+.hexgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hex{position:relative;aspect-ratio:1/1.12;display:grid;place-items:center;text-align:center;padding:8px 4px;cursor:pointer;border:0;background:transparent}
+.hex svg{position:absolute;inset:0;width:100%;height:100%}
+.hex .t{position:relative;font-size:10.5px;font-weight:800;line-height:1.1;color:#fff;text-transform:uppercase;letter-spacing:.02em}
+.hex .n{position:relative;font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:900;color:#fff;line-height:1}
+.hex[data-done="1"] .t,.hex[data-done="1"] .n{color:var(--azul-ink)}
+.merit{display:flex;align-items:center;gap:14px}
+.merit .ring{width:92px;height:92px;flex:none}
+.merit .txt b{font-family:"Barlow Condensed",sans-serif;font-size:20px;text-transform:uppercase;display:block;line-height:1}
+.merit .txt span{font-size:13px;color:var(--ink-2)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.item .nm{font-weight:800}
+.item .meta{font-size:12px;color:var(--ink-2)}
+.stage{display:flex;gap:3px;margin-top:8px}
+.stage button{flex:1;border:0;background:var(--line);height:22px;border-radius:6px;font-size:9px;font-weight:800;text-transform:uppercase;color:var(--ink-2);cursor:pointer;padding:0}
+.stage button.on{background:var(--azul);color:#fff}
+.stage button.fin{background:var(--amarelo);color:var(--azul-ink)}
+.del{border:0;background:transparent;color:var(--cinza);cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{background:var(--sel);color:var(--azul);border-radius:999px;padding:4px 10px;font-size:13px;font-weight:700;display:inline-flex;gap:6px;align-items:center}
+.chip.o{background:#FDE7D2;color:#9A4A0E}.chip.y{background:#FDF1C7;color:#6E5300}
+:root[data-theme="dark"] .chip.o,:root:not([data-theme="light"]) .chip.o{}
+.chip button{border:0;background:transparent;cursor:pointer;color:inherit;font-weight:900;padding:0}
+.addrow{display:flex;gap:6px;margin-top:6px}
+.addrow input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--ink)}
+
+/* LADDER */
+.ladder{display:flex;flex-direction:column;gap:6px}
+.ladder button{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg);cursor:pointer}
+.ladder button .k{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:18px;background:var(--line);color:var(--ink-2);flex:none}
+.ladder button[aria-pressed="true"]{border-color:var(--azul);background:var(--sel)}
+.ladder button[aria-pressed="true"] .k{background:var(--azul);color:#fff}
+.ladder .t{font-weight:800;font-size:14px}.ladder .s{font-size:12px;color:var(--ink-2)}
+
+/* COMMENTS */
+.cmt{border-left:4px solid var(--laranja);background:var(--bg);border-radius:0 12px 12px 0;padding:8px 12px}
+.cmt.ea{border-color:var(--azul)}
+.cmt .by{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.cmt p{margin:4px 0 0;font-size:14px}
+
+/* LOGIN + PAINEL */
+.login{position:fixed;inset:0;z-index:50;background:linear-gradient(160deg,var(--hero-a),var(--hero-b));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.login h1{font-size:64px;line-height:.9}
+.login h1 span{color:var(--amarelo)}
+.login p{max-width:34ch;color:#D7E3F7}
+.login .btn{margin-top:18px;background:#fff;color:var(--azul-ink);font-size:16px}
+.userbar{display:flex;gap:8px;align-items:center;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;font-size:13px}
+.userbar .u{flex:1;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.userbar .btn{padding:6px 10px;font-size:12px}
+.viewing{background:var(--laranja);color:#fff;padding:8px 14px;font-weight:800;font-size:13px;display:flex;gap:8px;align-items:center}
+.viewing .btn{margin-left:auto;background:#fff;color:var(--azul-ink);padding:5px 10px;font-size:12px}
+.row-card{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);cursor:pointer;width:100%;text-align:left;color:var(--ink)}
+.row-card .av{width:40px;height:40px;border-radius:12px;background:var(--azul);color:#fff;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:900;flex:none}
+.row-card .nm{font-weight:800}.row-card .meta{font-size:12px;color:var(--ink-2)}
+.row-card .kpi{margin-left:auto;text-align:right;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.row-card .kpi b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:20px;color:var(--azul)}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat div{background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:30px;color:var(--azul);line-height:1}
+.stat span{font-size:12px;color:var(--ink-2)}
+table.adm{width:100%;border-collapse:collapse;font-size:13px}
+table.adm td{padding:6px 4px;border-bottom:1px solid var(--line)}
+table.adm select,table.adm input{border:1.5px solid var(--line);border-radius:8px;padding:4px;background:var(--bg);color:var(--ink);font-size:12px;max-width:100%}
+.pend{display:inline-block;background:#FDE7D2;color:#9A4A0E;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800}
+
+/* TABS */
+.tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;pointer-events:none}
+.tabs nav{pointer-events:auto;display:flex;width:100%;max-width:560px;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(14,42,85,.08);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.tabs button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--cinza);cursor:pointer;border-radius:10px}
+.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected="true"]{color:var(--azul)}
+.tabs button[aria-selected="true"] svg{fill:rgba(47,107,208,.15)}
+.tabs button:focus-visible{outline:3px solid var(--amarelo)}
+.note{font-size:13px;color:var(--ink-2)}
+.warn{background:#FDF1C7;color:#5B4300;border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600}
+details summary{cursor:pointer;font-weight:800;color:var(--azul)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+
+<div class="login" id="login">
+  <div class="eyebrow" style="color:var(--amarelo);font-weight:800;letter-spacing:.18em;font-size:12px">III SECÇÃO · 2026/2027 · JAMBOREE 2027</div>
+  <h1>Cartão <span>Bravery</span></h1>
+  <p>O teu mapa de coragem. Entra com a tua conta Google para abrir o teu cartão. Só tu, o teu Guia e a Equipa de Animação o podem ver.</p>
+  <button class="btn" id="btnLogin">Entrar com Google</button>
+  <p id="loginMsg" style="font-size:12px;margin-top:14px"></p>
+</div>
+<div class="app">
+  <header class="hero">
+    <svg class="hexbg" viewBox="0 0 100 115" aria-hidden="true"><polygon points="50,2 97,29 97,86 50,113 3,86 3,29" fill="none" stroke="#fff" stroke-width="6"/><polygon points="50,22 80,39 80,76 50,93 20,76 20,39" fill="none" stroke="#fff" stroke-width="4"/></svg>
+    <div class="eyebrow">III Secção · Ano Escutista 2026/2027 · Jamboree 2027</div>
+    <h1>Cartão <span>Bravery</span></h1>
+    <p class="sub">O meu mapa de coragem: onde estou, o que me custa, o que vou treinar e como vou chegar a Gdańsk.</p>
+    <div class="who">
+      <span class="name" id="hName">O meu cartão</span>
+      <span class="pill y" id="hRole">Escuteiro</span>
+      <span class="pill g" id="hTeam">Equipa</span>
+      <span class="pill o" id="hGoal">Insígnia de Mérito</span>
+      <span class="pill g" id="hEtapa">Etapa</span>
+    </div>
+    <div class="progress">
+      <div class="bar"><i id="pBar"></i></div>
+      <div class="lbl"><span id="pTxt">Cartão 0% preenchido</span><span id="pTrail">0/12 etapas vividas</span></div>
+    </div>
+  </header>
+
+  <div class="userbar"><span class="u" id="ubName">...</span><span class="pill y" id="ubRole" style="font-size:10px"></span><button class="btn ghost" id="btnOut">Sair</button></div>
+  <div class="viewing" id="viewing" style="display:none"><span id="viewingTxt"></span><button class="btn" id="btnBack">Voltar ao painel</button></div>
+
+  <!-- ===== PAINEL ===== -->
+  <section class="panel" id="p-painel">
+    <div class="card" id="painelStats"><h2>Painel <small id="painelSub"></small></h2><div class="stat" id="stats"></div></div>
+    <div class="card"><h2>Cartões <small>Toca num cartão para o abrir</small></h2>
+      <div class="field" id="filtroEquipaWrap"><label>Equipa</label><select id="filtroEquipa"><option value="">Todas</option></select></div>
+      <div class="list" id="cardsList" style="margin-top:10px"></div></div>
+    <div class="card" id="admin" style="display:none"><h2>Administração <small>Só a Equipa de Animação vê isto</small></h2>
+      <div class="field"><label>Equipas (separadas por vírgula)</label><input id="admEquipas" placeholder="Ex.: Águia, Lobo"><button class="btn sm" id="admEquipasSave" style="margin-top:6px">Guardar Equipas</button></div>
+      <h3>Utilizadores e permissões</h3><p class="note">Quem entra pela primeira vez fica como "Jovem". Define aqui a Equipa e quem é Guia ou Equipa de Animação.</p>
+      <div style="overflow-x:auto"><table class="adm" id="admUsers"></table></div>
+      <h3>Trilhos oficiais</h3><p class="note">Os 18 Trilhos oficiais já estão na aplicação. Aqui podes acrescentar um objetivo ou corrigir um nome; fica visível em todos os cartões.</p>
+      <div style="overflow-x:auto"><table class="adm" id="admTrilhos"></table></div><button class="btn sm" id="admTrilhosSave" style="margin-top:6px">Guardar Trilhos</button></div>
+  </section>
+
+  <!-- ===== MAPA ===== -->
+  <section class="panel on" id="p-mapa">
+    <div class="card">
+      <h2>O mapa do ano <small>Coragem → Competência → Responsabilidade → Autonomia → Jamboree</small></h2>
+      <div class="quote">Primeiro conhecer. Depois escolher. Só depois comprometer.</div>
+      <p class="note">Marca cada etapa quando a viveres e escreve uma frase sobre o que levas dela. É o teu diário de aventura.</p>
+    </div>
+    <div class="trail" id="trail"></div>
+    <div class="card">
+      <h3>A pergunta do ano</h3>
+      <div class="quote">Se BRAVELY significa ter coragem para enfrentar aquilo que nos custa, qual é a aventura que eu preciso de viver este ano?</div>
+    </div>
+  </section>
+
+  <!-- ===== BRAVERY ===== -->
+  <section class="panel" id="p-bravery">
+    <div class="card">
+      <h2>Quem sou <small>Identificação no cartão</small></h2>
+      <div class="grid2">
+        <div class="field"><label>Nome</label><input data-path="id.nome" placeholder="O teu nome"></div>
+        <div class="field"><label>Equipa</label><select data-path="id.equipa" id="selEquipa"><option value="">Escolhe</option></select></div>
+      </div>
+      <div class="field"><label>O meu papel</label>
+        <div class="choices" data-choice="id.papel" data-opts="Noviço|Escuteiro|Subguia|Guia"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Guia</label><input data-path="id.guia"></div>
+        <div class="field"><label>Subguia</label><input data-path="id.subguia"></div>
+      </div>
+      <div class="field"><label>Cargo na Equipa</label><select data-path="id.cargo" id="selCargo"></select>
+        <input data-path="id.cargoOutro" id="cargoOutro" placeholder="Qual?" style="margin-top:6px;display:none">
+        <div class="note" id="cargoDesc" style="margin-top:6px"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>O meu Bravery <small>Uma dificuldade treinável. Não a maior, a que aceito trabalhar este ano.</small></h2>
+      <div class="quote">Coragem não é não ter medo. É saber o que me custa e avançar com treino: reconhecer → expor → assumir → treinar → ultrapassar.</div>
+      <div class="field"><label>Este ano quero ter coragem para...</label><textarea data-path="brv.dificuldade" placeholder="Ex.: falar perante os outros / pedir ajuda / não desistir quando erro / delegar"></textarea></div>
+      <div class="field"><label>Como se manifesta</label><textarea data-path="brv.manifesta" placeholder="Em que situações reparo nisto?"></textarea></div>
+      <div class="field"><label>Objetivo concreto</label><input data-path="brv.objetivo" placeholder="O que quero conseguir fazer até Junho"></div>
+      <div class="field"><label>Primeiro passo</label><input data-path="brv.passo" placeholder="Uma coisa pequena, nas próximas 2 semanas"></div>
+      <div class="field"><label>Como saberei que evoluí</label><input data-path="brv.indicador" placeholder="Indicador que a Equipa também consegue ver"></div>
+      <div class="field"><label>Apoio que preciso</label><input data-path="brv.apoio" placeholder="Quem me ajuda e como"></div>
+      <div class="field"><label>Fase atual</label>
+        <div class="choices" data-choice="brv.fase" data-opts="Reconhecer|Expor|Assumir|Treinar|Ultrapassar"></div>
+      </div>
+      <div class="warn">Aqui fica só o que é útil e treinável no escutismo. Segredos, assuntos de família ou muito pessoais não são para este cartão.</div>
+    </div>
+
+    <div class="card">
+      <h2>A luz que levo <small>Raide Empreendimento de 23 para 24 de Outubro - "Da escuridão à Luz"</small></h2>
+      <div class="field"><label>O passo concreto de treino que escolhi na noite do raide</label><textarea data-path="brv.luz"></textarea></div>
+      <div class="quote">A parte escura não desaparece porque escondemos aquilo que nos custa. Torna-se menos escura quando temos coragem de a conhecer.</div>
+    </div>
+
+    <div class="card">
+      <h2>A minha meta <small id="metaSub">Insígnia de Mérito: uma Especialidade em 6 áreas distintas</small></h2>
+      <div class="field"><label>Plano para lá chegar</label><textarea data-path="brv.meta" placeholder="Etapas de Progresso / Especialidades e quando"></textarea></div>
+    </div>
+  </section>
+
+  <!-- ===== FACEIS ===== -->
+  <section class="panel" id="p-faceis">
+    <div class="card">
+      <h2>A minha roda do Progresso <small id="rodaSub">A etapa não se escolhe: é consequência dos Trilhos concluídos.</small></h2>
+      <svg class="radar" id="roda" viewBox="0 0 300 300" role="img" aria-label="Roda da insígnia de Progresso"></svg>
+      <div class="choices" id="etapasBar" style="justify-content:center;margin-top:6px"></div>
+      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando a Equipa de Animação valida.</p>
+    </div>
+    <div class="card">
+      <h2>Como me vejo hoje <small>Autodiagnóstico FACEIS (Espelho Bravely)</small></h2>
+      <svg class="radar" id="radar" viewBox="0 0 300 300" role="img" aria-label="Radar FACEIS"></svg>
+      <p class="note" style="text-align:center">1 evito · 2 preciso de treino · 3 consigo · 4 forte</p>
+    </div>
+    <div class="faceis-wrap" id="faceis"></div>
+  </section>
+
+  <!-- ===== ESPECIALIDADES ===== -->
+  <section class="panel" id="p-esp">
+    <div class="card">
+      <h2>Mérito <small id="meritSub">Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas</small></h2>
+      <div class="merit">
+        <svg class="ring" id="ring" viewBox="0 0 100 100" aria-hidden="true"></svg>
+        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para ver as tuas Especialidades. Concluídas ficam a amarelo.</span></div>
+      </div>
+      <div class="hexgrid" id="hexgrid" style="margin-top:14px"></div>
+    </div>
+
+    <div class="card">
+      <h2>As minhas Especialidades <small>Interesse → Aprender → Treinar → Demonstrar → Usar → Ensinar</small></h2>
+      <div class="list" id="espList"></div>
+      <details style="margin-top:10px"><summary>+ Adicionar Especialidade</summary>
+        <div class="field"><label>Área</label><select id="espArea"></select></div>
+        <div class="field"><label>Especialidade</label><select id="espSel"></select><input id="espNome" placeholder="Nome da Especialidade" style="margin-top:6px;display:none"><div class="note" id="espDesc" style="margin-top:6px"></div></div>
+        <div class="grid2">
+          <div class="field"><label>Mentor</label><input id="espMentor" placeholder="Quem me acompanha"></div>
+          <div class="field"><label>Onde a vou usar</label><input id="espOnde" placeholder="Natal / Carnaval / Junho / Jamboree"></div>
+        </div>
+        <button class="btn sm" id="espAdd" style="margin-top:8px">Adicionar</button>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>Competências <small>O que trazes na mochila?</small></h2>
+      <h3>Já sei fazer</h3><div class="chips" id="c-sei"></div>
+      <div class="addrow"><input id="in-sei" placeholder="Ex.: orientação, fogo, cozinha"><button class="btn sm" data-add="sei">+</button></div>
+      <h3>Quero aprender</h3><div class="chips" id="c-aprender"></div>
+      <div class="addrow"><input id="in-aprender" placeholder="Ex.: primeiros socorros"><button class="btn sm o" data-add="aprender">+</button></div>
+      <h3>Posso ensinar</h3><div class="chips" id="c-ensinar"></div>
+      <div class="addrow"><input id="in-ensinar" placeholder="Ex.: nós e amarrações"><button class="btn sm y" data-add="ensinar">+</button></div>
+    </div>
+  </section>
+
+  <!-- ===== EQUIPA ===== -->
+  <section class="panel" id="p-equipa">
+    <div class="card">
+      <h2>O meu Cargo <small>Uma responsabilidade real e uma oportunidade para crescer</small></h2>
+      <div class="quote">Cargo → responsabilidade → aprendizagem → autonomia → ensinar outro</div>
+      <div class="field"><label>O que a Equipa pode esperar de mim</label><textarea data-path="cargo.espera"></textarea></div>
+      <div class="field"><label>Competência que o Cargo me obriga a desenvolver</label><input data-path="cargo.competencia"></div>
+      <div class="grid2">
+        <div class="field"><label>O que preciso de aprender</label><input data-path="cargo.aprender"></div>
+        <div class="field"><label>Quem me pode ensinar</label><input data-path="cargo.quem"></div>
+      </div>
+      <div class="field"><label>Até ao fim do ano devo conseguir fazer sozinho</label><input data-path="cargo.sozinho"></div>
+      <div class="field"><label>E devo ser capaz de ensinar a outro elemento</label><input data-path="cargo.ensinar"></div>
+      <div class="field"><label>Evidência de que cumpri bem</label><input data-path="cargo.evidencia" placeholder="O que se viu na prática"></div>
+      <h3>Em que degrau estou</h3>
+      <div class="ladder" id="ladder"></div>
+    </div>
+
+    <div class="card">
+      <h2>Eu na Equipa</h2>
+      <div class="field"><label>Como contribuo</label><input data-path="eq.contribuo"></div>
+      <div class="field"><label>O que preciso dos outros</label><input data-path="eq.preciso"></div>
+      <div class="field"><label>O que quero ensinar à Equipa</label><input data-path="eq.ensino"></div>
+      <div class="field"><label>Padrinho/Madrinha de (se acompanho um Noviço)</label><input data-path="eq.afilhado"></div>
+    </div>
+
+    <div class="card" id="cardNovico">
+      <h2>Sou Noviço <small>Ninguém entra sozinho: dois padrinhos e o Guia como apoio</small></h2>
+      <div class="grid2">
+        <div class="field"><label>Padrinho/Madrinha (investido)</label><input data-path="nov.padrinho"></div>
+        <div class="field"><label>Subguia</label><input data-path="nov.subguia"></div>
+      </div>
+      <div class="field"><label>Onde estou no caminho para a Promessa</label><textarea data-path="nov.ponto"></textarea></div>
+      <div class="field"><label>Próximo passo</label><input data-path="nov.proximo"></div>
+      <div class="field"><label>Primeira responsabilidade real que já tenho</label><input data-path="nov.tarefa"></div>
+    </div>
+
+    <div class="card" id="cardGuia">
+      <h2>Sou Guia <small>O meu sucesso é a Equipa funcionar sem mim</small></h2>
+      <div class="quote">O Guia não é aquele que sabe fazer tudo. É aquele que começa, mostra, ensina e depois deixa os outros fazerem.</div>
+      <div class="field"><label>A dificuldade que eu exponho primeiro à Equipa</label><input data-path="guia.expor" placeholder="Lidero pelo exemplo"></div>
+      <div class="field"><label>Elementos que quero preparar para liderar em 2027/2028</label><input data-path="guia.sucessores"></div>
+      <div class="field"><label>Competências que lhes devo proporcionar</label><input data-path="guia.competencias"></div>
+      <div class="field"><label>Responsabilidades que vou delegar (e quando)</label><textarea data-path="guia.delegar"></textarea></div>
+      <div class="field"><label>Decisões que a Equipa deve aprender a tomar sem mim</label><input data-path="guia.decisoes"></div>
+      <div class="field"><label>O que vou deixar de fazer e passar a ensinar</label><input data-path="guia.deixar"></div>
+      <div class="field"><label>Ponto de situação dos Noviços da Equipa (para reportar à Equipa de Animação)</label><textarea data-path="guia.novicos"></textarea></div>
+      <h3>Teste de autonomia · acampamento de Junho</h3>
+      <div class="list" id="autoTest"></div>
+      <p class="note" style="margin-top:8px">Quanto menos necessário for o Guia, maior foi o seu sucesso enquanto Guia.</p>
+    </div>
+
+    <div class="card">
+      <h2>As aventuras <small>A Equipa de Animação dá o tema. As Equipas escolhem as aventuras.</small></h2>
+      <div class="field"><label>Natal · 19-21 Dez · integração e laços (Social, Caráter, Afetivo) · onde acampamos e o que faço lá</label><textarea data-path="av.natal"></textarea></div>
+      <div class="field"><label>Carnaval · 6-8 Fev · animação (Físico, Espiritual, Intelectual) · a minha parte</label><textarea data-path="av.carnaval"></textarea></div>
+      <div class="field"><label>Symposium Bushcraft · 24-25 Abr · Constância · o que quero aprender</label><textarea data-path="av.symposium"></textarea></div>
+      <div class="field"><label>Acampamento em autonomia · 26 Jun-2 Jul · Tomar · a minha responsabilidade</label><textarea data-path="av.junho"></textarea></div>
+      <div class="field"><label>Jamboree 2027 · Gdańsk · 30 Jul - 8 Ago · a minha missão pessoal</label><textarea data-path="av.jamboree"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h2>Comentários <small>Do Guia e da Equipa de Animação. Não alteram o cartão, acompanham-no.</small></h2>
+      <div class="list" id="cmtList"></div>
+      <div id="cmtForm" style="margin-top:10px">
+        <div class="field"><label>Comentário</label><textarea id="cmtTxt" placeholder="O que vi, o que sugiro, o que reconheço"></textarea></div>
+        <button class="btn sm o" id="cmtAdd">Guardar comentário</button>
+      </div>
+      <p class="note" id="cmtNote" style="margin-top:8px">Só o Guia e a Equipa de Animação comentam.</p>
+    </div>
+
+    </div>
+  </section>
+
+  <div class="tabs"><nav role="tablist">
+    <button role="tab" aria-selected="false" data-tab="painel" id="tabPainel" style="display:none"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Painel</button>
+    <button role="tab" aria-selected="true" data-tab="mapa"><svg viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>Mapa</button>
+    <button role="tab" aria-selected="false" data-tab="bravery"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9L9.5 8z"/></svg>Bravery</button>
+    <button role="tab" aria-selected="false" data-tab="faceis"><svg viewBox="0 0 24 24"><path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"/><path d="M12 8v8M8 10l8 4M16 10l-8 4"/></svg>FACEIS</button>
+    <button role="tab" aria-selected="false" data-tab="esp"><svg viewBox="0 0 24 24"><path d="M12 2l4 2.3v4.6L12 11 8 8.9V4.3z"/><path d="M5 10l4 2.3v4.6L5 19l-4-2.1v-4.6z"/><path d="M19 10l4 2.3v4.6L19 19l-4-2.1v-4.6z"/></svg>Especial.</button>
+    <button role="tab" aria-selected="false" data-tab="equipa"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6M16 15c3 0 6 1.5 6 5"/></svg>Equipa</button>
+  </nav></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function(){
+const AREAS=[
+ 'Serviço e Socorrismo','Comunicação, Informação e Relacionamento','Desenvolvimento Físico','Natureza, Ambiente e Vida em Campo',
+ 'Terra, Água e Ar','Habilidade, Criatividade e Vida Profissional','Fé e Religião','Ciência e Tecnologia'];
+const AREA_SHORT=['Serviço e Socorrismo','Comunicação','Desenv. Físico','Natureza e Vida em Campo','Terra, Água e Ar','Habilidade e Criatividade','Fé e Religião','Ciência e Tecnologia'];
+const STAGES=['Interesse','Aprender','Treinar','Demonstrar','Usar','Ensinar'];
+const TRAIL=[
+ {id:'t1',when:'Sáb 03 Out 2026',ttl:'Missão Bravely',what:'Lançamento do ano. Seis desafios FACEIS e o Mapa do Ano. O desafio: sermos corajosos.'},
+ {id:'t2',when:'Sáb 10 Out',ttl:'Espelho Bravely',what:'Em sala. Como me vejo e como a Equipa me vê. Onde preciso de ser mais corajoso?'},
+ {id:'t3',when:'Sáb 17 Out',ttl:'FACEIS às escuras',what:'Raide noturno com 6 postos. Como ajo quando aparece dificuldade, cansaço e incerteza?'},
+ {id:'t5',when:'23 → 24 Out',ttl:'Da escuridão à Luz',what:'Raide Empreendimento. Entrar na escuridão, escolher o que evito, pedir ajuda, o Guia lidera primeiro. Termino com a luz que levo.',big:true},
+ {id:'t4',when:'Sáb 31 Out',ttl:'O que trazes na mochila?',what:'Raide técnico. Já sei / quero tentar / preciso que me ensinem / quero aprender. Nascem aqui as Especialidades.'},
+ {id:'t6',when:'Sáb 07 Nov',ttl:'Compromisso Bravely',what:'O diagnóstico vira objetivos: Bravery, Trilhos, Especialidades, Cargo, padrinhos e meta de Mérito. Fecha-se o cartão v1.'},
+ {id:'t7',when:'Novembro',ttl:'A Equipa escolhe as aventuras',what:'A Equipa de Animação deu o tema. Nós decidimos onde e como vamos viver o Natal e o Carnaval.'},
+ {id:'t8',when:'19 → 21 Dez',ttl:'Acampamento de Natal',what:'Integração, laços, Noviços integrados. Foco nas áreas Social, Caráter e Afetiva.'},
+ {id:'t9',when:'6 → 8 Fev 2027',ttl:'Acampamento de Carnaval',what:'Animação, expressão, criatividade. Foco nas áreas Física, Espiritual e Intelectual.'},
+ {id:'t10',when:'24 → 25 Abr',ttl:'Symposium Bushcraft · Constância',what:'Instrução. Aprender o que precisamos para sermos autónomos em Junho.',big:true},
+ {id:'t11',when:'26 Jun → 2 Jul',ttl:'Acampamento em autonomia · Tomar',what:'O teste. A Equipa funciona sem o Guia. Os Cargos funcionam. Eu faço e ensino.',big:true},
+ {id:'t12',when:'30 Jul → 8 Ago 2027',ttl:'Jamboree · Gdańsk',what:'BRAVELY em ação, num mundo inteiro de escuteiros. A razão pela qual o caminho começou em Outubro.',big:true}
+];
+const FACEIS=[
+ {k:'F',n:'Físico',q:'O que consigo fazer bem? O que evito por cansaço, receio ou falta de técnica?'},
+ {k:'A',n:'Afetivo',q:'Como reajo à crítica, ao conflito, à frustração e à pressão?'},
+ {k:'C',n:'Caráter',q:'Cumpro o que assumo? Persisto quando falho? Sei corrigir?'},
+ {k:'E',n:'Espiritual',q:'O que dá sentido às minhas escolhas, ao esforço e ao serviço?'},
+ {k:'I',n:'Intelectual',q:'O que sei fazer e o que quero aprender? Como resolvo o que não sei?'},
+ {k:'S',n:'Social',q:'Como trabalho, ajudo e vivo com os outros? Como acolho quem chega?'}
+];
+const CARGOS=[
+ {n:'',d:''},
+ {n:'Guia',d:'Lidera a Equipa pelo exemplo, dá direção, distribui responsabilidades e prepara sucessores. Reporta à Equipa de Animação.',c:'Liderar, delegar, escutar antes de decidir',esp:'-'},
+ {n:'Subguia',d:'Substitui o Guia, acompanha os Noviços como padrinho/madrinha e organiza o dia a dia da Equipa.',c:'Acompanhar, organizar, comunicar',esp:'-'},
+ {n:'Secretário/a',d:'Guarda a memória da Equipa: atas do Conselho de Equipa, registos, calendário e comunicação interna.',c:'Registo, síntese, comunicação',esp:'Comunicação, Informação e Relacionamento'},
+ {n:'Tesoureiro/a',d:'Gere o dinheiro da Equipa: orçamento das atividades, quotas, prestação de contas transparente.',c:'Rigor, planeamento, honestidade',esp:'Habilidade, Criatividade e Vida Profissional'},
+ {n:'Intendente (material)',d:'Responsável pelo material de campo: inventário, manutenção, arrumação e previsão do que falta.',c:'Organização, previsão, cuidado',esp:'Natureza, Ambiente e Vida em Campo'},
+ {n:'Socorrista / Enfermeiro/a',d:'Cuida da caixa de primeiros socorros, conhece as fichas de saúde e é o primeiro a agir num acidente ligeiro.',c:'Calma, prevenção, primeiros socorros',esp:'Serviço e Socorrismo'},
+ {n:'Cozinheiro/a',d:'Planeia ementas, quantidades e higiene alimentar; organiza a cozinha de campo e ensina os outros.',c:'Planeamento, higiene, alimentação',esp:'Habilidade, Criatividade e Vida Profissional'},
+ {n:'Animador/a',d:'Cria e conduz jogos, cânticos, fogos de conselho e momentos de energia. Lidera no acampamento de Carnaval.',c:'Criatividade, energia, inclusão',esp:'Comunicação, Informação e Relacionamento'},
+ {n:'Cronista / Fotógrafo/a',d:'Regista a vida da Equipa em texto e imagem; alimenta o diário e as partilhas com os pais e o Agrupamento.',c:'Observar, contar, representar',esp:'Comunicação, Informação e Relacionamento'},
+ {n:'Guarda-ambiente',d:'Garante o impacto mínimo em campo: resíduos, água, fogo, respeito pela natureza; propõe ações ambientais.',c:'Responsabilidade ambiental',esp:'Terra, Água e Ar'},
+ {n:'Animador/a da Fé',d:'Prepara os momentos de oração, reflexão e celebração da Equipa; liga a fé à vida da Equipa.',c:'Interioridade, sentido, celebração',esp:'Fé e Religião'},
+ {n:'Comunicação / Redes',d:'Representa a Equipa para fora: informação aos pais, partilhas do Agrupamento, contacto com outras Equipas e Jamboree.',c:'Síntese, representação, responsabilidade digital',esp:'Ciência e Tecnologia'},
+ {n:'Outro',d:'Cargo definido pela Equipa.'}
+];
+const ETAPAS=['Desprendimento','Conhecimento','Vontade','Construção'];
+/* Os 18 Trilhos oficiais da III Secção (Ferramenta de início de pista e observação contínua) */
+const TRILHOS={"F": [{"n": "Desempenho", "k": ["Testar limites", "Capacidade", "Destreza"], "q": ["Pratica regularmente atividade física ou dança?", "Demonstra agilidade?", "Adequa a atividade física à resistência do corpo?"], "o": ["Tenta superar-se no jogo em reunião da Unidade;", "Empenha-se em atividade físicas, p.ex.º gincanas", "Pratica empenhadamente um desporto/dança."]}, {"n": "Autoconhecimento", "k": ["Aceitação", "Respeito", "Corpo"], "q": ["Tem cuidado com a sua condição física?", "Respeita as diferenças físicas dos outros?", "Aceita-se como é?", "Respeita as diferenças de comportamento entre homens e mulheres, derivadas das alterações hormonais?"], "o": ["Demonstra cuidado com a alimentação.", "Demonstra estar confortável com o seu corpo.", "Aceita os elementos com diferenças físicas.", "Vive, plenamente integrado, numa equipa mista;", "Aceita a integração de elementos do sexo oposto nos jogos propostos."]}, {"n": "Bem-estar físico", "k": ["Escolhas saudáveis", "Atividade Física", "Nutrição"], "q": ["Faz uma alimentação equilibrada contendo os diversos nutrientes?", "Tem em conta a necessidade do descanso quando organiza o seu dia-a-dia?", "Tem hábitos de higiene?", "Tem consciência das consequências do consumo de drogas, cigarros, álcool, ...?", "Evita este tipo de consumos?"], "o": ["Planeia refeições e ementas equilibradas.", "Respeita os tempos de descanso nas atividades.", "Não tem comportamentos de risco.", "Demonstra ter cuidados de higiene e preocupação com a sua saúde."]}], "A": [{"n": "Relacionamento e sensibilidade", "k": ["Gestão de conflitos", "Valores"], "q": ["Mantém e cultiva as relações (amizade, familiares, amorosas)?", "Encara o seu crescimento de forma natural?", "Desempenha tarefas em casa?", "Informa os pais/educadores e envolve-os na vida do Agrupamento?", "Frequenta exposições, concertos, ...", "Conhece uma determinada forma de arte?"], "o": ["Participa ativamente nos eventos familiares;", "Fala com entusiasmo da sua família/educadores.", "Gosta de música, de cinema/séries, de ler, ... e respeita os gostos dos outros.", "Não entra em conflito com os elementos do grupo.", "Respeita o seu \"espaço\"  e o \"espaço\" dos outros."]}, {"n": "Equilíbrio emocional", "k": ["Autocontrolo", "Otimismo/Pessimismo", "Maturidade"], "q": ["Pensa, antes de agir impulsivamente?", "É cuidadoso nas suas palavras e ações, de forma a não ferir suscetibilidades?", "Sabe pedir desculpa?", "Reconhece quando erra?"], "o": ["Expressa os seus sentimentos livremente, de forma natural e com equilibrio (ri , chora, abraça, ...).", "Não é agressivo com os outros, não os culpa nem se queixa demasiado deles.", "Aprende com os erros."]}, {"n": "Autoestima", "k": ["Valorização pessoal"], "q": ["Conhece-se a si próprio?", "Reconhece as suas falhas e procura corrigi-las?", "Sabe quais são os seus limites e procura superá-los?", "Conhece o seu valor?"], "o": ["Reflete sobre o seu comportamento nas atividades.", "Identifica os seus pontos fracos.", "Aceita as observações dos outros.", "Frequenta atividades extra-curriculares.", "Supera os desafios que lhe são apresentados nas atividades."]}], "C": [{"n": "Autonomia", "k": ["Independência", "Referências", "Opção"], "q": ["Estabele para si próprio padrões de vida?", "Faz escolhas, sabendo o que estas implicam?", "Estabelece objetivos para si próprio?", "Estabelece prioridades na sua vida?"], "o": ["É coerente nos seus atos e convicções;", "Explica aos outros as suas convicções, sem as impôr;", "Analisa situações e estabelece alternativas;", "Contribui na resolução de situações na equipa(gem);", "Tem o seu percurso escolar definido;", "Toma decisões de forma informada."]}, {"n": "Responsabilidade", "k": ["Perseverança", "Compromisso", "Consequência"], "q": ["É empenhado no desempenho do seu cargo?", "Demonstra responsabilidade no cumprimento das tarefas?", "Assume as tarefas de forma consciente?", "É persistente na resolução dos problemas?", "Assume as consequências das suas ações?"], "o": ["Desempenha com empenho o seu cargo e/ou tarefas que lhe são atribuídas.", "Assume responsabilidades no grupo, na escola, ...:", "Distingue tarefas importantes de urgentes.", "Demonstra uma atitude construtiva perante as dificuldades.", "Tens hábitos de avaliação.", "Participa de forma empenhada nos Conselhos.", "Assume as opções tomadas."]}, {"n": "Coerência", "k": ["Partilha de valores", "Defender ideias", "Convicção"], "q": ["É coerente na apresentação das suas ideias e valores?", "Sabe transmitir aos outros os seus padrões de vida?"], "o": ["É coerente entre os seus atos e convicções pessoais.", "Explica aos outros as suas convicções.", "Participa de forma empenhada nos Conselhos.", "Defende as ideias em que acredita."]}], "E": [{"n": "Descoberta", "k": ["Procurar", "Saber", "Viver"], "q": ["Conhece e sabe manusear o Antigo Testamento?", "Conhece os principais profetas?", "Conhece a vida dos Apóstolos e os principais momentos com Jesus?", "É membro ativo da comunidade paroquial?", "Sabe a importância dos vários grupos paroquiais?"], "o": ["Sabe transmitir aos outros os ensinamentos de Deus.", "Conhece o projeto de Deus e como se deu a conhecer aos Homens.", "Participa ativamente na Eucatristia.", "Participa em algum grupo paroquial.", "Conhece os principais momentos de Jesus com os Apóstolos."]}, {"n": "Aprofundamento", "k": ["Comunidade", "Testemunho", "Diálogo inter-religioso"], "q": ["Demonstra hábitos de oração?", "Reconhece na Eucaristia o expoente da oração comunitária?", "Conhece outras religiões e confissões cristãs?", "Sabe o que a Igreja defende no que diz respeito a temas da atualidade?"], "o": ["Organiza/participa em momentos de oração.", "Participa na Eucaristia semanal.", "Enquadra temas atuais com passagens bíblicas.", "Participa em iniciativas da comunidade paroquial.", "Participa em iniciativas ecuménicas.", "Faz parte de grupos de oração."]}, {"n": "Serviço", "k": ["Dar mais", "Construir", "Evangelização"], "q": ["Reconhece a Criação como obra de Deus?", "Não atenta contra os outros ou contra si próprio?", "Reconhece que a vida humana tem valor absoluto?", "Assume a sua fé perante a família, os colegas, ...?"], "o": ["Colabora em movimentos de solidariedade social.", "Assume liderança em grupos de jovens.", "Tem atitudes de preocupação e de proteção do ambiente.", "Indigna-se contra a ofensa da dignidade humana."]}], "I": [{"n": "Procura de conhecimento", "k": ["Autoaprendizagem", "Iniciativa", "Procura"], "q": ["Demonstra maior aquisição de conhecimentos?", "Sabe partilhar com os outros as suas ideias?", "Sabe fazer seleção de conhecimentos e informação?", "Conhece todas as fontes de informação e meios de busca?", "Sabe adequar as suas aptidões a atividades e estudos em que se sinta à vontade?", "Desenvolve competências que vão ao encontro dos seus desejos profissionais?"], "o": ["Escolhe uma área de estudo.", "Elabora conteúdos para uma atividade.", "Separa informação mediática e sensionalista do verdadeiro conhecimento.", "Participa em fóruns e debates.", "Procura fontes fidedignas.", "Coloca o seu conhecimento em prática nos projetos."]}, {"n": "Resolução de problemas", "k": ["Capacidade de análise", "Uso de recursos", "Capacidade de síntese"], "q": ["Procura e utiliza novos conhecimentos?", "Aplica conhecimentos adquiridos para resolver problemas?", "Tem em conta as experiências vividas para a escolha do seu percurso?", "Tem capacidade crítica?", "Usa a capacidade crítica de forma construtiva, contribuindo para o bem comum?"], "o": ["Aplica os conhecimentos adquiridos na escola e/ou escuteiros.", "Propõe novas dinâmicas no grupo.", "Participa ativamente nos momentos de avaliação.", "Tem em conta a avaliação de uma atividade.", "Propõe novas ideias para os projetos da equipa.", "Tem uma atitude construtiva nos momentos de discussão/avaliação."]}, {"n": "Criatividade e expressão", "k": ["Inovação", "Copiar ideias", "Projetos"], "q": ["Apresenta propostas criativas com novas ideias?", "É criativo nas formas de apresentação?", "Nos projetos empenha-se nas oficinas?", "Sabe adequar a linguagem aos destinatários?"], "o": ["Demonstra criatividade nas apresentações dos projetos, fogos de conselho, ....", "Faz apresentações/exposições de forma clara e criativa.", "Participa, de forma inovadora, nas oficinas do projeto.", "Tem um papel ativo nos momentos de animação (p.e. Fogo de Conselho)."]}], "S": [{"n": "Exercer ativamente cidadania", "k": ["Democracia", "Direitos", "Deveres"], "q": ["Conhece os seus direitos e deveres como cidadão?", "Conhece os orgãos onde tem assento e o seu funcionamento?", "Pertence ou colcabora com organizações de interesse local ou ONG?", "Apresenta sempre as suas ideias?", "Aceita as decisões tomadas pelo grupo como suas?"], "o": ["Pertence à associação de estudantes.", "Sabe como agir em caso de emergência/catástrofre.", "Participa ativamente nos momentos de decisão.", "Colabora no enriquecimento do projeto vencedor.", "Integra-se na vida da equipa e do grupo.", "Envolve-se na comunidade."]}, {"n": "Solidariedade e tolerância", "k": ["Aceitação", "Respeito pela diferença", "Interajuda"], "q": ["Está atento às necessidades ou dificuldades dos que o rodeiam?", "Identifica situações onde pode ser útil?", "Tem uma atitude genuina de prática da boa-acção perante as necessidades que encontra?", "Tem uma voz ativa no grupo expondo as suas ideias?"], "o": ["Ajuda de bom grado os seus pares.", "Participa em projetos de cidadania ou de ação social.", "Apresenta propostas de projetos, no âmbito da ação social, à equipa ou grupo.", "Envolve-se em projetos de voluntariado."]}, {"n": "Interação e cooperação", "k": ["Espírito de Equipa", "Assertividade"], "q": ["Tem consciência da importância das funções de todos?", "Desempenha com empenho e responsabilidade as suas tarefas?", "Sabe ser líder, dividindo tarefas por todos?", "Motiva os outros no desempenho das suas tarefas?"], "o": ["Participa ativamente num projeto de equipa.", "Desempenha de forma continuada e empenhada o seu cargo.", "Delega tarefas por todos os elementos.", "Motiva os seus pares no cumprimento das suas tarefas."]}]};
+/* Catálogo oficial de Especialidades do CNE por área (especialidades.escutismo.pt) com descrição curta */
+const ESP_CAT=[
+ [['Socorrista','Primeiros socorros, avaliação de uma vítima e pedido de ajuda.'],['Nadador Salvador','Segurança e salvamento em meio aquático.'],['Proteção Civil','Prevenção e resposta a emergências e catástrofes.'],['Cuidador','Cuidar de crianças, idosos ou pessoas dependentes.'],['Protetor dos Animais','Bem-estar e proteção de animais.'],['Vigilante da Natureza','Vigilância e proteção de áreas naturais.'],['Voluntário Internacional','Serviço voluntário em projetos internacionais.'],['Intérprete','Ajudar pessoas a comunicar noutra língua.'],['Guia da Região','Conhecer e mostrar a região a visitantes.'],['Guia do Património Religioso','Conhecer e mostrar o património religioso local.']],
+ [['Comunicador','Falar em público, transmitir mensagens com clareza.'],['Jornalista','Recolher, escrever e publicar notícias.'],['Relações Públicas','Representar a Equipa e o Agrupamento para fora.'],['Fotógrafo','Fotografar e contar histórias em imagem.'],['Ator','Representar e expressar-se em palco.'],['Saltimbanco','Animar com malabarismo, circo e espetáculo de rua.'],['Sinaleiro','Comunicar por sinais: morse, semáforo, códigos.'],['Tradutor','Traduzir textos e conversas.'],['Historiador','Investigar e contar a história local e do escutismo.'],['Bibliotecário','Organizar e dinamizar livros e leitura.'],['Bom Consumidor','Consumo responsável e informado.'],['Cidadão Cristão','Viver a cidadania à luz da fé.'],['Cidadão do Mundo','Compreender o mundo e os seus problemas globais.'],['Cidadão Europeu','Conhecer a Europa e a União Europeia.'],['Cidadão Lusófono','Conhecer os países de língua portuguesa.'],['Culturas do Mundo','Conhecer e respeitar outras culturas (ideal para o Jamboree).']],
+ [['Atleta','Treinar atletismo e preparação física.'],['Desportista','Praticar um desporto com regularidade e regras.'],['Ciclista','Andar de bicicleta com técnica, manutenção e segurança.'],['Escalador','Escalada com segurança e técnica.'],['Pedestrianista','Caminhadas e marchas de longa distância.'],['Cavaleiro','Equitação e cuidado do cavalo.'],['Artes Marciais','Praticar uma arte marcial com disciplina.'],['Nadador','Natação com técnica e segurança.'],['Jogos de Mesa','Dominar e dinamizar jogos de mesa.'],['Desportos de Deslize com Rodas','Skate, patins e afins.'],['Desportos de Deslize sobre Água','Surf, bodyboard e afins.']],
+ [['Campista','Montar e viver um campo com conforto e segurança.'],['Pioneirista','Construções de campo com nós, amarrações e ferramentas.'],['Bushcraft','Viver na natureza com técnicas de sobrevivência e mínimo material.'],['Sobrevivência','Abrigo, água, fogo e orientação em situação de emergência.'],['Sapador','Ferramentas de corte e trabalho de campo em segurança.'],['Intendente','Gerir material e abastecimentos da Equipa.'],['Fogo de Conselho','Preparar e animar fogos de conselho.'],['Líder de Expedição','Planear e conduzir uma expedição.'],['Topógrafo','Ler e fazer mapas, orientação com carta e bússola.'],['Geógrafo','Conhecer o território e a paisagem.'],['Geólogo','Rochas, minerais e formação da Terra.'],['Botânico','Plantas: identificar, cuidar e proteger.'],['Zoólogo','Animais: observar e conhecer.'],['Ornitólogo','Observar e identificar aves.'],['Fotógrafo Naturalista','Fotografar a natureza.'],['Ambientalista','Proteger o ambiente e reduzir impactos.'],['Reciclador','Reduzir, reutilizar e reciclar.'],['Guarda-Rios','Proteger rios e ribeiras.'],['Agricultor','Cultivar a terra.'],['Agricultor Urbano','Hortas e cultivo em espaço urbano.']],
+ [['Meteorologista','Observar e prever o tempo.'],['Astrónomo','Observar o céu, estrelas e planetas.'],['Montanhista','Progressão em montanha com segurança.'],['Geocaching','Orientação por GPS e caça ao tesouro.'],['Marinharia','Nós, cabos e vida a bordo.'],['Mestre do Leme','Conduzir uma embarcação.'],['Velejador','Navegar à vela.'],['Canoísta','Canoagem com técnica e segurança.'],['Mergulhador','Mergulho com segurança.'],['Oceanógrafo','Conhecer o oceano e a sua vida.'],['Pescador','Pesca responsável.'],['Carpinteiro Naval','Construir e reparar embarcações.'],['Técnicas Aeronáuticas','Aeronáutica, aeromodelismo e voo.']],
+ [['Cozinheiro','Cozinhar em campo e em casa com higiene e sabor.'],['Cozinheiro do Mundo','Cozinha de outras culturas.'],['Trabalhos Manuais / Bricolage','Construir, reparar e criar com as mãos.'],['Carpinteiro','Trabalhar a madeira.'],['Pedreiro','Construção e alvenaria.'],['Eletricista','Instalações elétricas simples e seguras.'],['Metalúrgico / Mecânico','Trabalhar metais e mecânica.'],['Desenhador','Desenho e ilustração.'],['Músico','Tocar um instrumento e animar com música.'],['Cantor','Cantar e dirigir cânticos.'],['Dança','Dançar e ensinar danças.'],['Realizador','Fazer vídeo e cinema.'],['Modelismo','Construir modelos e maquetas.'],['Alfaiate / Modista','Costura e confeção.'],['Doméstico','Organizar a casa e as tarefas domésticas.'],['Colecionador','Organizar e apresentar uma coleção.'],['Leis e Justiça','Conhecer direitos, deveres e a justiça.']],
+ [['Animador da Fé','Preparar e animar momentos de fé.'],['Animador Litúrgico','Preparar celebrações litúrgicas.'],['Acólito','Servir ao altar.'],['Leitor','Proclamar a Palavra nas celebrações.'],['Biblista','Conhecer e ler a Bíblia.'],['Músico Litúrgico','Tocar nas celebrações.'],['Cantor Litúrgico','Cantar nas celebrações.']],
+ [['Informático','Computadores, programação e segurança digital.'],['Robótica','Construir e programar robôs.'],['Eletrónica','Circuitos e montagens eletrónicas.'],['Editor de Vídeo','Editar vídeo e contar histórias.'],['Rádioescuteiro','Rádio e JOTA-JOTI.'],['Rádioamador','Comunicações por rádio.'],['Matemático','Matemática aplicada e jogos de lógica.'],['Física','Experiências e leis da física.'],['Química','Experiências e segurança em química.'],['Biólogo','Vida, células e ecossistemas.'],['Aeroespacial','Foguetes, satélites e espaço.']]
+];
+function espSlug(n){return n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+
+const TR_STATES={0:'Por começar',1:'A trabalhar',2:'Proposto ao Guia',3:'Guia: por concluir',4:'Guia: concluído',5:'Concluído ✓'};
+const LEVELS=['Evito / tenho dificuldade','Consigo, mas preciso de treino','Consigo','Sou forte nisto'];
+const LADDER=[['Eu faço, tu observas','percebo o método'],['Fazemos juntos','pratico com apoio'],['Tu fazes, eu observo','assumo a responsabilidade'],['Tu fazes e ensinas outro','a competência multiplica-se'],['A Equipa funciona sem mim','autonomia real']];
+const AUTOTEST=['Os Cargos funcionam sem o Guia dar ordens','As tarefas distribuem-se sozinhas','Os problemas do dia a dia são resolvidos pela Equipa','As decisões correntes são tomadas pelos jovens','Os Noviços estão integrados e sabem a quem recorrer','Há pelo menos dois elementos capazes de liderar','O Guia consegue observar sem intervir'];
+
+const blank=()=>({v:1,id:{},brv:{},fx:{},esp:[],comp:{sei:[],aprender:[],ensinar:[]},cargo:{},eq:{},nov:{},guia:{},auto:{},av:{},trail:{},tri:{}});
+let S=blank(), mode='eu', ME=null, PROFILE=null, VIEW=null, REV={g:{},e:{}}, CMTS=[], CONFIG={equipas:[]}, unsubs=[];
+firebase.initializeApp(FIREBASE_CONFIG); const auth=firebase.auth(), db=firebase.firestore();
+try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(e){}
+let saveT=null;
+function save(){ paintHeader(); if(mode!=='eu'||!VIEW) return; clearTimeout(saveT); saveT=setTimeout(()=>{ 
+  const doc=JSON.parse(JSON.stringify(S)); doc.nome=S.id.nome||PROFILE.nome||''; doc.papel=S.id.papel||''; doc.equipa=PROFILE.equipa||''; doc.updated=firebase.firestore.FieldValue.serverTimestamp();
+  db.collection('cards').doc(VIEW).set(doc,{merge:true}).catch(e=>toast('Não guardou: '+e.code));
+  if(S.id.nome&&S.id.nome!==PROFILE.nome) db.collection('users').doc(ME.uid).update({nome:S.id.nome}).catch(()=>{});
+ },600); }
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function get(p){return p.split('.').reduce((o,k)=>o&&o[k],S);}
+function set(p,v){const ks=p.split('.');let o=S;ks.slice(0,-1).forEach(k=>{o[k]=o[k]||{};o=o[k];});o[ks[ks.length-1]]=v;save();}
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800);}
+
+/* bind simple fields */
+$$('[data-path]').forEach(el=>{
+  const p=el.dataset.path; const v=get(p); if(v!=null) el.value=v;
+  el.addEventListener('input',()=>{set(p,el.value); if(p==='id.equipa'&&mode==='eu'){PROFILE.equipa=el.value;db.collection('users').doc(ME.uid).update({equipa:el.value}).catch(()=>{});} if(p==='id.nome'||p==='id.equipa') paintHeader();});
+});
+/* choice chips */
+$$('[data-choice]').forEach(box=>{
+  const p=box.dataset.choice, opts=box.dataset.opts.split('|');
+  const paint=()=>{box.innerHTML='';const cur=get(p);opts.forEach(o=>{const b=document.createElement('button');b.type='button';b.textContent=o;b.setAttribute('aria-pressed',cur===o);b.onclick=()=>{set(p,o);paint();if(p==='id.papel')roleUI();};box.appendChild(b);});};
+  box._paint=paint; paint();
+});
+
+/* cargo list */
+(function(){const sel=$('#selCargo');CARGOS.forEach(c=>{const o=document.createElement('option');o.value=c.n;o.textContent=c.n||'Escolhe o Cargo';sel.appendChild(o);});sel.value=S.id.cargo||'';
+ const other=$('#cargoOutro'); const sync=()=>{other.style.display=sel.value==='Outro'?'':'none';const c=CARGOS.find(x=>x.n===sel.value);$('#cargoDesc').innerHTML=c&&c.d?`<b>O que faz:</b> ${esc(c.d)}${c.c?` · <b>Desenvolve:</b> ${esc(c.c)}`:''}${c.esp&&c.esp!=='-'?` · <b>Especialidade natural:</b> ${esc(c.esp)}`:''}`:'';}; sync(); sel.addEventListener('change',sync); window._syncCargo=sync;})();
+/* header */
+function paintHeader(){
+  $('#hName').textContent=S.id.nome||'O meu cartão';
+  $('#hRole').textContent=S.id.papel||'Escuteiro';
+  $('#hTeam').textContent=(S.id.equipa||(PROFILE&&PROFILE.equipa))?('Equipa '+(S.id.equipa||PROFILE.equipa)):'Equipa';
+  const g=S.id.papel==='Guia'?'Anilha de Mérito':'Insígnia de Mérito';
+  $('#hGoal').textContent=g;
+  $('#metaSub').textContent=S.id.papel==='Guia'?'Anilha de Mérito: concluir o Sistema de Progresso, sem deixar o meu percurso para trás':'Insígnia de Mérito: uma Especialidade em 6 áreas distintas';
+  const fields=['id.nome','id.equipa','id.papel','id.cargo','brv.dificuldade','brv.objetivo','brv.passo','brv.indicador','brv.apoio','cargo.espera','cargo.competencia','cargo.sozinho','cargo.ensinar','eq.contribuo','av.natal','av.symposium','av.junho','av.jamboree'];
+  let n=fields.filter(f=>get(f)).length; const fx=FACEIS.filter(f=>S.fx[f.k]&&S.fx[f.k].l).length; n+=fx; if(S.esp.length)n++;
+  const pct=Math.round(100*n/(fields.length+7));
+  $('#pBar').style.width=pct+'%'; $('#pTxt').textContent='Cartão '+pct+'% preenchido';
+  const done=TRAIL.filter(t=>S.trail[t.id]&&S.trail[t.id].done).length;
+  const trd=Object.keys(S.tri||{}).filter(k=>effState(k)===5).length;$('#pTrail').textContent=done+'/'+TRAIL.length+' etapas · '+trd+' Trilhos concluídos';
+}
+function roleUI(){
+  $('#cardNovico').style.display=S.id.papel==='Noviço'?'':'none';
+  $('#cardGuia').style.display=S.id.papel==='Guia'?'':'none';
+  paintHeader();
+}
+
+/* trail */
+function paintTrail(){
+  const box=$('#trail'); box.innerHTML='';
+  TRAIL.forEach((t,i)=>{
+    const st=S.trail[t.id]||{}; const d=document.createElement('div');
+    d.className='step'+(st.done?' done':'')+(t.big?' big':'');
+    d.innerHTML=`<div class="dot">${st.done?'✓':i+1}</div><div class="when">${t.when}</div><div class="ttl">${t.ttl}</div><div class="what">${t.what}</div>
+      <div class="foot"><label class="chk"><input type="checkbox" ${st.done?'checked':''}> Vivi</label><input placeholder="O que levo desta etapa" value="${esc(st.nota)}"></div>`;
+    d.querySelector('input[type=checkbox]').onchange=e=>{S.trail[t.id]=Object.assign({},st,{done:e.target.checked});save();paintTrail();};
+    d.querySelector('.foot input:not([type=checkbox])').oninput=e=>{S.trail[t.id]=Object.assign({},S.trail[t.id]||{},{nota:e.target.value});save();};
+    box.appendChild(d);
+  });
+}
+
+/* FACEIS */
+function paintFaceis(){
+  const box=$('#faceis'); box.innerHTML='';
+  FACEIS.forEach(f=>{
+    const st=S.fx[f.k]||{}; const d=document.createElement('div'); d.className='fa';
+    d.innerHTML=`<div class="hd"><div class="letter">${f.k}</div><div><div class="nm">${f.n}</div><div class="q">${f.q}</div></div></div>
+      <div class="choices" style="margin-top:10px"></div>
+      <div class="field"><label>Ponto de partida</label><input data-fx="${f.k}.p" value="${esc(st.p)}" placeholder="Hoje..."></div>
+      <div class="field"><label>Objetivo até Junho</label><input data-fx="${f.k}.o" value="${esc(st.o)}" placeholder="Quero conseguir..."></div>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" ${st.d?'checked':''}> Quero desafiar-me aqui</label>
+      <h3 style="margin-top:12px">Trilhos · ${f.n}</h3><p class="note">Três Trilhos nesta área. Regista, com data, as oportunidades educativas que te ajudaram a concretizar cada um.</p>
+      <div class="trilhos"></div>`;
+    const tb=d.querySelector('.trilhos');
+    [0,1,2].forEach(i=>tb.appendChild(trilhoEl(f.k,i)));
+    const ch=d.querySelector('.choices');
+    LEVELS.forEach((L,i)=>{const b=document.createElement('button');b.type='button';b.textContent=L;b.className=i===0?'o':i===1?'y':'';b.setAttribute('aria-pressed',st.l===i+1);b.onclick=()=>{S.fx[f.k]=Object.assign({},S.fx[f.k]||{},{l:i+1});save();paintFaceis();};ch.appendChild(b);});
+    d.querySelectorAll('[data-fx]').forEach(inp=>inp.oninput=()=>{const[k,f2]=inp.dataset.fx.split('.');S.fx[k]=Object.assign({},S.fx[k]||{});S.fx[k][f2]=inp.value;save();});
+    d.querySelector('input[type=checkbox]').onchange=e=>{S.fx[f.k]=Object.assign({},S.fx[f.k]||{},{d:e.target.checked});save();};
+    box.appendChild(d);
+  });
+  paintRadar(); paintRoda();
+}
+function trilhoName(area,i){const cfg=(typeof CONFIG!=='undefined'&&CONFIG.trilhos&&CONFIG.trilhos[area+i])||{};return cfg.n||TRILHOS[area][i].n;}
+function trilhoDesc(area,i){const cfg=(typeof CONFIG!=='undefined'&&CONFIG.trilhos&&CONFIG.trilhos[area+i])||{};return cfg.d||'';}
+function areaDone(area){return [0,1,2].filter(i=>effState(area+i)===5).length;}
+function etapaAtual(){ if(S.id.papel==='Noviço') return 0; const m=Math.min(...FACEIS.map(f=>areaDone(f.k))); return Math.min(3,1+m); }
+function effState(key){
+  const t=(S.tri||{})[key]||{}; const g=REV.g[key]||{}, e=REV.e[key]||{};
+  const ts=x=>x&&x.toMillis?x.toMillis():(typeof x==='number'?x:0);
+  if(e.s===5) return 5;
+  const youth=t.s||0, pa=ts(t.at);
+  if(youth>=2){ if(e.ret&&ts(e.ret)>pa) return 1; if(g.op&&ts(g.at)>=pa) return g.op; return 2; }
+  return youth;
+}
+function trilhoEl(area,i){
+  S.tri=S.tri||{}; const key=area+i; const t=S.tri[key]||(S.tri[key]={n:'',s:0});
+  const st=effState(key); const g=REV.g[key]||{}, e=REV.e[key]||{}; const d=document.createElement('div');
+  d.className='tr'+(st===5?' done':st>=2?' prop':st===1?' work':'');
+  const nm=trilhoName(area,i), T=TRILHOS[area][i]; t.ops=t.ops||[];
+  d.innerHTML=`<div class="hd2"><span class="k" style="font-family:'Barlow Condensed';font-weight:900;font-size:18px;color:var(--azul)">${i+1}</span><b style="flex:1">${esc(nm)}</b><span class="st">${ETAPAS[i+1]}</span></div>
+    <div class="chips" style="margin-top:6px">${T.k.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div>
+    ${trilhoDesc(area,i)?`<div class="note" style="margin-top:4px">${esc(trilhoDesc(area,i))}</div>`:''}
+    <details style="margin-top:6px"><summary style="font-size:13px">Será que...?</summary><ul class="note" style="margin:4px 0 0;padding-left:18px">${T.q.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>
+    ${mode!=='eu'?`<details style="margin-top:4px"><summary style="font-size:13px">O que observar</summary><ul class="note" style="margin:4px 0 0;padding-left:18px">${T.o.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:''}
+    <h4 style="margin:10px 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)">Oportunidades educativas</h4>
+    <div class="ops"></div>
+    <div class="acts"><span class="st">${TR_STATES[st]}</span></div>`;
+  const ops=d.querySelector('.ops');
+  const paintOps=()=>{ops.innerHTML='';t.ops.forEach((o,j)=>{const r=document.createElement('div');r.className='item';r.style.padding='6px 10px';r.innerHTML=`<div class="top"><div><div class="meta">${esc(o.d?new Date(o.d).toLocaleDateString('pt-PT'):'sem data')}</div><div style="font-size:14px">${esc(o.t)}</div></div>${(mode==='eu'&&st!==5)?'<button class="del" title="Remover">×</button>':''}</div>`;const del=r.querySelector('.del');if(del)del.onclick=()=>{t.ops.splice(j,1);save();paintOps();};ops.appendChild(r);});
+    if(!t.ops.length)ops.innerHTML='<p class="note">Ainda sem oportunidades registadas.</p>';
+    if(mode==='eu'&&st!==5){const f=document.createElement('div');f.className='addrow';f.innerHTML=`<input type="date" style="flex:0 0 130px"><input placeholder="Atividade que me ajudou a concretizar este Trilho"><button class="btn sm" type="button">+</button>`;const [di,ti]=f.querySelectorAll('input');f.querySelector('button').onclick=()=>{if(!ti.value.trim())return toast('Escreve a oportunidade');t.ops.push({d:di.value,t:ti.value.trim()});if(st===0)t.s=1;save();paintFaceis();};ti.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();f.querySelector('button').click();}});ops.appendChild(f);}
+  }; paintOps();
+  const acts=d.querySelector('.acts');
+  const btn=(txt,cls,fn)=>{const b=document.createElement('button');b.type='button';b.className='btn sm '+cls;b.textContent=txt;b.onclick=fn;acts.appendChild(b);return b;};
+  const repaint=()=>{save();paintFaceis();};
+  if(mode==='eu'){
+    if(st===0) btn('Começar este Trilho','',()=>{t.s=1;repaint();});
+    if(st===1||st===3){ btn('Proponho ao Guia: concluído','o',()=>{if(!t.ops.length)return toast('Regista pelo menos uma oportunidade educativa');t.s=2;t.at=Date.now();repaint();}); if(st===1) btn('Deixar','ghost',()=>{t.s=0;repaint();}); }
+  }
+  if(mode==='guia' && (st===2||st===3||st===4)){
+    const ta=document.createElement('textarea');ta.placeholder='Porquê? O que vi na prática';ta.value=g.g||'';d.appendChild(ta);
+    const w=(op)=>{if(!ta.value.trim())return toast('Escreve o porquê');db.collection('cards').doc(VIEW).collection('reviews').doc('guia').set({[key]:{op,g:ta.value.trim(),by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()}},{merge:true}).then(()=>toast('Opinião guardada')).catch(x=>toast('Erro: '+x.code));};
+    btn('Considero concluído','',()=>w(4)); btn('Ainda por concluir','ghost',()=>w(3));
+  }
+  if(mode==='ea' && (st===2||st===3||st===4)){
+    const ta=document.createElement('textarea');ta.placeholder='Nota da Equipa de Animação (opcional)';ta.value=e.v||'';d.appendChild(ta);
+    const ref=db.collection('cards').doc(VIEW).collection('reviews').doc('ea');
+    btn('Validar: Trilho concluído','y',()=>ref.set({[key]:{s:5,v:ta.value.trim(),by:PROFILE.nome,vd:new Date().toLocaleDateString('pt-PT')}},{merge:true}).then(()=>toast('Trilho validado')).catch(x=>toast('Erro: '+x.code)));
+    btn('Devolver ao jovem','ghost',()=>ref.set({[key]:{ret:firebase.firestore.FieldValue.serverTimestamp(),v:ta.value.trim(),by:PROFILE.nome}},{merge:true}).then(()=>toast('Devolvido')).catch(x=>toast('Erro: '+x.code)));
+  }
+  if(mode==='ea' && st===5){ btn('Reabrir','ghost',()=>{if(confirm('Reabrir este Trilho?'))db.collection('cards').doc(VIEW).collection('reviews').doc('ea').set({[key]:{s:0}},{merge:true});}); }
+  if(g.g && st>=3){const r=document.createElement('div');r.className='rev';r.innerHTML=`<b>Opinião do Guia ${esc(g.by||'')} · ${g.op===4?'concluído':'por concluir'}</b>${esc(g.g)}`;d.appendChild(r);}
+  if(st===5){const r=document.createElement('div');r.className='rev ea';r.innerHTML=`<b>Validado pela Equipa de Animação · ${esc(e.by||'')} · ${esc(e.vd||'')}</b>${esc(e.v||'Trilho concluído.')}`;d.appendChild(r);}
+  return d;
+}
+function paintRoda(){
+  const svg=$('#roda'); if(!svg) return; const cx=150,cy=150; const R=[38,74,108,142]; let out='';
+  const pol=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+  FACEIS.forEach((f,i)=>{
+    const a0=-Math.PI/2+i*Math.PI/3+0.02, a1=-Math.PI/2+(i+1)*Math.PI/3-0.02; const done=areaDone(f.k);
+    for(let ring=0;ring<3;ring++){
+      const st=effState(f.k+ring); const r0=R[ring]+3,r1=R[ring+1]-1;
+      const fill=st===5?['#F6C544','#F2842B','#2F6BD0'][ring]:(st>=2?'#B9C7E0':st===1?'#DCE6F7':'var(--line)');
+      const p0=pol(r0,a0),p1=pol(r1,a0),p2=pol(r1,a1),p3=pol(r0,a1);
+      out+=`<path d="M${p0[0]},${p0[1]} L${p1[0]},${p1[1]} A${r1},${r1} 0 0 1 ${p2[0]},${p2[1]} L${p3[0]},${p3[1]} A${r0},${r0} 0 0 0 ${p0[0]},${p0[1]}Z" fill="${fill}" stroke="var(--card)" stroke-width="2"/>`;
+    }
+    const [lx,ly]=pol(R[3]+0,(a0+a1)/2); const [tx,ty]=pol(R[3]-16,(a0+a1)/2);
+    out+=`<text x="${tx}" y="${ty+6}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="18" fill="var(--ink)">${f.k}</text>`;
+  });
+  const et=etapaAtual();
+  out+=`<circle cx="${cx}" cy="${cy}" r="${R[0]-2}" fill="${et===3?'#F6C544':'#1C4E9E'}"/>`;
+  out+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="9" fill="${et===3?'#0B1F42':'#fff'}">ETAPA</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="12" fill="${et===3?'#0B1F42':'#fff'}">${et===3?'CONCLUÍDO':ETAPAS[et].toUpperCase()}</text>`;
+  svg.innerHTML=out;
+  const bar=$('#etapasBar'); if(bar){bar.innerHTML='';ETAPAS.forEach((e,i)=>{const b=document.createElement('button');b.type='button';b.textContent=e;b.disabled=true;b.style.cursor='default';b.setAttribute('aria-pressed',i<=et&&et<3||(et===3));if(i===et)b.classList.add('y');bar.appendChild(b);});}
+  const total=FACEIS.reduce((a,f)=>a+areaDone(f.k),0);
+  $('#rodaSub').textContent=(et===0?'Desprendimento: até à Promessa. ':'Etapa atual: '+ETAPAS[et]+'. ')+total+' de 18 Trilhos concluídos. A etapa não se escolhe: é consequência dos Trilhos.';
+  const hp=$('#hEtapa'); if(hp) hp.textContent=et===3?'Progresso concluído':ETAPAS[et];
+}
+function paintRadar(){
+  const svg=$('#radar'); const cx=150,cy=150,R=110; let out='';
+  const pt=(i,r)=>{const a=-Math.PI/2+i*Math.PI/3;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  for(let l=1;l<=4;l++){out+=`<polygon points="${[0,1,2,3,4,5].map(i=>pt(i,R*l/4).join(',')).join(' ')}" fill="none" stroke="${l===4?'#7A8494':'#A7B0BF'}" stroke-opacity=".6" stroke-width="1"/>`;}
+  [0,1,2,3,4,5].forEach(i=>{const[x,y]=pt(i,R);out+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#A7B0BF" stroke-opacity=".6"/>`;});
+  const pts=FACEIS.map((f,i)=>pt(i,R*((S.fx[f.k]&&S.fx[f.k].l)||0)/4));
+  out+=`<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="#2F6BD0" fill-opacity=".35" stroke="#1C4E9E" stroke-width="3" stroke-linejoin="round"/>`;
+  pts.forEach((p,i)=>{const lv=(S.fx[FACEIS[i].k]||{}).l;if(lv)out+=`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${(S.fx[FACEIS[i].k]||{}).d?'#F2842B':'#F6C544'}" stroke="#1C4E9E" stroke-width="2"/>`;});
+  FACEIS.forEach((f,i)=>{const[x,y]=pt(i,R+22);out+=`<text x="${x}" y="${y+7}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="22" fill="var(--azul)">${f.k}</text>`;});
+  svg.innerHTML=out;
+}
+
+/* Specialties */
+function areasDone(){const s=new Set();S.esp.forEach(e=>{if(e.st>=3)s.add(e.area);});return s;}
+function paintEsp(){
+  const done=areasDone(); const grid=$('#hexgrid'); grid.innerHTML='';
+  AREAS.forEach((a,i)=>{
+    const cnt=S.esp.filter(e=>e.area===i).length; const ok=done.has(i);
+    const b=document.createElement('button'); b.type='button'; b.className='hex'; b.dataset.done=ok?1:0; b.title=a;
+    b.innerHTML=`<svg viewBox="0 0 100 112"><polygon points="50,2 97,29 97,83 50,110 3,83 3,29" fill="${ok?'#F6C544':(cnt?'#2F6BD0':'#1C4E9E')}" stroke="${ok?'#F2842B':'#0E2A55'}" stroke-width="4"/></svg><div><div class="n">${cnt||''}</div><div class="t">${AREA_SHORT[i]}</div></div>`;
+    b.onclick=()=>{$('#espArea').value=i;$('#p-esp details').open=true;$('#espNome').focus();toast(a);};
+    grid.appendChild(b);
+  });
+  const n=done.size, pct=Math.min(1,n/6);
+  const r=42,c=2*Math.PI*r;
+  $('#ring').innerHTML=`<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${n>=6?'#F6C544':'#F2842B'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c*pct} ${c}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="26" fill="var(--ink)">${n}/6</text>`;
+  $('#meritTxt').textContent=n>=6?'Insígnia de Mérito ao alcance!':n+' de 6 áreas com Especialidade concluída';
+  const sel=$('#espArea'); if(!sel.options.length){ AREAS.forEach((a,i)=>{const o=document.createElement('option');o.value=i;o.textContent=a;sel.appendChild(o);}); const fillEsp=()=>{const es=$('#espSel');es.innerHTML='';ESP_CAT[+sel.value].forEach(x=>{const o=document.createElement('option');o.value=x[0];o.textContent=x[0];es.appendChild(o);});const o=document.createElement('option');o.value='__outra';o.textContent='Outra...';es.appendChild(o);descEsp();}; const descEsp=()=>{const es=$('#espSel');const x=ESP_CAT[+sel.value].find(y=>y[0]===es.value);$('#espNome').style.display=es.value==='__outra'?'':'none';$('#espDesc').innerHTML=x?`${esc(x[1])} · <a href="https://especialidades.escutismo.pt/${espSlug(x[0])}/" target="_blank" rel="noopener">requisitos oficiais</a>`:'';}; sel.onchange=fillEsp; $('#espSel').onchange=descEsp; fillEsp(); window._fillEsp=fillEsp; }
+  const list=$('#espList'); list.innerHTML='';
+  if(!S.esp.length) list.innerHTML='<p class="note">Ainda sem Especialidades. Começa por uma que ligue ao teu Bravery ou ao teu Cargo.</p>';
+  S.esp.forEach((e,idx)=>{
+    const d=document.createElement('div'); d.className='item';
+    const cat=(ESP_CAT[e.area]||[]).find(x=>x[0]===e.nome);
+    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div></div><button class="del" title="Remover">×</button></div><div class="stage"></div>`;
+    const sg=d.querySelector('.stage');
+    STAGES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=s;if(i<=e.st)b.className=i>=3?'fin':'on';b.onclick=()=>{e.st=i;save();paintEsp();};sg.appendChild(b);});
+    d.querySelector('.del').onclick=()=>{if(confirm('Remover '+e.nome+'?')){S.esp.splice(idx,1);save();paintEsp();}};
+    list.appendChild(d);
+  });
+  paintHeader();
+}
+$('#espAdd').onclick=()=>{const es=$('#espSel');const n=es.value==='__outra'?$('#espNome').value.trim():es.value;if(!n)return toast('Escolhe a Especialidade');S.esp.push({nome:n,area:+$('#espArea').value,mentor:$('#espMentor').value.trim(),onde:$('#espOnde').value.trim(),st:0});$('#espNome').value='';$('#espMentor').value='';$('#espOnde').value='';save();paintEsp();toast('Especialidade adicionada');};
+
+/* competências chips */
+function paintChips(){['sei','aprender','ensinar'].forEach(k=>{const box=$('#c-'+k);box.innerHTML='';(S.comp[k]||[]).forEach((c,i)=>{const s=document.createElement('span');s.className='chip '+(k==='aprender'?'o':k==='ensinar'?'y':'');s.innerHTML=`${esc(c)} <button title="remover">×</button>`;s.querySelector('button').onclick=()=>{S.comp[k].splice(i,1);save();paintChips();};box.appendChild(s);});});}
+$$('[data-add]').forEach(b=>b.onclick=()=>{const k=b.dataset.add,inp=$('#in-'+k),v=inp.value.trim();if(!v)return;S.comp[k]=S.comp[k]||[];S.comp[k].push(v);inp.value='';save();paintChips();});
+$$('.addrow input').forEach(inp=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.nextElementSibling.click();}}));
+
+/* ladder + autotest */
+function paintLadder(){const box=$('#ladder');box.innerHTML='';LADDER.forEach((l,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',S.cargo.fase===i+1);b.innerHTML=`<span class="k">${i+1}</span><span><div class="t">${l[0]}</div><div class="s">${l[1]}</div></span>`;b.onclick=()=>{S.cargo.fase=i+1;save();paintLadder();};box.appendChild(b);});}
+function paintAuto(){const box=$('#autoTest');box.innerHTML='';AUTOTEST.forEach((t,i)=>{const l=document.createElement('label');l.className='chk item';l.innerHTML=`<input type="checkbox" ${S.auto[i]?'checked':''}> ${t}`;l.querySelector('input').onchange=e=>{S.auto[i]=e.target.checked;save();};box.appendChild(l);});}
+
+/* comments */
+function paintCmts(){const box=$('#cmtList');box.innerHTML='';if(!CMTS.length)box.innerHTML='<p class="note">Ainda sem comentários.</p>';CMTS.forEach(c=>{const d=document.createElement('div');d.className='cmt'+(c.role==='ea'?' ea':'');d.innerHTML=`<div class="by">${esc(c.by)} · ${c.role==='ea'?'Equipa de Animação':'Guia'} · ${c.at&&c.at.toDate?c.at.toDate().toLocaleDateString('pt-PT'):''}</div><p>${esc(c.txt)}</p>`;box.appendChild(d);});}
+$('#cmtAdd').onclick=()=>{const txt=$('#cmtTxt').value.trim();if(!txt)return toast('Escreve o comentário');db.collection('cards').doc(VIEW).collection('comments').add({uid:ME.uid,by:PROFILE.nome,role:PROFILE.role,txt,at:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{$('#cmtTxt').value='';toast('Comentário guardado');}).catch(e=>toast('Erro: '+e.code));};
+
+/* mode */
+function setMode(m){mode=m;
+  const ro=m!=='eu'; ['#p-mapa','#p-bravery','#p-faceis','#p-esp','#cardNovico','#cardGuia','#p-equipa .card:nth-child(1)','#p-equipa .card:nth-child(2)','#p-equipa .card:nth-child(5)'].forEach(x=>{const el=$(x);if(el)el.classList.toggle('ro',ro);});
+  $('#cmtForm').style.display=ro?'':'none'; $('#cmtNote').style.display=ro?'none':'';
+}
+/* tabs */
+$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.tab));window.scrollTo({top:0,behavior:'smooth'});});
+
+/* ===== AUTH + DATA ===== */
+function showTab(id){$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x.dataset.tab===id));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+id));window.scrollTo({top:0});}
+$('#btnLogin').onclick=()=>{const prov=new firebase.auth.GoogleAuthProvider();$('#loginMsg').textContent='A abrir a Google...';(/Mobi|Android/i.test(navigator.userAgent)?auth.signInWithRedirect(prov):auth.signInWithPopup(prov)).catch(e=>{$('#loginMsg').textContent='Não entrou: '+e.message;});};
+$('#btnOut').onclick=()=>auth.signOut().then(()=>location.reload());
+$('#btnBack').onclick=()=>{openCard(ME.uid);showTab('painel');};
+function clearSubs(){unsubs.forEach(u=>u());unsubs=[];}
+function fillFields(){ $$('[data-path]').forEach(el=>{const v=get(el.dataset.path);el.value=v!=null?v:'';}); $$('[data-choice]').forEach(box=>box._paint&&box._paint()); if(window._syncCargo)window._syncCargo(); }
+function paintAll(){fillFields();paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();roleUI();paintHeader();}
+function openCard(uid){
+  clearSubs(); VIEW=uid; const own=uid===ME.uid; REV={g:{},e:{}}; CMTS=[];
+  setMode(own?'eu':(PROFILE.role==='ea'?'ea':'guia'));
+  $('#viewing').style.display=own?'none':'';
+  let first=true;
+  unsubs.push(db.collection('cards').doc(uid).onSnapshot(snap=>{ if(snap.metadata.hasPendingWrites) return; const d=snap.exists?snap.data():{}; if(first||!own){ S=Object.assign(blank(),d); S.tri=S.tri||{}; if(own&&!S.id.nome){S.id.nome=PROFILE.nome;} if(own){S.id.equipa=PROFILE.equipa||S.id.equipa||'';} paintAll(); if(!own)$('#viewingTxt').textContent='A ver o cartão de '+(d.nome||'?'); first=false; } },e=>toast('Sem acesso a este cartão')));
+  unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('guia').onSnapshot(sn=>{REV.g=sn.exists?sn.data():{};paintFaceis();paintHeader();},()=>{}));
+  unsubs.push(db.collection('cards').doc(uid).collection('reviews').doc('ea').onSnapshot(sn=>{REV.e=sn.exists?sn.data():{};paintFaceis();paintHeader();},()=>{}));
+  unsubs.push(db.collection('cards').doc(uid).collection('comments').orderBy('at','desc').onSnapshot(sn=>{CMTS=sn.docs.map(x=>x.data());paintCmts();},()=>{}));
+  showTab(own?'mapa':'bravery');
+}
+/* painel */
+let USERS=[],CARDS=[];
+function paintPainel(){
+  if(!PROFILE||PROFILE.role==='jovem') return;
+  const role=PROFILE.role; const eq=$('#filtroEquipa').value;
+  const users=USERS.filter(u=>role==='ea'?(!eq||u.equipa===eq):u.equipa===PROFILE.equipa);
+  const list=$('#cardsList');list.innerHTML='';
+  const cardOf=u=>CARDS.find(c=>c.uid===u.uid)||{};
+  users.sort((a,b)=>(a.equipa||'').localeCompare(b.equipa||'')||(a.nome||'').localeCompare(b.nome||'')).forEach(u=>{const c=cardOf(u);const tri=c.tri||{};
+    const pend=Object.values(tri).filter(t=>t.s>=2).length; const esp=(c.esp||[]).length;
+    const b=document.createElement('button');b.className='row-card';b.innerHTML=`<div class="av">${esc((u.nome||'?')[0])}</div><div><div class="nm">${esc(u.nome||'?')}</div><div class="meta">${esc(u.equipa||'sem Equipa')}${c.papel?' · '+esc(c.papel):''}${c.id&&c.id.cargo?' · '+esc(c.id.cargo):''}${c.brv&&c.brv.dificuldade?' · '+esc(c.brv.dificuldade.slice(0,40)):''}</div>${pend?`<span class="pend">${pend} Trilho(s) a aguardar</span>`:''}</div><div class="kpi"><b>${esp}</b>Especialidades</div>`;
+    b.onclick=()=>openCard(u.uid);list.appendChild(b);});
+  const st=$('#stats');const n=users.length,withCard=users.filter(u=>cardOf(u).id).length,pendTotal=users.reduce((a,u)=>a+Object.values(cardOf(u).tri||{}).filter(t=>t.s>=2).length,0);
+  st.innerHTML=`<div><b>${n}</b><span>elementos</span></div><div><b>${withCard}</b><span>cartões iniciados</span></div><div><b>${pendTotal}</b><span>Trilhos propostos</span></div>`;
+  $('#painelSub').textContent=role==='ea'?'Toda a Comunidade':'A tua Equipa '+(PROFILE.equipa||'');
+  if(role==='ea'){ $('#admin').style.display=''; if(document.activeElement!==$('#admEquipas'))$('#admEquipas').value=(CONFIG.equipas||[]).join(', ');
+    const t=$('#admUsers');t.innerHTML='<tr><td><b>Nome</b></td><td><b>Equipa</b></td><td><b>Papel</b></td></tr>';
+    USERS.forEach(u=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${esc(u.nome)}<br><span class="note">${esc(u.email||'')}</span></td><td><select data-f="equipa"><option value="">-</option>${(CONFIG.equipas||[]).map(x=>`<option ${u.equipa===x?'selected':''}>${esc(x)}</option>`).join('')}</select></td><td><select data-f="role"><option value="jovem" ${u.role==='jovem'?'selected':''}>Jovem</option><option value="guia" ${u.role==='guia'?'selected':''}>Guia</option><option value="ea" ${u.role==='ea'?'selected':''}>Eq. Animação</option></select></td>`;
+      tr.querySelectorAll('select').forEach(sel=>sel.onchange=()=>db.collection('users').doc(u.uid).update({[sel.dataset.f]:sel.value}).then(()=>{toast('Guardado');if(sel.dataset.f==='equipa')db.collection('cards').doc(u.uid).set({equipa:sel.value},{merge:true}).catch(()=>{});}).catch(e=>toast('Erro: '+e.code)));t.appendChild(tr);});
+    const tt=$('#admTrilhos'); if(!tt.dataset.built){ tt.dataset.built='1'; tt.innerHTML='<tr><td><b>Área</b></td><td><b>Trilho</b></td><td><b>Nome (se diferente)</b></td><td><b>Objetivo (Diário de Bordo)</b></td></tr>';
+      FACEIS.forEach(f=>[0,1,2].forEach(i=>{const k=f.k+i;const cfg=(CONFIG.trilhos||{})[k]||{};const tr=document.createElement('tr');tr.innerHTML=`<td>${f.n}</td><td>${i+1} · ${ETAPAS[i+1]}</td><td><input data-k="${k}" data-f="n" value="${esc(cfg.n)}" placeholder="${esc(TRILHOS[f.k][i].n)}" style="width:150px"></td><td><input data-k="${k}" data-f="d" value="${esc(cfg.d)}" placeholder="objetivo do Trilho (opcional)" style="width:260px"></td>`;tt.appendChild(tr);})); }
+  }
+}
+$('#filtroEquipa').onchange=paintPainel;
+$('#admEquipasSave').onclick=()=>db.collection('config').doc('app').set({equipas:$('#admEquipas').value.split(',').map(x=>x.trim()).filter(Boolean)},{merge:true}).then(()=>toast('Equipas guardadas'));
+$('#admTrilhosSave').onclick=()=>{const tr={};$$('#admTrilhos input').forEach(i=>{tr[i.dataset.k]=tr[i.dataset.k]||{};tr[i.dataset.k][i.dataset.f]=i.value.trim();});db.collection('config').doc('app').set({trilhos:tr},{merge:true}).then(()=>toast('Trilhos guardados'));};
+function fillEquipas(){const list=CONFIG.equipas||[];const se=$('#selEquipa');const cur=se.value;se.innerHTML='<option value="">Escolhe</option>'+list.map(x=>`<option>${esc(x)}</option>`).join('');se.value=S.id.equipa||cur||'';const fe=$('#filtroEquipa');const c2=fe.value;fe.innerHTML='<option value="">Todas</option>'+list.map(x=>`<option>${esc(x)}</option>`).join('');fe.value=c2;}
+async function boot(user){
+  ME=user; $('#login').style.display='none';
+  const uref=db.collection('users').doc(user.uid); let us=await uref.get();
+  if(!us.exists){ await uref.set({nome:user.displayName||'',email:user.email||'',role:'jovem',equipa:'',created:firebase.firestore.FieldValue.serverTimestamp()}); us=await uref.get(); }
+  PROFILE=Object.assign({uid:user.uid},us.data());
+  uref.onSnapshot(sn=>{const old=PROFILE.role;PROFILE=Object.assign({uid:user.uid},sn.data()||{});$('#ubRole').textContent=PROFILE.role==='ea'?'Equipa de Animação':PROFILE.role==='guia'?'Guia':'Jovem';if(old!==PROFILE.role)location.reload();});
+  db.collection('config').doc('app').onSnapshot(sn=>{CONFIG=sn.exists?sn.data():{equipas:[]};fillEquipas();paintFaceis();paintPainel();});
+  $('#ubName').textContent=PROFILE.nome||user.email; $('#ubRole').textContent=PROFILE.role==='ea'?'Equipa de Animação':PROFILE.role==='guia'?'Guia':'Jovem';
+  if(PROFILE.role!=='jovem'){ $('#tabPainel').style.display=''; $('#filtroEquipaWrap').style.display=PROFILE.role==='ea'?'':'none';
+    const uq=PROFILE.role==='ea'?db.collection('users'):db.collection('users').where('equipa','==',PROFILE.equipa||'-');
+    uq.onSnapshot(sn=>{USERS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPainel();},e=>toast('Painel: '+e.code));
+    const cq=PROFILE.role==='ea'?db.collection('cards'):db.collection('cards').where('equipa','==',PROFILE.equipa||'-');
+    cq.onSnapshot(sn=>{CARDS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPainel();},()=>{});
+  }
+  openCard(user.uid); if(PROFILE.role!=='jovem') showTab('painel');
+}
+auth.getRedirectResult().catch(e=>{$('#loginMsg').textContent='Não entrou: '+e.message;});
+auth.onAuthStateChanged(u=>{ if(u) boot(u).catch(e=>{$('#login').style.display='';$('#loginMsg').textContent='Erro: '+e.message;}); else { $('#login').style.display=''; } });
+})();
+</script>
+
+</body></html>
