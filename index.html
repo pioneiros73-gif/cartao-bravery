@@ -289,7 +289,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
 <div class="login" id="login">
   <div class="eyebrow" style="color:var(--amarelo);font-weight:800;letter-spacing:.18em;font-size:12px">III SECÇÃO · 2026/2027 · JAMBOREE 2027</div>
   <h1>Cartão <span>Bravery</span></h1>
-  <p>O teu mapa de coragem. Entra com a tua conta Google para abrir o teu cartão. Só tu, o teu Guia e aos Viriatos o podem ver.</p>
+  <p>O teu mapa de coragem. Entra com a tua conta Google para abrir o teu cartão. Só tu, o teu Guia e à Viriato o podem ver.</p>
   <button class="btn" id="btnLogin">Entrar com Google</button>
   <p id="loginMsg" style="font-size:12px;margin-top:14px"></p>
 </div>
@@ -322,9 +322,12 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     <div class="card"><h2>Cartões <small>Toca num cartão para o abrir</small></h2>
       <div class="field" id="filtroEquipaWrap"><label>Equipa</label><select id="filtroEquipa"><option value="">Todas</option></select></div>
       <div class="list" id="cardsList" style="margin-top:10px"></div></div>
-    <div class="card" id="admin" style="display:none"><h2>Administração <small>Só aos Viriatos vê isto</small></h2>
+    <div class="card" id="matrizCard"><h2>Matriz da Comunidade <small>Um mapa com todos os cartões: estado, Cargo, etapa, Trilhos, Mérito e assiduidade</small></h2>
+      <div class="row"><button class="btn sm" id="btnMatriz">Mostrar matriz</button><button class="btn sm ghost" id="btnCsv">Exportar para Excel (CSV)</button></div>
+      <div id="matriz" style="margin-top:10px"></div></div>
+    <div class="card" id="admin" style="display:none"><h2>Administração <small>Só à Viriato vê isto</small></h2>
       <div class="field"><label>Equipas (separadas por vírgula)</label><input id="admEquipas" placeholder="Ex.: Águia, Lobo"><button class="btn sm" id="admEquipasSave" style="margin-top:6px">Guardar Equipas</button></div>
-      <h3>Utilizadores e permissões</h3><p class="note">Quem entra pela primeira vez fica como "Pioneiro". Define aqui a Equipa e quem é Guia ou Viriato.</p>
+      <h3>Utilizadores e permissões</h3><p class="note">Quem entra pela primeira vez fica como Pioneiro. Define aqui a Equipa, o acesso (Pioneiro/Noviço, Guia, Viriato) e o estado (Noviço ou Pioneiro; Subguia ou Guia) de cada um.</p>
       <div style="overflow-x:auto"><table class="adm" id="admUsers"></table></div>
       <h3>Trilhos oficiais</h3><p class="note">Os 18 Trilhos oficiais já estão na aplicação. Aqui podes acrescentar um objetivo ou corrigir um nome; fica visível em todos os cartões.</p>
       <div style="overflow-x:auto"><table class="adm" id="admTrilhos"></table></div><button class="btn sm" id="admTrilhosSave" style="margin-top:6px">Guardar Trilhos</button></div>
@@ -352,6 +355,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
         <div class="field"><label>Nome</label><input data-path="id.nome" placeholder="O teu nome"></div>
         <div class="field"><label>Equipa</label><select data-path="id.equipa" id="selEquipa"><option value="">Escolhe</option></select></div>
       </div>
+      <div class="field"><label>Totem pessoal</label><input data-path="id.totem" placeholder="Ex.: Lobo Sereno"></div>
       <div class="field"><label>O meu papel</label>
         <div class="choices" data-choice="id.papel" data-opts="Noviço|Pioneiro|Subguia|Guia"></div>
       </div>
@@ -402,7 +406,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <h2>A minha roda do Progresso <small id="rodaSub">A etapa não se escolhe: é consequência dos Trilhos concluídos.</small></h2>
       <svg class="radar" id="roda" viewBox="0 0 300 300" role="img" aria-label="Roda da insígnia de Progresso"></svg>
       <div class="choices" id="etapasBar" style="justify-content:center;margin-top:6px"></div>
-      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando aos Viriatos validam.</p>
+      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando à Viriato validam.</p>
     </div>
     <div class="card">
       <h2>Como me vejo hoje <small>Autodiagnóstico FACEIS (Espelho Bravely)</small></h2>
@@ -418,7 +422,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <h2>Mérito <small id="meritSub">Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas</small></h2>
       <div class="merit">
         <svg class="ring" id="ring" viewBox="0 0 100 100" aria-hidden="true"></svg>
-        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para adicionar. Uma Especialidade só conta para o Mérito depois de validada pelos Viriatos.</span></div>
+        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para adicionar. Uma Especialidade só conta para o Mérito depois de validada pela Viriato.</span></div>
       </div>
       <div class="hexgrid" id="hexgrid" style="margin-top:14px"></div>
     </div>
@@ -451,18 +455,18 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
   <!-- ===== ASSIDUIDADE ===== -->
   <section class="panel" id="p-assid">
     <div class="card">
-      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, aos Viriatos validam.</small></h2>
+      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, à Viriato validam.</small></h2>
       <div class="stat" id="assStats"></div>
       <div class="progress" style="margin-top:10px"><div class="bar" style="background:var(--line)"><i id="assBar" style="background:linear-gradient(90deg,#2E9E5B,#F6C544)"></i></div><div class="lbl" style="color:var(--ink-2)"><span id="assTxt"></span><span>só sessões validadas</span></div></div>
     </div>
     <div class="card" id="assMapCard" style="display:none">
-      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só aos Viriatos alteram.</small></h2>
+      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só à Viriato alteram.</small></h2>
       <div class="field"><label>Sessão</label><select id="assSel"></select></div>
       <div id="assMap" style="margin-top:8px"></div>
       <div class="row" id="assMapActs" style="margin-top:10px"></div>
     </div>
     <div class="card" id="assNewCard" style="display:none">
-      <h2>Sessões <small>Só aos Viriatos criam sessões</small></h2>
+      <h2>Sessões <small>Só à Viriato criam sessões</small></h2>
       <div class="grid2"><div class="field"><label>Data</label><input type="date" id="nsDate"></div><div class="field"><label>Tipo</label><select id="nsType"><option>Reunião</option><option>Atividade</option><option>Acampamento</option><option>Raide</option></select></div></div>
       <div class="field"><label>Título</label><input id="nsTitle" placeholder="Ex.: Reunião de Comunidade"></div>
       <div class="row"><button class="btn sm" id="nsAdd">Criar sessão</button><button class="btn sm ghost" id="nsGen">Gerar sábados até Julho</button></div>
@@ -520,14 +524,14 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <div class="field"><label>Responsabilidades que vou delegar (e quando)</label><textarea data-path="guia.delegar"></textarea></div>
       <div class="field"><label>Decisões que a Equipa deve aprender a tomar sem mim</label><input data-path="guia.decisoes"></div>
       <div class="field"><label>O que vou deixar de fazer e passar a ensinar</label><input data-path="guia.deixar"></div>
-      <div class="field"><label>Ponto de situação dos Noviços da Equipa (para reportar aos Viriatos)</label><textarea data-path="guia.novicos"></textarea></div>
+      <div class="field"><label>Ponto de situação dos Noviços da Equipa (para reportar à Viriato)</label><textarea data-path="guia.novicos"></textarea></div>
       <h3>Teste de autonomia · acampamento de Junho</h3>
       <div class="list" id="autoTest"></div>
       <p class="note" style="margin-top:8px">Quanto menos necessário for o Guia, maior foi o seu sucesso enquanto Guia.</p>
     </div>
 
     <div class="card">
-      <h2>As aventuras <small>Os Viriatos dão o tema. As Equipas escolhem as aventuras.</small></h2>
+      <h2>As aventuras <small>A Viriato dá o tema. As Equipas escolhem as aventuras.</small></h2>
       <div class="field"><label>Natal · 19-21 Dez · integração e laços (Social, Caráter, Afetivo) · onde acampamos e o que faço lá</label><textarea data-path="av.natal"></textarea></div>
       <div class="field"><label>Carnaval · 6-8 Fev · animação (Físico, Espiritual, Intelectual) · a minha parte</label><textarea data-path="av.carnaval"></textarea></div>
       <div class="field"><label>Symposium Bushcraft · 24-25 Abr · Constância · o que quero aprender</label><textarea data-path="av.symposium"></textarea></div>
@@ -536,17 +540,13 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     </div>
 
     <div class="card">
-      <h2>Comentários <small>Do Guia e dos Viriatos. Não alteram o cartão, acompanham-no.</small></h2>
+      <h2>Comentários <small>Do Guia e da Viriato. Não alteram o cartão, acompanham-no.</small></h2>
       <div class="list" id="cmtList"></div>
       <div id="cmtForm" style="margin-top:10px">
-        <div class="grid2">
-          <div class="field"><label>Quem comenta</label><input id="cmtBy" placeholder="Nome"></div>
-          <div class="field"><label>Papel</label><select id="cmtRole"><option>Guia</option><option>Viriato</option></select></div>
-        </div>
         <div class="field"><label>Comentário</label><textarea id="cmtTxt" placeholder="O que vi, o que sugiro, o que reconheço"></textarea></div>
         <button class="btn sm o" id="cmtAdd">Guardar comentário</button>
       </div>
-      <p class="note" id="cmtNote" style="margin-top:8px">Para comentar, muda "Quem vê" para Guia ou Viriato.</p>
+      <p class="note" id="cmtNote" style="margin-top:8px">Só o Guia e à Viriato comentam.</p>
     </div>
 
     </div>
@@ -578,7 +578,7 @@ const TRAIL=[
  {id:'t5',when:'23 → 24 Out',ttl:'Da escuridão à Luz',what:'Raide Empreendimento. Entrar na escuridão, escolher o que evito, pedir ajuda, o Guia lidera primeiro. Termino com a luz que levo.',big:true},
  {id:'t4',when:'Sáb 31 Out',ttl:'O que trazes na mochila?',what:'Raide técnico. Já sei / quero tentar / preciso que me ensinem / quero aprender. Nascem aqui as Especialidades.'},
  {id:'t6',when:'Sáb 07 Nov',ttl:'Compromisso Bravely',what:'O diagnóstico vira objetivos: Bravery, Trilhos, Especialidades, Cargo, padrinhos e meta de Mérito. Fecha-se o cartão v1.'},
- {id:'t7',when:'Novembro',ttl:'A Equipa escolhe as aventuras',what:'Os Viriatos deram o tema. Nós decidimos onde e como vamos viver o Natal e o Carnaval.'},
+ {id:'t7',when:'Novembro',ttl:'A Equipa escolhe as aventuras',what:'A Viriato deu o tema. Nós decidimos onde e como vamos viver o Natal e o Carnaval.'},
  {id:'t8',camp:true,when:'19 → 21 Dez',ttl:'Acampamento de Natal',what:'Integração, laços, Noviços integrados. Foco nas áreas Social, Caráter e Afetiva.'},
  {id:'t9',camp:true,when:'6 → 8 Fev 2027',ttl:'Acampamento de Carnaval',what:'Animação, expressão, criatividade. Foco nas áreas Física, Espiritual e Intelectual.'},
  {id:'t10',camp:true,when:'24 → 25 Abr',ttl:'Acampamento Symposium Bushcraft · Constância',what:'Instrução. Aprender o que precisamos para sermos autónomos em Junho.',big:true},
@@ -595,7 +595,7 @@ const FACEIS=[
 ];
 const CARGOS=[
  {n:'',d:''},
- {n:'Guia',d:'Lidera a Equipa pelo exemplo, dá direção, distribui responsabilidades e prepara sucessores. Reporta aos Viriatos.',c:'Liderar, delegar, escutar antes de decidir',esp:'-'},
+ {n:'Guia',d:'Lidera a Equipa pelo exemplo, dá direção, distribui responsabilidades e prepara sucessores. Reporta à Viriato.',c:'Liderar, delegar, escutar antes de decidir',esp:'-'},
  {n:'Subguia',d:'Substitui o Guia, acompanha os Noviços como padrinho/madrinha e organiza o dia a dia da Equipa.',c:'Acompanhar, organizar, comunicar',esp:'-'},
  {n:'Secretário/a',d:'Guarda a memória da Equipa: atas do Conselho de Equipa, registos, calendário e comunicação interna.',c:'Registo, síntese, comunicação',esp:'Comunicação, Informação e Relacionamento'},
  {n:'Tesoureiro/a',d:'Gere o dinheiro da Equipa: orçamento das atividades, quotas, prestação de contas transparente.',c:'Rigor, planeamento, honestidade',esp:'Habilidade, Criatividade e Vida Profissional'},
@@ -649,7 +649,7 @@ let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on
 /* bind simple fields */
 $$('[data-path]').forEach(el=>{
   const p=el.dataset.path; const v=get(p); if(v!=null) el.value=v;
-  el.addEventListener('input',()=>{set(p,el.value); if(p==='id.equipa'&&mode==='eu'){PROFILE.equipa=el.value;db.collection('users').doc(ME.uid).update({equipa:el.value}).catch(()=>{});} if(p==='id.nome'||p==='id.equipa') paintHeader();});
+  el.addEventListener('input',()=>{set(p,el.value); if(p==='id.nome'||p==='id.equipa'||p==='id.totem') paintHeader();});
 });
 /* choice chips */
 $$('[data-choice]').forEach(box=>{
@@ -663,7 +663,7 @@ $$('[data-choice]').forEach(box=>{
  const other=$('#cargoOutro'); const sync=()=>{other.style.display=sel.value==='Outro'?'':'none';const c=CARGOS.find(x=>x.n===sel.value);$('#cargoDesc').innerHTML=c&&c.d?`<b>O que faz:</b> ${esc(c.d)}${c.c?` · <b>Desenvolve:</b> ${esc(c.c)}`:''}${c.esp&&c.esp!=='-'?` · <b>Especialidade natural:</b> ${esc(c.esp)}`:''}`:'';}; sync(); sel.addEventListener('change',sync); window._syncCargo=sync;})();
 /* header */
 function paintHeader(){
-  $('#hName').textContent=S.id.nome||'O meu cartão';
+  $('#hName').textContent=(S.id.nome||'O meu cartão')+(S.id.totem?' · '+S.id.totem:'');
   $('#hRole').textContent=S.id.papel||'Pioneiro';
   $('#hTeam').textContent=(S.id.equipa||(PROFILE&&PROFILE.equipa))?('Equipa '+(S.id.equipa||PROFILE.equipa)):'Equipa';
   const g=S.id.papel==='Guia'?'Anilha de Mérito':'Insígnia de Mérito';
@@ -859,7 +859,7 @@ function paintEsp(){
   S.esp.forEach((e,idx)=>{
     const d=document.createElement('div'); d.className='item';
     const cat=(ESP_CAT[e.area]||[]).find(x=>x[0]===e.nome); const lockedE=espLocked(e);
-    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div>${lockedE?'<div class="note"><b>Validada pelos Viriatos</b> · '+esc(lockedE.vd||'')+'</div>':''}</div>${(mode==='eu'&&!lockedE)?'<button class="del" title="Remover">×</button>':''}</div><div class="stage"></div><div class="acts row" style="margin-top:6px"></div>`;
+    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div>${lockedE?'<div class="note"><b>Validada pela Viriato</b> · '+esc(lockedE.vd||'')+'</div>':''}</div>${(mode==='eu'&&!lockedE)?'<button class="del" title="Remover">×</button>':''}</div><div class="stage"></div><div class="acts row" style="margin-top:6px"></div>`;
     const sg=d.querySelector('.stage');
     STAGES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=s;if(i<=e.st)b.className=i>=3?'fin':'on';if(mode==='eu'&&!lockedE)b.onclick=()=>{e.st=i;save();paintEsp();};else b.disabled=true;sg.appendChild(b);});
     const del=d.querySelector('.del');if(del)del.onclick=()=>{if(confirm('Remover '+e.nome+'?')){S.esp.splice(idx,1);save();paintEsp();}};
@@ -889,12 +889,12 @@ const ATT={
   },
   createSession(o){return db.collection('sessions').add(Object.assign({by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},o)).catch(e=>toast('Erro: '+e.code));},
   mark(sid,equipa,uid,p){const ref=db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-'));
-    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só aos Viriatos alteram':'Erro: '+e.code));},
+    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só à Viriato alteram':'Erro: '+e.code));},
   validate(sid,equipa,on){db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-')).set({sid,equipa,validated:on,vby:PROFILE.nome,vat:new Date().toLocaleDateString('pt-PT')},{merge:true}).then(()=>toast(on?'Validado':'Reaberto')).catch(e=>toast('Erro: '+e.code));},
   justify(sid,uid,txt){db.collection('avisos').doc(sid+'_'+uid).set({sid,uid,equipa:PROFILE.equipa||'',txt,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>toast('Erro: '+e.code));},
-  members(){return USERS.map(u=>u.role==='ea'?Object.assign({},u,{equipa:'Viriatos'}):u);},
+  members(){return USERS.map(u=>u.role==='ea'?Object.assign({},u,{equipa:'Viriato'}):u);},
   me(){return ME.uid;},
-  myEquipa(){return PROFILE.role==='ea'?'Viriatos':(PROFILE.equipa||'');},
+  myEquipa(){return PROFILE.role==='ea'?'Viriato':(PROFILE.equipa||'');},
   canMark(equipa){return PROFILE.role==='ea'||(PROFILE.role==='guia'&&equipa===PROFILE.equipa);},
   canValidate(){return PROFILE.role==='ea';},
   canCreate(){return PROFILE.role==='ea';},
@@ -915,12 +915,12 @@ function paintAssid(){
   const hp=$('#hAssid');if(hp)hp.textContent=V?pct+'% assiduidade':'';
   // my sessions
   const list=$('#assList');list.innerHTML='';
-  if(!sess.length)list.innerHTML='<p class="note">Ainda não há sessões criadas pelos Viriatos.</p>';
+  if(!sess.length)list.innerHTML='<p class="note">Ainda não há sessões criadas pela Viriato.</p>';
   [...sess].reverse().forEach(x=>{const e=eqDoc(x.id,eq);const p=e.pres[me];const fd=fmtDate(x.date);const just=(ATTD.just[x.id]||{})[me];
     const d=document.createElement('div');d.className='sess'+(/acamp/i.test(x.type||'')?' camp':'');
     const lbl=p==='P'?'Presente':p==='F'?'Falta':p==='J'?'Justificada':'Por registar';
     d.innerHTML=`<div class="dt"><b>${fd.d}</b><span>${fd.m}</span></div><div class="ti"><div class="nm">${esc(x.title)}</div><div class="meta">${esc(x.type||'')}${just?' · avisei: '+esc(just):''}</div></div><span class="pres ${p||'N'} ${e.validated?'V':''}">${lbl}</span>`;
-    if(mode==='eu'&&x.date>=today&&!e.validated){const b=document.createElement('button');b.className='btn sm ghost';b.textContent=just?'Editar aviso':'Vou faltar';b.style.marginLeft='6px';b.onclick=()=>{const t=prompt('Motivo (fica visível ao Guia e aos Viriatos):',just||'');if(t!==null)ATT.justify(x.id,me,t.trim());};d.appendChild(b);}
+    if(mode==='eu'&&x.date>=today&&!e.validated){const b=document.createElement('button');b.className='btn sm ghost';b.textContent=just?'Editar aviso':'Vou faltar';b.style.marginLeft='6px';b.onclick=()=>{const t=prompt('Motivo (fica visível ao Guia e à Viriato):',just||'');if(t!==null)ATT.justify(x.id,me,t.trim());};d.appendChild(b);}
     list.appendChild(d);});
   // map (guia / ea)
   const canMap=ATT.canMap(); $('#assMapCard').style.display=canMap?'':'none'; $('#assNewCard').style.display=ATT.canCreate()?'':'none';
@@ -934,14 +934,14 @@ function paintAssid(){
   const members=ATT.members(); const byEq={}; members.forEach(m=>{(byEq[m.equipa||'Sem Equipa']=byEq[m.equipa||'Sem Equipa']||[]).push(m);});
   Object.keys(byEq).sort().forEach(equipa=>{
     const e=eqDoc(sid,equipa); const locked=!!e.validated; const editable=ATT.canMark(equipa)&&(!locked||ATT.canValidate());
-    const h=document.createElement('div');h.innerHTML=`<h3>${esc(equipa)} <span class="lock">${locked?'· validado pelos Viriatos '+esc(e.vat||''):(e.by?'· registado pelo '+esc(e.by):'· por registar')}</span></h3>`;box.appendChild(h);
+    const h=document.createElement('div');h.innerHTML=`<h3>${esc(equipa)} <span class="lock">${locked?'· validado pela Viriato '+esc(e.vat||''):(e.by?'· registado pelo '+esc(e.by):'· por registar')}</span></h3>`;box.appendChild(h);
     byEq[equipa].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(m=>{const p=e.pres[m.uid];const just=(ATTD.just[sid]||{})[m.uid];
       const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(m.nome)}${just?`<div class="note">avisou: ${esc(just)}</div>`:''}</div><div class="pbtns"></div>`;
       const pb=r.querySelector('.pbtns');['P','F','J'].forEach(k=>{const b=document.createElement('button');b.type='button';b.className=k;b.textContent=k;b.setAttribute('aria-pressed',p===k);b.disabled=!editable;b.title=k==='P'?'Presente':k==='F'?'Falta':'Falta justificada';b.onclick=()=>ATT.mark(sid,equipa,m.uid,k);pb.appendChild(b);});
       box.appendChild(r);});
     if(ATT.canValidate()){const b=document.createElement('button');b.className='btn sm '+(locked?'ghost':'y');b.textContent=(locked?'Reabrir ':'Validar ')+equipa;b.onclick=()=>ATT.validate(sid,equipa,!locked);acts.appendChild(b);}
   });
-  if(mode==='guia'){const n=document.createElement('p');n.className='note';n.textContent='Depois de validado pelos Viriatos, o registo fica bloqueado para ti.';acts.appendChild(n);}
+  if(mode==='guia'){const n=document.createElement('p');n.className='note';n.textContent='Depois de validado pela Viriato, o registo fica bloqueado para ti.';acts.appendChild(n);}
 }
 $('#nsAdd').onclick=()=>{const dt=$('#nsDate').value,t=$('#nsTitle').value.trim();if(!dt||!t)return toast('Data e título são precisos');ATT.createSession({date:dt,title:t,type:$('#nsType').value});$('#nsTitle').value='';toast('Sessão criada');};
 $('#nsGen').onclick=()=>{if(!confirm('Criar uma sessão "Reunião de Comunidade" em cada sábado de 3 Out 2026 a 24 Jul 2027 que ainda não exista?'))return;const have=new Set(ATTD.sessions.map(x=>x.date));let d=new Date('2026-10-03T00:00:00'),n=0;while(d<=new Date('2027-07-24T00:00:00')){const iso=d.toISOString().slice(0,10);if(!have.has(iso)){ATT.createSession({date:iso,title:'Reunião de Comunidade',type:'Reunião'});n++;}d.setDate(d.getDate()+7);}toast(n+' sessões criadas');};
@@ -998,14 +998,41 @@ function paintPainel(){
   st.innerHTML=`<div><b>${n}</b><span>elementos</span></div><div><b>${withCard}</b><span>cartões iniciados</span></div><div><b>${pendTotal}</b><span>Trilhos propostos</span></div>`;
   $('#painelSub').textContent=role==='ea'?'Toda a Comunidade':'A tua Equipa '+(PROFILE.equipa||'');
   if(role==='ea'){ $('#admin').style.display=''; if(document.activeElement!==$('#admEquipas'))$('#admEquipas').value=(CONFIG.equipas||[]).join(', ');
-    const t=$('#admUsers');t.innerHTML='<tr><td><b>Nome</b></td><td><b>Equipa</b></td><td><b>Papel</b></td></tr>';
-    USERS.forEach(u=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${esc(u.nome)}<br><span class="note">${esc(u.email||'')}</span></td><td><select data-f="equipa"><option value="">-</option>${(CONFIG.equipas||[]).map(x=>`<option ${u.equipa===x?'selected':''}>${esc(x)}</option>`).join('')}</select></td><td><select data-f="role"><option value="jovem" ${u.role==='jovem'?'selected':''}>Pioneiro</option><option value="guia" ${u.role==='guia'?'selected':''}>Guia</option><option value="ea" ${u.role==='ea'?'selected':''}>Viriato</option></select></td>`;
-      tr.querySelectorAll('select').forEach(sel=>sel.onchange=()=>db.collection('users').doc(u.uid).update({[sel.dataset.f]:sel.value}).then(()=>{toast('Guardado');if(sel.dataset.f==='equipa')db.collection('cards').doc(u.uid).set({equipa:sel.value},{merge:true}).catch(()=>{});}).catch(e=>toast('Erro: '+e.code)));t.appendChild(tr);});
+    const t=$('#admUsers');t.innerHTML='<tr><td><b>Nome</b></td><td><b>Equipa</b></td><td><b>Acesso</b></td><td><b>Estado</b></td></tr>';
+    USERS.forEach(u=>{const tr=document.createElement('tr');const c=cardOf(u); const papel=(c.id&&c.id.papel)||'';
+      tr.innerHTML=`<td>${esc(u.nome)}<br><span class="note">${esc(u.email||'')}</span></td><td><select data-f="equipa"><option value="">-</option>${(CONFIG.equipas||[]).map(x=>`<option ${u.equipa===x?'selected':''}>${esc(x)}</option>`).join('')}</select></td><td><select data-f="role"><option value="jovem" ${u.role==='jovem'?'selected':''}>Pioneiro / Noviço</option><option value="guia" ${u.role==='guia'?'selected':''}>Guia</option><option value="ea" ${u.role==='ea'?'selected':''}>Viriato</option></select></td><td>${u.role==='ea'?'-':`<select data-f="papel"><option value="">-</option>${['Noviço','Pioneiro','Subguia','Guia'].map(x=>`<option ${papel===x?'selected':''}>${x}</option>`).join('')}</select>`}</td>`;
+      tr.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ if(sel.dataset.f==='papel'){db.collection('cards').doc(u.uid).set({id:{papel:sel.value},papel:sel.value},{merge:true}).then(()=>toast('Guardado')).catch(e=>toast('Erro: '+e.code));return;} db.collection('users').doc(u.uid).update({[sel.dataset.f]:sel.value}).then(()=>{toast('Guardado');if(sel.dataset.f==='equipa')db.collection('cards').doc(u.uid).set({equipa:sel.value},{merge:true}).catch(()=>{});}).catch(e=>toast('Erro: '+e.code));});t.appendChild(tr);});
     const tt=$('#admTrilhos'); if(!tt.dataset.built){ tt.dataset.built='1'; tt.innerHTML='<tr><td><b>Área</b></td><td><b>Trilho</b></td><td><b>Nome (se diferente)</b></td><td><b>Objetivo (Diário de Bordo)</b></td></tr>';
       FACEIS.forEach(f=>[0,1,2].forEach(i=>{const k=f.k+i;const cfg=(CONFIG.trilhos||{})[k]||{};const tr=document.createElement('tr');tr.innerHTML=`<td>${f.n}</td><td>${i+1}</td><td><input data-k="${k}" data-f="n" value="${esc(cfg.n)}" placeholder="${esc(TRILHOS[f.k][i].n)}" style="width:150px"></td><td><input data-k="${k}" data-f="d" value="${esc(cfg.d)}" placeholder="objetivo do Trilho (opcional)" style="width:260px"></td>`;tt.appendChild(tr);})); }
   }
 }
 $('#filtroEquipa').onchange=paintPainel;
+/* Matriz da Comunidade + exportação */
+async function buildRows(){
+  const rows=[]; const users=USERS.filter(u=>PROFILE.role==='ea'||u.equipa===PROFILE.equipa);
+  const sess=ATTD.sessions||[];
+  for(const u of users){
+    const c=CARDS.find(x=>x.uid===u.uid)||{}; let ea={};
+    try{const sn=await db.collection('cards').doc(u.uid).collection('reviews').doc('ea').get(); ea=sn.exists?sn.data():{};}catch(e){}
+    const done={}; FACEIS.forEach(f=>{done[f.k]=[0,1,2].filter(i=>(ea[f.k+i]||{}).s===5).length;});
+    const min=Math.min(...FACEIS.map(f=>done[f.k])); const papel=(c.id&&c.id.papel)||(u.role==='guia'?'Guia':'');
+    const etapa=u.role==='ea'?'-':papel==='Noviço'?'Desprendimento':(FACEIS.every(f=>done[f.k]>=3)?'Concluído':ETAPAS[Math.min(3,1+min)]);
+    const espv=ea.espv||{}; const esps=(c.esp||[]).map(e=>e.nome+(espv[e.id]?' ✓':'')).join(', ');
+    const eq=u.role==='ea'?'Viriato':(u.equipa||''); let P=0,V=0,F=0,J=0;
+    sess.forEach(x=>{const d=ATTD.eq[x.id+'|'+eq];if(d&&d.validated){V++;const p=(d.pres||{})[u.uid];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
+    rows.push({Nome:u.nome||'',Totem:(c.id&&c.id.totem)||'',Equipa:eq,Estado:u.role==='ea'?'Viriato':papel,Cargo:(c.id&&c.id.cargo)||'',Etapa:etapa,'Trilhos validados':Object.values(done).reduce((s,n)=>s+n,0),'F':done.F,'A':done.A,'C':done.C,'E':done.E,'I':done.I,'S':done.S,'Bravery':(c.brv&&c.brv.dificuldade)||'','Especialidades':esps,'Áreas Mérito':new Set((c.esp||[]).filter(e=>espv[e.id]).map(e=>e.area)).size,'Presenças':P,'Justificadas':J,'Faltas':F,'Assiduidade %':V?Math.round(100*P/V):'' ,'Sessões validadas':V});
+  }
+  return rows.sort((a,b)=>a.Equipa.localeCompare(b.Equipa)||a.Nome.localeCompare(b.Nome));
+}
+async function paintMatriz(){
+  const box=$('#matriz'); if(!box) return; box.innerHTML='<p class="note">A calcular...</p>';
+  const rows=await buildRows(); window._ROWS=rows;
+  const cols=['Nome','Totem','Equipa','Estado','Cargo','Etapa','Trilhos validados','Áreas Mérito','Assiduidade %'];
+  box.innerHTML='<div style="overflow-x:auto"><table class="adm"><tr>'+cols.map(c=>`<td><b>${c}</b></td>`).join('')+'</tr>'+rows.map(r=>'<tr>'+cols.map(c=>`<td>${esc(String(r[c]??''))}</td>`).join('')+'</tr>').join('')+'</table></div>';
+}
+$('#btnMatriz').onclick=paintMatriz;
+$('#btnCsv').onclick=async()=>{const rows=window._ROWS||await buildRows();if(!rows.length)return toast('Sem dados');const cols=Object.keys(rows[0]);const csv='\ufeff'+[cols.join(';')].concat(rows.map(r=>cols.map(c=>'"'+String(r[c]??'').replace(/"/g,'""')+'"').join(';'))).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cartoes-bravery-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();toast('CSV descarregado (abre no Excel)');};
 $('#admEquipasSave').onclick=()=>db.collection('config').doc('app').set({equipas:$('#admEquipas').value.split(',').map(x=>x.trim()).filter(Boolean)},{merge:true}).then(()=>toast('Equipas guardadas'));
 $('#admTrilhosSave').onclick=()=>{const tr={};$$('#admTrilhos input').forEach(i=>{tr[i.dataset.k]=tr[i.dataset.k]||{};tr[i.dataset.k][i.dataset.f]=i.value.trim();});db.collection('config').doc('app').set({trilhos:tr},{merge:true}).then(()=>toast('Trilhos guardados'));};
 function fillEquipas(){const list=CONFIG.equipas||[];const se=$('#selEquipa');const cur=se.value;se.innerHTML='<option value="">Escolhe</option>'+list.map(x=>`<option>${esc(x)}</option>`).join('');se.value=S.id.equipa||cur||'';const fe=$('#filtroEquipa');const c2=fe.value;fe.innerHTML='<option value="">Todas</option>'+list.map(x=>`<option>${esc(x)}</option>`).join('');fe.value=c2;}
