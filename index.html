@@ -155,6 +155,19 @@ textarea{resize:vertical;min-height:64px}
 .et.cur .s{color:var(--laranja);font-weight:800}
 .falta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 
+.motto{background:var(--laranja);color:#fff;border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;margin:8px 0 10px;line-height:1.3}
+.motto b{text-decoration:underline}
+.mat{border:1.5px dashed var(--line);border-radius:12px;padding:8px 10px;margin-top:8px;background:var(--bg)}
+.mat h4{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--azul)}
+.mat .f{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:14px}
+.mat .f .ic{width:26px;height:26px;border-radius:7px;background:var(--azul);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:900;flex:none}
+.mat .f a{color:var(--azul);font-weight:700;text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mat .f .x{border:0;background:none;color:var(--ink-2);cursor:pointer;font-size:16px}
+.mat .resp{margin-top:6px;padding:6px 8px;border-left:3px solid var(--amarelo);background:var(--card);border-radius:6px;font-size:13px}
+.step.camp .mat{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
+.step.camp .mat h4,.step.camp .mat .f a{color:#fff}
+.step.camp .mat .note{color:#fff;opacity:.85}
+.step.camp .mat .resp{background:rgba(255,255,255,.15);color:#fff}
 .req{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
 .req.done{border-color:var(--amarelo);background:linear-gradient(90deg,rgba(246,197,68,.18),transparent)}
 .req .top{display:flex;gap:8px;align-items:flex-start}
@@ -365,7 +378,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
     <div class="card">
       <h2>A caminhada do ano <small>Coragem → Competência → Responsabilidade → Autonomia → Jamboree</small></h2>
       <div class="quote">Primeiro conhecer. Depois escolher. Só depois comprometer.</div>
-      <p class="note">Marca cada etapa quando a viveres e escreve uma frase sobre o que levas dela. É o teu diário de aventura. Os acampamentos aparecem a azul.</p>
+      <p class="note">Marca cada etapa quando a viveres e escreve uma frase sobre o que levas dela. É o teu diário de aventura. Os acampamentos aparecem a azul. Em cada atividade encontras os materiais publicados pela Viriato (fichas, ementas, mapas) e o espaço para a resposta da tua Equipa, dada pelo Guia.</p>
     </div>
     <div class="trail" id="trail"></div>
     <div class="card">
@@ -394,6 +407,8 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       <div class="field"><label>O meu papel</label>
         <div class="choices" data-choice="id.papel" data-opts="Noviço|Pioneiro|Subguia|Guia"></div>
       </div>
+      <label class="chk" id="ultimoAnoRow"><input type="checkbox" id="ultimoAno"> <span>Este é o meu <b>último ano na Comunidade</b> (passo aos Caminheiros em 2027)</span></label>
+      <p class="note" id="ultimoAnoNote" style="margin-top:4px">No último ano a meta passa a ser a Anilha de Mérito: concluir o Sistema de Progresso. Nos restantes anos, a Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas.</p>
       <div class="grid2">
         <div class="field"><label>Guia</label><input data-path="id.guia"></div>
         <div class="field"><label>Subguia</label><input data-path="id.subguia"></div>
@@ -405,6 +420,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
 
     <div class="card">
       <h2>O meu Bravery <small>Uma dificuldade treinável. Não a maior, a que aceito trabalhar este ano.</small></h2>
+      <div class="motto">O Cargo, os Trilhos e os objetivos nascem daquilo em que <b>quero ser melhor</b>, não daquilo em que já sou bom.</div>
       <div class="quote">Coragem não é não ter medo. É saber o que me custa e avançar com treino: reconhecer → expor → assumir → treinar → ultrapassar.</div>
       <div class="field"><label>Este ano quero ter coragem para...</label><textarea data-path="brv.dificuldade" placeholder="Ex.: falar perante os outros / pedir ajuda / não desistir quando erro / delegar"></textarea></div>
       <div class="field"><label>Como se manifesta</label><textarea data-path="brv.manifesta" placeholder="Em que situações reparo nisto?"></textarea></div>
@@ -434,6 +450,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
   <section class="panel" id="p-faceis">
     <div class="card" id="etapaCard">
       <h2>A minha etapa de Progresso <small>A insígnia da etapa recebe-se ao iniciá-la. Para concluir uma etapa é preciso um Trilho validado em cada uma das seis áreas, por qualquer ordem.</small></h2>
+      <div class="motto">O Cargo, os Trilhos e os objetivos nascem daquilo em que <b>quero ser melhor</b>, não daquilo em que já sou bom.</div>
       <div class="etapas" id="etapasRow"></div>
       <div id="etapaInfo" style="margin-top:10px"></div>
     </div>
@@ -441,7 +458,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       <h2>A minha roda do Progresso <small id="rodaSub">A etapa não se escolhe: é consequência dos Trilhos concluídos.</small></h2>
       <svg class="radar" id="roda" viewBox="0 0 300 300" role="img" aria-label="Roda da insígnia de Progresso"></svg>
       <div class="choices" id="etapasBar" style="justify-content:center;margin-top:6px"></div>
-      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando à Viriato validam.</p>
+      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando a Viriato valida.</p>
     </div>
     <div class="card">
       <h2>Como me vejo hoje <small>Autodiagnóstico FACEIS (Espelho Bravely)</small></h2>
@@ -491,6 +508,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
   <section class="panel" id="p-cargo">
     <div class="card">
       <h2>O meu Cargo <small>Uma responsabilidade real e uma oportunidade para crescer</small></h2>
+      <div class="motto">O Cargo, os Trilhos e os objetivos nascem daquilo em que <b>quero ser melhor</b>, não daquilo em que já sou bom.</div>
       <div class="quote">Cargo → responsabilidade → aprendizagem → autonomia → ensinar outro</div>
       <div class="field"><label>O que a Equipa pode esperar de mim</label><textarea data-path="cargo.espera"></textarea></div>
       <div class="field"><label>Competência que o Cargo me obriga a desenvolver</label><input data-path="cargo.competencia"></div>
@@ -612,12 +630,13 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
   <!-- ===== ASSIDUIDADE ===== -->
   <section class="panel" id="p-assid">
     <div class="card">
-      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, à Viriato validam.</small></h2>
+      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, a Viriato valida.</small></h2>
       <div class="stat" id="assStats"></div>
       <div class="progress" style="margin-top:10px"><div class="bar" style="background:var(--line)"><i id="assBar" style="background:linear-gradient(90deg,#2E9E5B,#F6C544)"></i></div><div class="lbl" style="color:var(--ink-2)"><span id="assTxt"></span><span>só sessões validadas</span></div></div>
+      <div id="assCmp"></div>
     </div>
     <div class="card" id="assMapCard" style="display:none">
-      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só à Viriato alteram.</small></h2>
+      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só a Viriato altera.</small></h2>
       <div class="field"><label>Sessão</label><select id="assSel"></select></div>
       <div id="assMap" style="margin-top:8px"></div>
       <div class="row" id="assMapActs" style="margin-top:10px"></div>
@@ -811,13 +830,14 @@ function paintFoto(){const f=S.id.foto;const ini=((S.id.nome||'?')[0]||'?').toUp
 $('#fotoIn').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;if(mode!=='eu')return toast('Só o próprio altera a fotografia');
   const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');const sz=240;const r=Math.max(sz/im.width,sz/im.height);c.width=sz;c.height=sz;const ctx=c.getContext('2d');const w=im.width*r,h=im.height*r;ctx.drawImage(im,(sz-w)/2,(sz-h)/2,w,h);S.id.foto=c.toDataURL('image/jpeg',0.8);save();paintFoto();toast('Fotografia guardada');};im.src=rd.result;};rd.readAsDataURL(file);});
 /* header */
+$('#ultimoAno').addEventListener('change',e=>{S.id.ultimoAno=e.target.checked;save();paintHeader();});
 function paintHeader(){ paintFoto();
   $('#hName').textContent=(S.id.nome||'O meu cartão')+(S.id.totem?' · '+S.id.totem:'');
   $('#hRole').textContent=S.id.papel||'Pioneiro';
   $('#hTeam').textContent=(S.id.equipa||(PROFILE&&PROFILE.equipa))?('Equipa '+(S.id.equipa||PROFILE.equipa)):'Equipa';
-  const g=S.id.papel==='Guia'?'Anilha de Mérito':'Insígnia de Mérito';
-  $('#hGoal').textContent=g;
-  $('#metaSub').textContent=S.id.papel==='Guia'?'Anilha de Mérito: concluir o Sistema de Progresso, sem deixar o meu percurso para trás':'Insígnia de Mérito: uma Especialidade em 6 áreas distintas';
+  const ua=!!S.id.ultimoAno; const g=ua?'Anilha de Mérito':'Insígnia de Mérito';
+  $('#hGoal').textContent=g; const uac=$('#ultimoAno'); if(uac&&document.activeElement!==uac)uac.checked=ua;
+  $('#metaSub').textContent=ua?'Anilha de Mérito (último ano na Comunidade): concluir o Sistema de Progresso, os 18 Trilhos validados':'Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas';
   const fields=['id.nome','id.equipa','id.papel','id.cargo','brv.dificuldade','brv.objetivo','brv.passo','brv.indicador','brv.apoio','cargo.espera','cargo.competencia','cargo.sozinho','cargo.ensinar','eq.contribuo','av.natal','av.symposium','av.junho','av.jamboree'];
   let n=fields.filter(f=>get(f)).length; const fx=FACEIS.filter(f=>S.fx[f.k]&&S.fx[f.k].l).length; n+=fx; if(S.esp.length)n++;
   const pct=Math.round(100*n/(fields.length+7));
@@ -838,12 +858,67 @@ function paintTrail(){
     const st=S.trail[t.id]||{}; const d=document.createElement('div');
     d.className='step'+(st.done?' done':'')+(t.big?' big':'')+(t.camp?' camp':'');
     d.innerHTML=`<div class="dot">${st.done?'✓':i+1}</div><div class="when">${t.when}</div><div class="ttl">${t.ttl}</div><div class="what">${t.what}</div>
-      <div class="foot"><label class="chk"><input type="checkbox" ${st.done?'checked':''}> Vivi</label><input placeholder="O que levo desta etapa" value="${esc(st.nota)}"></div>`;
+      <div class="foot"><label class="chk"><input type="checkbox" ${st.done?'checked':''}> Vivi</label><input placeholder="O que levo desta etapa" value="${esc(st.nota)}"></div><div class="mat" data-step="${t.id}"></div>`;
+    paintMat(t.id,d.querySelector('.mat'));
     d.querySelector('input[type=checkbox]').onchange=e=>{S.trail[t.id]=Object.assign({},st,{done:e.target.checked});save();paintTrail();};
     d.querySelector('.foot input:not([type=checkbox])').oninput=e=>{S.trail[t.id]=Object.assign({},S.trail[t.id]||{},{nota:e.target.value});save();};
     box.appendChild(d);
   });
 }
+
+
+/* ===== MATERIAIS DAS ATIVIDADES (Viriato publica, a Equipa responde) ===== */
+const MAT_MAX=700*1024;
+function matIcon(t){t=(t||'').toLowerCase();return /pdf/.test(t)?'PDF':/word|docx?/.test(t)?'DOC':/excel|xlsx?|sheet/.test(t)?'XLS':/image|png|jpe?g|gif|webp/.test(t)?'IMG':/link/.test(t)?'URL':'FIC';}
+function readFileAsData(file){return new Promise((res,rej)=>{
+  if(/^image\//.test(file.type)){const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const mx=1400;let w=img.width,h=img.height;if(w>mx||h>mx){const r=Math.min(mx/w,mx/h);w=Math.round(w*r);h=Math.round(h*r);}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);res({data:c.toDataURL('image/jpeg',.82),type:'image/jpeg'});};img.onerror=rej;img.src=u;return;}
+  if(file.size>MAT_MAX){rej(new Error('O ficheiro tem '+Math.round(file.size/1024)+' KB. O máximo é 700 KB: comprime-o ou publica uma ligação (Drive, OneDrive).'));return;}
+  const r=new FileReader();r.onload=()=>res({data:r.result,type:file.type||'application/octet-stream'});r.onerror=rej;r.readAsDataURL(file);});}
+function matList(stepId){return MATS[stepId]||{mat:[],resp:{}};}
+function paintMat(stepId,box){
+  if(!box)box=document.querySelector(`.mat[data-step="${stepId}"]`);if(!box)return;
+  const a=matList(stepId);box.innerHTML='';
+  const canPub=matCanPublish(), canResp=matCanReply();
+  if(!a.mat.length&&!Object.keys(a.resp).length&&!canPub&&!canResp){box.style.display='none';return;}
+  box.style.display='';
+  const h=document.createElement('h4');h.textContent='Materiais da Viriato';box.appendChild(h);
+  if(!a.mat.length){const p=document.createElement('div');p.className='note';p.textContent='Ainda sem materiais.';box.appendChild(p);}
+  a.mat.forEach(m=>{const f=document.createElement('div');f.className='f';f.innerHTML=`<span class="ic">${matIcon(m.t)}</span><a href="${m.url||m.data}" target="_blank" rel="noopener" ${m.data?'download="'+esc(m.n)+'"':''}>${esc(m.n)}</a><span class="note">${esc(m.by||'')}</span>`;
+    if(canPub){const x=document.createElement('button');x.className='x';x.title='Remover';x.textContent='×';x.onclick=()=>{if(confirm('Remover "'+m.n+'"?'))matRemove(stepId,m);};f.appendChild(x);}
+    box.appendChild(f);});
+  if(canPub){const w=document.createElement('div');w.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:6px';
+    const inp=document.createElement('input');inp.type='file';inp.accept='.pdf,.doc,.docx,.xls,.xlsx,image/*';inp.style.display='none';inp.multiple=true;
+    const b1=document.createElement('button');b1.className='btn sm y';b1.textContent='+ Ficheiro (PDF, Word, Excel, imagem)';b1.onclick=()=>inp.click();
+    inp.onchange=async()=>{for(const file of inp.files){try{const r=await readFileAsData(file);await matAdd(stepId,{n:file.name,t:r.type,data:r.data,size:r.data.length});}catch(e){alert(e.message||'Não foi possível ler o ficheiro');}}inp.value='';};
+    const b2=document.createElement('button');b2.className='btn sm ghost';b2.textContent='+ Ligação';b2.onclick=()=>{const u=prompt('Endereço (Drive, OneDrive, site):');if(!u)return;const n=prompt('Nome a mostrar:',u.replace(/^https?:\/\//,'').slice(0,40))||u;matAdd(stepId,{n,t:'link',url:/^https?:/.test(u)?u:'https://'+u});};
+    w.append(b1,b2,inp);box.appendChild(w);}
+  const eqs=Object.keys(a.resp);
+  if(eqs.length||canResp){const h2=document.createElement('h4');h2.style.marginTop='8px';h2.textContent='Resposta da Equipa';box.appendChild(h2);}
+  eqs.sort().forEach(eq=>{const r=a.resp[eq];const d=document.createElement('div');d.className='resp';d.innerHTML=`<b>${esc(eq)}</b> · ${esc(r.by||'')} ${r.at?'· '+esc(r.at):''}<div>${esc(r.txt||'')}</div>`;
+    (r.files||[]).forEach(m=>{const f=document.createElement('div');f.className='f';f.innerHTML=`<span class="ic">${matIcon(m.t)}</span><a href="${m.url||m.data}" target="_blank" rel="noopener" ${m.data?'download="'+esc(m.n)+'"':''}>${esc(m.n)}</a>`;d.appendChild(f);});
+    box.appendChild(d);});
+  if(canResp){const my=a.resp[matMyEquipa()]||{};const w=document.createElement('div');w.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:6px';
+    const b=document.createElement('button');b.className='btn sm';b.textContent=my.txt?'Editar resposta da Equipa':'Responder pela Equipa';
+    b.onclick=()=>{const t=prompt('Resposta da Equipa '+matMyEquipa()+' (ex.: ementa, lista de material, escolha da atividade):',my.txt||'');if(t!==null)matReply(stepId,{txt:t.trim(),files:my.files||[]});};
+    const inp=document.createElement('input');inp.type='file';inp.accept='.pdf,.doc,.docx,.xls,.xlsx,image/*';inp.style.display='none';
+    const b2=document.createElement('button');b2.className='btn sm ghost';b2.textContent='+ Anexar à resposta';b2.onclick=()=>inp.click();
+    inp.onchange=async()=>{const file=inp.files[0];if(!file)return;try{const r=await readFileAsData(file);const files=[...(my.files||[]),{n:file.name,t:r.type,data:r.data}];if(files.reduce((s,f)=>s+(f.data||'').length,0)>900*1024){alert('A resposta já tem demasiados ficheiros. Usa uma ligação.');return;}matReply(stepId,{txt:my.txt||'',files});}catch(e){alert(e.message);}inp.value='';};
+    w.append(b,b2,inp);box.appendChild(w);}
+}
+function paintMats(){TRAIL.forEach(t=>paintMat(t.id));}
+/* materiais online: materiais/{mid}{step,n,t,data|url,by,at} e respostas/{step_equipa}{step,equipa,txt,files,by,at} */
+let MATS={},matUnsubs=[];
+function matsLoad(){matUnsubs.forEach(u=>u());matUnsubs=[];MATS={};
+  matUnsubs.push(db.collection('materiais').onSnapshot(sn=>{Object.keys(MATS).forEach(k=>MATS[k].mat=[]);sn.docs.forEach(d=>{const x=d.data();MATS[x.step]=MATS[x.step]||{mat:[],resp:{}};MATS[x.step].mat.push(Object.assign({id:d.id},x));});Object.values(MATS).forEach(a=>a.mat.sort((p,q)=>(p.at||'')<(q.at||'')?-1:1));paintMats();},e=>console.warn('materiais',e.code)));
+  matUnsubs.push(db.collection('respostas').onSnapshot(sn=>{Object.keys(MATS).forEach(k=>MATS[k].resp={});sn.docs.forEach(d=>{const x=d.data();MATS[x.step]=MATS[x.step]||{mat:[],resp:{}};MATS[x.step].resp[x.equipa]=x;});paintMats();},e=>console.warn('respostas',e.code)));}
+function matsSave(){}
+window.matAdd=matAdd;
+function matCanPublish(){return PROFILE&&PROFILE.role==='ea';}
+function matCanReply(){return PROFILE&&PROFILE.role==='guia';}
+function matMyEquipa(){return PROFILE.equipa||'Equipa';}
+function matAdd(id,m){return db.collection('materiais').add(Object.assign({step:id,by:PROFILE.nome,at:new Date().toISOString()},m)).then(()=>toast('Material publicado para toda a Comunidade')).catch(e=>toast(e.code==='permission-denied'?'Só a Viriato publica materiais':'Ficheiro demasiado grande ou erro: '+(e.code||e.message)));}
+function matRemove(id,m){return db.collection('materiais').doc(m.id).delete().catch(e=>toast('Erro: '+e.code));}
+function matReply(id,r){const eq=matMyEquipa();return db.collection('respostas').doc((id+'_'+eq).replace(/\//g,'-')).set(Object.assign({step:id,equipa:eq,by:PROFILE.nome,at:new Date().toLocaleDateString('pt-PT')},r)).then(()=>toast('Resposta da Equipa enviada à Viriato')).catch(e=>toast(e.code==='permission-denied'?'Só o Guia responde pela Equipa':'Erro: '+(e.code||e.message)));}
 
 /* FACEIS */
 function paintFaceis(){
@@ -936,7 +1011,7 @@ function paintEtapas(et){
     row.appendChild(d);});
   const info=$('#etapaInfo'); const cur=ET_INFO[et];
   if(S.id.papel==='Noviço'){info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}${S.nov&&S.nov.promessa?' Promessa prevista: '+new Date(S.nov.promessa).toLocaleDateString('pt-PT')+'.':''}</p><p class="note">Depois da Promessa, muda o teu papel para Pioneiro e recebes a insígnia de Conhecimento.</p>`;return;}
-  if(allDone){info.innerHTML=`<p><b>Sistema de Progresso concluído.</b> Os 18 Trilhos estão validados. Para os Guias: Anilha de Mérito.</p>`;return;}
+  if(allDone){info.innerHTML=`<p><b>Sistema de Progresso concluído.</b> Os 18 Trilhos estão validados: Anilha de Mérito.</p>`;return;}
   const need=et; const falta=FACEIS.filter(f=>areaDone(f.k)<need);
   info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}</p><p class="note" style="margin-top:6px">Para concluir esta etapa e receber a insígnia de <b>${ET_INFO[Math.min(3,et+1)].n}</b>, falta um Trilho validado em:</p><div class="falta">${falta.length?falta.map(f=>`<span class="chip o">${f.n}</span>`).join(''):'<span class="chip y">todas as áreas concluídas</span>'}</div>`;
 }
@@ -1038,7 +1113,7 @@ const ATT={
   },
   createSession(o){return db.collection('sessions').add(Object.assign({by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},o)).catch(e=>toast('Erro: '+e.code));},
   mark(sid,equipa,uid,p){const ref=db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-'));
-    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só à Viriato alteram':'Erro: '+e.code));},
+    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só a Viriato altera':'Erro: '+e.code));},
   validate(sid,equipa,on){db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-')).set({sid,equipa,validated:on,vby:PROFILE.nome,vat:new Date().toLocaleDateString('pt-PT')},{merge:true}).then(()=>toast(on?'Validado':'Reaberto')).catch(e=>toast('Erro: '+e.code));},
   justify(sid,uid,txt){db.collection('avisos').doc(sid+'_'+uid).set({sid,uid,equipa:PROFILE.equipa||'',txt,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>toast('Erro: '+e.code));},
   members(){return USERS.map(u=>u.role==='ea'?Object.assign({},u,{equipa:'Viriato'}):u);},
@@ -1049,7 +1124,7 @@ const ATT={
   canCreate(){return PROFILE.role==='ea';},
   canMap(){return PROFILE.role!=='jovem';}
 };
-let ATTD={sessions:[],eq:{},just:{}};
+let ATTD={sessions:[],eq:{},just:{}};window.ATT=ATT;
 function eqDoc(sid,equipa){const e=ATTD.eq[sid+'|'+equipa]||{};return Object.assign({pres:{}},e,{pres:e.pres||{}});}
 function fmtDate(d){if(!d)return '';const x=new Date(d+'T00:00:00');return {d:x.getDate(),m:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][x.getMonth()],full:x.toLocaleDateString('pt-PT')};}
 function paintAssid(){
@@ -1059,7 +1134,11 @@ function paintAssid(){
   let P=0,F=0,J=0,V=0;
   sess.forEach(x=>{const e=eqDoc(x.id,eq);if(e.validated){V++;const p=e.pres[me];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
   const pct=V?Math.round(100*P/V):0;
+  // média da Equipa: todos os registos validados da minha Equipa
+  let tP=0,tN=0;sess.forEach(x=>{const e=eqDoc(x.id,eq);if(e.validated){Object.values(e.pres).forEach(p=>{if(p==='P'||p==='F'||p==='J'){tN++;if(p==='P')tP++;}});}});
+  const tpct=tN?Math.round(100*tP/tN):0;
   $('#assStats').innerHTML=`<div><b>${P}</b><span>presenças</span></div><div><b>${J}</b><span>justificadas</span></div><div><b>${F}</b><span>faltas</span></div>`;
+  const cmp=$('#assCmp');if(cmp){cmp.innerHTML=V?`<div class="progress" style="margin-top:12px"><div class="lbl" style="display:flex;justify-content:space-between;gap:12px;color:var(--ink-2)"><span><b>Eu</b> · ${pct}%</span><span><b>Média da Equipa ${esc(eq)}</b> · ${tpct}%</span></div><div class="bar" style="background:var(--line);margin-top:4px"><i style="width:${tpct}%;background:var(--azul-2)"></i></div></div><p class="note" style="margin-top:6px">${pct>tpct+3?'Estás acima da média da tua Equipa. Puxa pelos outros.':pct<tpct-3?'Estás abaixo da média da tua Equipa. A Equipa conta contigo.':'Estás a par da tua Equipa.'}</p>`:'';}
   $('#assBar').style.width=pct+'%';$('#assTxt').textContent=V?pct+'% de assiduidade em '+V+' sessões validadas':'Ainda sem sessões validadas';
   const hp=$('#hAssid');if(hp)hp.textContent=V?pct+'% assiduidade':'';
   // my sessions
@@ -1242,7 +1321,7 @@ async function buildRows(){
     const espv=ea.espv||{}; const esps=(c.esp||[]).map(e=>e.nome+(espv[e.id]?' ✓':'')).join(', ');
     const eq=u.role==='ea'?'Viriato':(u.equipa||''); let P=0,V=0,F=0,J=0;
     sess.forEach(x=>{const d=ATTD.eq[x.id+'|'+eq];if(d&&d.validated){V++;const p=(d.pres||{})[u.uid];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
-    rows.push({Nome:u.nome||'','Nome completo':(c.id&&c.id.nomeCompleto)||'','Data de nascimento':(c.id&&c.id.nascimento)?new Date(c.id.nascimento).toLocaleDateString('pt-PT'):'',Totem:(c.id&&c.id.totem)||'',Equipa:eq,Estado:u.role==='ea'?'Viriato':papel,Cargo:(c.id&&c.id.cargo)||'',Etapa:etapa,'Trilhos validados':Object.values(done).reduce((s,n)=>s+n,0),'F':done.F,'A':done.A,'C':done.C,'E':done.E,'I':done.I,'S':done.S,'Bravery':(c.brv&&c.brv.dificuldade)||'','Especialidades':esps,'Áreas Mérito':new Set((c.esp||[]).filter(e=>espv[e.id]).map(e=>e.area)).size,'Presenças':P,'Justificadas':J,'Faltas':F,'Assiduidade %':V?Math.round(100*P/V):'' ,'Sessões validadas':V,_foto:(c.id&&c.id.foto)||''});
+    rows.push({Nome:u.nome||'','Nome completo':(c.id&&c.id.nomeCompleto)||'','Data de nascimento':(c.id&&c.id.nascimento)?new Date(c.id.nascimento).toLocaleDateString('pt-PT'):'',Totem:(c.id&&c.id.totem)||'',Equipa:eq,Estado:u.role==='ea'?'Viriato':papel,'Último ano':(c.id&&c.id.ultimoAno)?'Sim':'','Meta':u.role==='ea'?'':((c.id&&c.id.ultimoAno)?'Anilha de Mérito':'Insígnia de Mérito'),Cargo:(c.id&&c.id.cargo)||'',Etapa:etapa,'Trilhos validados':Object.values(done).reduce((s,n)=>s+n,0),'F':done.F,'A':done.A,'C':done.C,'E':done.E,'I':done.I,'S':done.S,'Bravery':(c.brv&&c.brv.dificuldade)||'','Especialidades':esps,'Áreas Mérito':new Set((c.esp||[]).filter(e=>espv[e.id]).map(e=>e.area)).size,'Presenças':P,'Justificadas':J,'Faltas':F,'Assiduidade %':V?Math.round(100*P/V):'' ,'Sessões validadas':V,_foto:(c.id&&c.id.foto)||''});
   }
   return rows.sort((a,b)=>a.Equipa.localeCompare(b.Equipa)||a.Nome.localeCompare(b.Nome));
 }
@@ -1277,7 +1356,7 @@ async function boot(user){
     const cq=PROFILE.role==='ea'?db.collection('cards'):db.collection('cards').where('equipa','==',PROFILE.equipa||'-');
     cq.onSnapshot(sn=>{CARDS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPainel();},()=>{});
   }
-  ATT.subscribe(d=>{ATTD=d;paintAssid();});
+  ATT.subscribe(d=>{ATTD=d;paintAssid();});matsLoad();
   openCard(user.uid); if(PROFILE.role!=='jovem') showTab('painel');
 }
 auth.getRedirectResult().catch(e=>{$('#loginMsg').textContent='Não entrou: '+e.message;});
