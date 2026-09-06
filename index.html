@@ -8,6 +8,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 /* ===== CONFIGURAÇÃO: colar aqui os dados do projeto Firebase (Consola Firebase > Definições do projeto > As tuas apps > Web) ===== */
+/* Imagens das insígnias das etapas (podem ser substituídas por ficheiros próprios: ins-desprendimento.png, etc.) */
+const INS_URLS = {
+  0: "https://677.escutismo.pt/wp-content/uploads/2019/07/pioneiros_despreendimento.png",
+  1: "https://677.escutismo.pt/wp-content/uploads/2019/07/pioneiros_c_conhecimento.png",
+  2: "https://677.escutismo.pt/wp-content/uploads/2019/07/pioneiros_c_vontade.png",
+  3: "https://677.escutismo.pt/wp-content/uploads/2019/07/pioneiros_c_construo.png"
+};
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyA6vew5tY5ubHtVgim88ti2JH0923yRu1c",
   authDomain: "cartao-bravery-online.firebaseapp.com",
@@ -123,6 +130,25 @@ textarea{resize:vertical;min-height:64px}
 .step .foot input:not([type=checkbox]){flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:10px;padding:7px 10px;background:var(--bg);font-size:14px;color:var(--ink)}
 .chk{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
 .chk input{width:20px;height:20px;accent-color:var(--azul)}
+
+.step.camp{background:var(--azul);border-color:var(--azul);color:#fff}
+.step.camp .when{color:var(--amarelo)}.step.camp .what{color:#D7E3F7}
+.step.camp .foot input:not([type=checkbox]){background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff}
+.step.camp .foot input::placeholder{color:#B9C7E0}
+.step.camp .dot{border-color:var(--laranja)}
+.sess.camp{background:var(--azul);border-color:var(--azul);color:#fff}
+.sess.camp .dt{color:var(--amarelo)}.sess.camp .ti .meta{color:#D7E3F7}
+.sess.camp .btn.ghost{color:#fff;border-color:rgba(255,255,255,.4)}
+
+.etapas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.et{border-radius:12px;padding:6px 2px;text-align:center;border:2px solid var(--line);background:var(--bg);opacity:.55;min-width:0}
+.et .ins{width:36px;height:41px;margin:0 auto 3px}
+.et .n{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:800;font-size:10px;text-transform:uppercase;line-height:1.05;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.et .s{font-size:10px;color:var(--ink-2);margin-top:2px}
+.et.done{opacity:1;border-color:var(--cinza-2)}
+.et.cur{opacity:1;border-color:var(--laranja);background:var(--card);box-shadow:var(--shadow)}
+.et.cur .s{color:var(--laranja);font-weight:800}
+.falta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 
 /* FACEIS */
 .faceis-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
@@ -263,7 +289,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
 <div class="login" id="login">
   <div class="eyebrow" style="color:var(--amarelo);font-weight:800;letter-spacing:.18em;font-size:12px">III SECÇÃO · 2026/2027 · JAMBOREE 2027</div>
   <h1>Cartão <span>Bravery</span></h1>
-  <p>O teu mapa de coragem. Entra com a tua conta Google para abrir o teu cartão. Só tu, o teu Guia e a Equipa de Animação o podem ver.</p>
+  <p>O teu mapa de coragem. Entra com a tua conta Google para abrir o teu cartão. Só tu, o teu Guia e aos Viriatos o podem ver.</p>
   <button class="btn" id="btnLogin">Entrar com Google</button>
   <p id="loginMsg" style="font-size:12px;margin-top:14px"></p>
 </div>
@@ -275,7 +301,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     <p class="sub">O meu mapa de coragem: onde estou, o que me custa, o que vou treinar e como vou chegar a Gdańsk.</p>
     <div class="who">
       <span class="name" id="hName">O meu cartão</span>
-      <span class="pill y" id="hRole">Escuteiro</span>
+      <span class="pill y" id="hRole">Pioneiro</span>
       <span class="pill g" id="hTeam">Equipa</span>
       <span class="pill o" id="hGoal">Insígnia de Mérito</span>
       <span class="pill g" id="hEtapa">Etapa</span>
@@ -296,9 +322,9 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     <div class="card"><h2>Cartões <small>Toca num cartão para o abrir</small></h2>
       <div class="field" id="filtroEquipaWrap"><label>Equipa</label><select id="filtroEquipa"><option value="">Todas</option></select></div>
       <div class="list" id="cardsList" style="margin-top:10px"></div></div>
-    <div class="card" id="admin" style="display:none"><h2>Administração <small>Só a Equipa de Animação vê isto</small></h2>
+    <div class="card" id="admin" style="display:none"><h2>Administração <small>Só aos Viriatos vê isto</small></h2>
       <div class="field"><label>Equipas (separadas por vírgula)</label><input id="admEquipas" placeholder="Ex.: Águia, Lobo"><button class="btn sm" id="admEquipasSave" style="margin-top:6px">Guardar Equipas</button></div>
-      <h3>Utilizadores e permissões</h3><p class="note">Quem entra pela primeira vez fica como "Jovem". Define aqui a Equipa e quem é Guia ou Equipa de Animação.</p>
+      <h3>Utilizadores e permissões</h3><p class="note">Quem entra pela primeira vez fica como "Pioneiro". Define aqui a Equipa e quem é Guia ou Viriato.</p>
       <div style="overflow-x:auto"><table class="adm" id="admUsers"></table></div>
       <h3>Trilhos oficiais</h3><p class="note">Os 18 Trilhos oficiais já estão na aplicação. Aqui podes acrescentar um objetivo ou corrigir um nome; fica visível em todos os cartões.</p>
       <div style="overflow-x:auto"><table class="adm" id="admTrilhos"></table></div><button class="btn sm" id="admTrilhosSave" style="margin-top:6px">Guardar Trilhos</button></div>
@@ -307,9 +333,9 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
   <!-- ===== MAPA ===== -->
   <section class="panel on" id="p-mapa">
     <div class="card">
-      <h2>O mapa do ano <small>Coragem → Competência → Responsabilidade → Autonomia → Jamboree</small></h2>
+      <h2>A caminhada do ano <small>Coragem → Competência → Responsabilidade → Autonomia → Jamboree</small></h2>
       <div class="quote">Primeiro conhecer. Depois escolher. Só depois comprometer.</div>
-      <p class="note">Marca cada etapa quando a viveres e escreve uma frase sobre o que levas dela. É o teu diário de aventura.</p>
+      <p class="note">Marca cada etapa quando a viveres e escreve uma frase sobre o que levas dela. É o teu diário de aventura. Os acampamentos aparecem a azul.</p>
     </div>
     <div class="trail" id="trail"></div>
     <div class="card">
@@ -327,7 +353,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
         <div class="field"><label>Equipa</label><select data-path="id.equipa" id="selEquipa"><option value="">Escolhe</option></select></div>
       </div>
       <div class="field"><label>O meu papel</label>
-        <div class="choices" data-choice="id.papel" data-opts="Noviço|Escuteiro|Subguia|Guia"></div>
+        <div class="choices" data-choice="id.papel" data-opts="Noviço|Pioneiro|Subguia|Guia"></div>
       </div>
       <div class="grid2">
         <div class="field"><label>Guia</label><input data-path="id.guia"></div>
@@ -367,11 +393,16 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
 
   <!-- ===== FACEIS ===== -->
   <section class="panel" id="p-faceis">
+    <div class="card" id="etapaCard">
+      <h2>A minha etapa de Progresso <small>A insígnia da etapa recebe-se ao iniciá-la. Para concluir uma etapa é preciso um Trilho validado em cada uma das seis áreas, por qualquer ordem.</small></h2>
+      <div class="etapas" id="etapasRow"></div>
+      <div id="etapaInfo" style="margin-top:10px"></div>
+    </div>
     <div class="card">
       <h2>A minha roda do Progresso <small id="rodaSub">A etapa não se escolhe: é consequência dos Trilhos concluídos.</small></h2>
       <svg class="radar" id="roda" viewBox="0 0 300 300" role="img" aria-label="Roda da insígnia de Progresso"></svg>
       <div class="choices" id="etapasBar" style="justify-content:center;margin-top:6px"></div>
-      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando a Equipa de Animação valida.</p>
+      <p class="note" style="text-align:center;margin-top:8px">Cada área tem 3 Trilhos. Em cada etapa concluis um Trilho de cada área. A roda pinta-se sozinha quando aos Viriatos validam.</p>
     </div>
     <div class="card">
       <h2>Como me vejo hoje <small>Autodiagnóstico FACEIS (Espelho Bravely)</small></h2>
@@ -387,7 +418,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <h2>Mérito <small id="meritSub">Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas</small></h2>
       <div class="merit">
         <svg class="ring" id="ring" viewBox="0 0 100 100" aria-hidden="true"></svg>
-        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para adicionar. Uma Especialidade só conta para o Mérito depois de validada pela Equipa de Animação.</span></div>
+        <div class="txt"><b id="meritTxt">0 de 6 áreas</b><span>Toca numa área para adicionar. Uma Especialidade só conta para o Mérito depois de validada pelos Viriatos.</span></div>
       </div>
       <div class="hexgrid" id="hexgrid" style="margin-top:14px"></div>
     </div>
@@ -420,18 +451,18 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
   <!-- ===== ASSIDUIDADE ===== -->
   <section class="panel" id="p-assid">
     <div class="card">
-      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, a Equipa de Animação valida.</small></h2>
+      <h2>Assiduidade <small>Estar presente é a primeira forma de coragem. O Guia regista, aos Viriatos validam.</small></h2>
       <div class="stat" id="assStats"></div>
       <div class="progress" style="margin-top:10px"><div class="bar" style="background:var(--line)"><i id="assBar" style="background:linear-gradient(90deg,#2E9E5B,#F6C544)"></i></div><div class="lbl" style="color:var(--ink-2)"><span id="assTxt"></span><span>só sessões validadas</span></div></div>
     </div>
     <div class="card" id="assMapCard" style="display:none">
-      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só a Equipa de Animação altera.</small></h2>
+      <h2>Mapa de presenças <small id="assMapSub">Regista P (presente), F (falta) ou J (falta justificada). Depois de validado, só aos Viriatos alteram.</small></h2>
       <div class="field"><label>Sessão</label><select id="assSel"></select></div>
       <div id="assMap" style="margin-top:8px"></div>
       <div class="row" id="assMapActs" style="margin-top:10px"></div>
     </div>
     <div class="card" id="assNewCard" style="display:none">
-      <h2>Sessões <small>Só a Equipa de Animação cria sessões</small></h2>
+      <h2>Sessões <small>Só aos Viriatos criam sessões</small></h2>
       <div class="grid2"><div class="field"><label>Data</label><input type="date" id="nsDate"></div><div class="field"><label>Tipo</label><select id="nsType"><option>Reunião</option><option>Atividade</option><option>Acampamento</option><option>Raide</option></select></div></div>
       <div class="field"><label>Título</label><input id="nsTitle" placeholder="Ex.: Reunião de Comunidade"></div>
       <div class="row"><button class="btn sm" id="nsAdd">Criar sessão</button><button class="btn sm ghost" id="nsGen">Gerar sábados até Julho</button></div>
@@ -469,7 +500,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     </div>
 
     <div class="card" id="cardNovico">
-      <h2>Sou Noviço <small>Ninguém entra sozinho: dois padrinhos e o Guia como apoio</small></h2>
+      <h2>Sou Noviço <small>Etapa de adesão (Desprendimento). Só depois de a concluir faço a Promessa e passo a Pioneiro.</small></h2>
       <div class="grid2">
         <div class="field"><label>Padrinho/Madrinha (investido)</label><input data-path="nov.padrinho"></div>
         <div class="field"><label>Subguia</label><input data-path="nov.subguia"></div>
@@ -477,6 +508,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <div class="field"><label>Onde estou no caminho para a Promessa</label><textarea data-path="nov.ponto"></textarea></div>
       <div class="field"><label>Próximo passo</label><input data-path="nov.proximo"></div>
       <div class="field"><label>Primeira responsabilidade real que já tenho</label><input data-path="nov.tarefa"></div>
+      <div class="field"><label>Data prevista da Promessa</label><input type="date" data-path="nov.promessa"><div class="hint">Depois da Promessa, muda o teu papel para "Pioneiro" no separador Bravery.</div></div>
     </div>
 
     <div class="card" id="cardGuia">
@@ -488,14 +520,14 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <div class="field"><label>Responsabilidades que vou delegar (e quando)</label><textarea data-path="guia.delegar"></textarea></div>
       <div class="field"><label>Decisões que a Equipa deve aprender a tomar sem mim</label><input data-path="guia.decisoes"></div>
       <div class="field"><label>O que vou deixar de fazer e passar a ensinar</label><input data-path="guia.deixar"></div>
-      <div class="field"><label>Ponto de situação dos Noviços da Equipa (para reportar à Equipa de Animação)</label><textarea data-path="guia.novicos"></textarea></div>
+      <div class="field"><label>Ponto de situação dos Noviços da Equipa (para reportar aos Viriatos)</label><textarea data-path="guia.novicos"></textarea></div>
       <h3>Teste de autonomia · acampamento de Junho</h3>
       <div class="list" id="autoTest"></div>
       <p class="note" style="margin-top:8px">Quanto menos necessário for o Guia, maior foi o seu sucesso enquanto Guia.</p>
     </div>
 
     <div class="card">
-      <h2>As aventuras <small>A Equipa de Animação dá o tema. As Equipas escolhem as aventuras.</small></h2>
+      <h2>As aventuras <small>Os Viriatos dão o tema. As Equipas escolhem as aventuras.</small></h2>
       <div class="field"><label>Natal · 19-21 Dez · integração e laços (Social, Caráter, Afetivo) · onde acampamos e o que faço lá</label><textarea data-path="av.natal"></textarea></div>
       <div class="field"><label>Carnaval · 6-8 Fev · animação (Físico, Espiritual, Intelectual) · a minha parte</label><textarea data-path="av.carnaval"></textarea></div>
       <div class="field"><label>Symposium Bushcraft · 24-25 Abr · Constância · o que quero aprender</label><textarea data-path="av.symposium"></textarea></div>
@@ -504,13 +536,17 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
     </div>
 
     <div class="card">
-      <h2>Comentários <small>Do Guia e da Equipa de Animação. Não alteram o cartão, acompanham-no.</small></h2>
+      <h2>Comentários <small>Do Guia e dos Viriatos. Não alteram o cartão, acompanham-no.</small></h2>
       <div class="list" id="cmtList"></div>
       <div id="cmtForm" style="margin-top:10px">
+        <div class="grid2">
+          <div class="field"><label>Quem comenta</label><input id="cmtBy" placeholder="Nome"></div>
+          <div class="field"><label>Papel</label><select id="cmtRole"><option>Guia</option><option>Viriato</option></select></div>
+        </div>
         <div class="field"><label>Comentário</label><textarea id="cmtTxt" placeholder="O que vi, o que sugiro, o que reconheço"></textarea></div>
         <button class="btn sm o" id="cmtAdd">Guardar comentário</button>
       </div>
-      <p class="note" id="cmtNote" style="margin-top:8px">Só o Guia e a Equipa de Animação comentam.</p>
+      <p class="note" id="cmtNote" style="margin-top:8px">Para comentar, muda "Quem vê" para Guia ou Viriato.</p>
     </div>
 
     </div>
@@ -518,7 +554,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
 
   <div class="tabs"><nav role="tablist">
     <button role="tab" aria-selected="false" data-tab="painel" id="tabPainel" style="display:none"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Painel</button>
-    <button role="tab" aria-selected="true" data-tab="mapa"><svg viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>Mapa</button>
+    <button role="tab" aria-selected="true" data-tab="mapa"><svg viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>Caminhada</button>
     <button role="tab" aria-selected="false" data-tab="bravery"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9L9.5 8z"/></svg>Bravery</button>
     <button role="tab" aria-selected="false" data-tab="faceis"><svg viewBox="0 0 24 24"><path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"/><path d="M12 8v8M8 10l8 4M16 10l-8 4"/></svg>FACEIS</button>
     <button role="tab" aria-selected="false" data-tab="esp"><svg viewBox="0 0 24 24"><path d="M12 2l4 2.3v4.6L12 11 8 8.9V4.3z"/><path d="M5 10l4 2.3v4.6L5 19l-4-2.1v-4.6z"/><path d="M19 10l4 2.3v4.6L19 19l-4-2.1v-4.6z"/></svg>Especial.</button>
@@ -542,12 +578,12 @@ const TRAIL=[
  {id:'t5',when:'23 → 24 Out',ttl:'Da escuridão à Luz',what:'Raide Empreendimento. Entrar na escuridão, escolher o que evito, pedir ajuda, o Guia lidera primeiro. Termino com a luz que levo.',big:true},
  {id:'t4',when:'Sáb 31 Out',ttl:'O que trazes na mochila?',what:'Raide técnico. Já sei / quero tentar / preciso que me ensinem / quero aprender. Nascem aqui as Especialidades.'},
  {id:'t6',when:'Sáb 07 Nov',ttl:'Compromisso Bravely',what:'O diagnóstico vira objetivos: Bravery, Trilhos, Especialidades, Cargo, padrinhos e meta de Mérito. Fecha-se o cartão v1.'},
- {id:'t7',when:'Novembro',ttl:'A Equipa escolhe as aventuras',what:'A Equipa de Animação deu o tema. Nós decidimos onde e como vamos viver o Natal e o Carnaval.'},
- {id:'t8',when:'19 → 21 Dez',ttl:'Acampamento de Natal',what:'Integração, laços, Noviços integrados. Foco nas áreas Social, Caráter e Afetiva.'},
- {id:'t9',when:'6 → 8 Fev 2027',ttl:'Acampamento de Carnaval',what:'Animação, expressão, criatividade. Foco nas áreas Física, Espiritual e Intelectual.'},
- {id:'t10',when:'24 → 25 Abr',ttl:'Symposium Bushcraft · Constância',what:'Instrução. Aprender o que precisamos para sermos autónomos em Junho.',big:true},
- {id:'t11',when:'26 Jun → 2 Jul',ttl:'Acampamento em autonomia · Tomar',what:'O teste. A Equipa funciona sem o Guia. Os Cargos funcionam. Eu faço e ensino.',big:true},
- {id:'t12',when:'30 Jul → 8 Ago 2027',ttl:'Jamboree · Gdańsk',what:'BRAVELY em ação, num mundo inteiro de escuteiros. A razão pela qual o caminho começou em Outubro.',big:true}
+ {id:'t7',when:'Novembro',ttl:'A Equipa escolhe as aventuras',what:'Os Viriatos deram o tema. Nós decidimos onde e como vamos viver o Natal e o Carnaval.'},
+ {id:'t8',camp:true,when:'19 → 21 Dez',ttl:'Acampamento de Natal',what:'Integração, laços, Noviços integrados. Foco nas áreas Social, Caráter e Afetiva.'},
+ {id:'t9',camp:true,when:'6 → 8 Fev 2027',ttl:'Acampamento de Carnaval',what:'Animação, expressão, criatividade. Foco nas áreas Física, Espiritual e Intelectual.'},
+ {id:'t10',camp:true,when:'24 → 25 Abr',ttl:'Acampamento Symposium Bushcraft · Constância',what:'Instrução. Aprender o que precisamos para sermos autónomos em Junho.',big:true},
+ {id:'t11',camp:true,when:'26 Jun → 2 Jul',ttl:'Acampamento em autonomia · Tomar',what:'O teste. A Equipa funciona sem o Guia. Os Cargos funcionam. Eu faço e ensino.',big:true},
+ {id:'t12',camp:true,when:'30 Jul → 8 Ago 2027',ttl:'Jamboree · Gdańsk',what:'BRAVELY em ação, num mundo inteiro de escuteiros. A razão pela qual o caminho começou em Outubro.',big:true}
 ];
 const FACEIS=[
  {k:'F',n:'Físico',q:'O que consigo fazer bem? O que evito por cansaço, receio ou falta de técnica?'},
@@ -559,7 +595,7 @@ const FACEIS=[
 ];
 const CARGOS=[
  {n:'',d:''},
- {n:'Guia',d:'Lidera a Equipa pelo exemplo, dá direção, distribui responsabilidades e prepara sucessores. Reporta à Equipa de Animação.',c:'Liderar, delegar, escutar antes de decidir',esp:'-'},
+ {n:'Guia',d:'Lidera a Equipa pelo exemplo, dá direção, distribui responsabilidades e prepara sucessores. Reporta aos Viriatos.',c:'Liderar, delegar, escutar antes de decidir',esp:'-'},
  {n:'Subguia',d:'Substitui o Guia, acompanha os Noviços como padrinho/madrinha e organiza o dia a dia da Equipa.',c:'Acompanhar, organizar, comunicar',esp:'-'},
  {n:'Secretário/a',d:'Guarda a memória da Equipa: atas do Conselho de Equipa, registos, calendário e comunicação interna.',c:'Registo, síntese, comunicação',esp:'Comunicação, Informação e Relacionamento'},
  {n:'Tesoureiro/a',d:'Gere o dinheiro da Equipa: orçamento das atividades, quotas, prestação de contas transparente.',c:'Rigor, planeamento, honestidade',esp:'Habilidade, Criatividade e Vida Profissional'},
@@ -628,7 +664,7 @@ $$('[data-choice]').forEach(box=>{
 /* header */
 function paintHeader(){
   $('#hName').textContent=S.id.nome||'O meu cartão';
-  $('#hRole').textContent=S.id.papel||'Escuteiro';
+  $('#hRole').textContent=S.id.papel||'Pioneiro';
   $('#hTeam').textContent=(S.id.equipa||(PROFILE&&PROFILE.equipa))?('Equipa '+(S.id.equipa||PROFILE.equipa)):'Equipa';
   const g=S.id.papel==='Guia'?'Anilha de Mérito':'Insígnia de Mérito';
   $('#hGoal').textContent=g;
@@ -638,7 +674,7 @@ function paintHeader(){
   const pct=Math.round(100*n/(fields.length+7));
   $('#pBar').style.width=pct+'%'; $('#pTxt').textContent='Cartão '+pct+'% preenchido';
   const done=TRAIL.filter(t=>S.trail[t.id]&&S.trail[t.id].done).length;
-  const trd=Object.keys(S.tri||{}).filter(k=>effState(k)===5).length;$('#pTrail').textContent=done+'/'+TRAIL.length+' etapas · '+trd+' Trilhos concluídos';
+  const trd=Object.keys(S.tri||{}).filter(k=>effState(k)===5).length;$('#pTrail').textContent=done+'/'+TRAIL.length+' marcos · '+trd+' Trilhos validados';
 }
 function roleUI(){
   $('#cardNovico').style.display=S.id.papel==='Noviço'?'':'none';
@@ -651,7 +687,7 @@ function paintTrail(){
   const box=$('#trail'); box.innerHTML='';
   TRAIL.forEach((t,i)=>{
     const st=S.trail[t.id]||{}; const d=document.createElement('div');
-    d.className='step'+(st.done?' done':'')+(t.big?' big':'');
+    d.className='step'+(st.done?' done':'')+(t.big?' big':'')+(t.camp?' camp':'');
     d.innerHTML=`<div class="dot">${st.done?'✓':i+1}</div><div class="when">${t.when}</div><div class="ttl">${t.ttl}</div><div class="what">${t.what}</div>
       <div class="foot"><label class="chk"><input type="checkbox" ${st.done?'checked':''}> Vivi</label><input placeholder="O que levo desta etapa" value="${esc(st.nota)}"></div>`;
     d.querySelector('input[type=checkbox]').onchange=e=>{S.trail[t.id]=Object.assign({},st,{done:e.target.checked});save();paintTrail();};
@@ -670,7 +706,7 @@ function paintFaceis(){
       <div class="field"><label>Ponto de partida</label><input data-fx="${f.k}.p" value="${esc(st.p)}" placeholder="Hoje..."></div>
       <div class="field"><label>Objetivo até Junho</label><input data-fx="${f.k}.o" value="${esc(st.o)}" placeholder="Quero conseguir..."></div>
       <label class="chk" style="margin-top:8px"><input type="checkbox" ${st.d?'checked':''}> Quero desafiar-me aqui</label>
-      <h3 style="margin-top:12px">Trilhos · ${f.n}</h3><p class="note">Três Trilhos nesta área. Regista, com data, as oportunidades educativas que te ajudaram a concretizar cada um.</p>
+      <h3 style="margin-top:12px">Trilhos · ${f.n}</h3><p class="note">Três Trilhos nesta área, por qualquer ordem. Regista, com data, as oportunidades educativas que te ajudaram a concretizar cada um.</p>
       <div class="trilhos"></div>`;
     const tb=d.querySelector('.trilhos');
     [0,1,2].forEach(i=>tb.appendChild(trilhoEl(f.k,i)));
@@ -699,7 +735,7 @@ function trilhoEl(area,i){
   const st=effState(key); const g=REV.g[key]||{}, e=REV.e[key]||{}; const d=document.createElement('div');
   d.className='tr'+(st===5?' done':st>=2?' prop':st===1?' work':'');
   const nm=trilhoName(area,i), T=TRILHOS[area][i]; t.ops=t.ops||[];
-  d.innerHTML=`<div class="hd2"><span class="k" style="font-family:'Barlow Condensed';font-weight:900;font-size:18px;color:var(--azul)">${i+1}</span><b style="flex:1">${esc(nm)}</b><span class="st">${ETAPAS[i+1]}</span></div>
+  d.innerHTML=`<div class="hd2"><span class="k" style="font-family:'Barlow Condensed';font-weight:900;font-size:18px;color:var(--azul)">${i+1}</span><b style="flex:1">${esc(nm)}</b></div>
     <div class="chips" style="margin-top:6px">${T.k.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div>
     ${trilhoDesc(area,i)?`<div class="note" style="margin-top:4px">${esc(trilhoDesc(area,i))}</div>`:''}
     <details style="margin-top:6px"><summary style="font-size:13px">Será que...?</summary><ul class="note" style="margin:4px 0 0;padding-left:18px">${T.q.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>
@@ -735,6 +771,26 @@ function trilhoEl(area,i){
   if(st===5){const r=document.createElement('div');r.className='rev ea';r.innerHTML=`<b>Validado pela Equipa de Animação · ${esc(e.by||'')} · ${esc(e.vd||'')}</b>${esc(e.v||'Trilho concluído.')}`;d.appendChild(r);}
   return d;
 }
+const INS_IMG=(typeof INS_URLS!=='undefined')?INS_URLS:{};
+const ET_INFO=[
+ {n:'Desprendimento',d:'Dar valor ao essencial e largar o supérfluo. Etapa de adesão: termina com a Promessa.',c:'#A7B0BF',t:'#0B1F42'},
+ {n:'Conhecimento',d:'Descobrir mais sobre mim, os outros e o mundo. Começa com a Promessa.',c:'#F6C544',t:'#0B1F42'},
+ {n:'Vontade',d:'Decidir, perseverar e agir com compromisso.',c:'#F2842B',t:'#fff'},
+ {n:'Construção',d:'Consolidar o crescimento e concretizar o meu projeto pessoal e de Equipa.',c:'#1C4E9E',t:'#fff'}];
+function paintEtapas(et){
+  const row=$('#etapasRow'); if(!row) return; row.innerHTML='';
+  const allDone=et===3&&FACEIS.every(f=>areaDone(f.k)>=3);
+  ET_INFO.forEach((e,i)=>{const d=document.createElement('div');const st=i<et||(allDone&&i===3)?'done':i===et?'cur':'';d.className='et '+st;
+    const fallback=`<svg class="ins" viewBox="0 0 44 50"><path d="M22 2 L42 12 V30 C42 40 32 46 22 48 C12 46 2 40 2 30 V12 Z" fill="${st?e.c:'#DCE1EA'}" stroke="${st==='cur'?'#0E2A55':'#A7B0BF'}" stroke-width="2"/><text x="22" y="32" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="22" fill="${st?e.t:'#7A8494'}">${e.n[0]}</text></svg>`;
+    const img=INS_IMG[i]?`<img class="ins" src="${INS_IMG[i]}" alt="Insígnia ${e.n}" style="object-fit:contain${st?'':';filter:grayscale(1);opacity:.5'}" onerror="this.outerHTML=this.nextElementSibling.innerHTML"><template>${fallback}</template>`:fallback;
+    d.innerHTML=`${img}<div class="n">${e.n}</div><div class="s">${st==='cur'?'insígnia atual':st==='done'?'concluída':'a seguir'}</div>`;
+    row.appendChild(d);});
+  const info=$('#etapaInfo'); const cur=ET_INFO[et];
+  if(S.id.papel==='Noviço'){info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}${S.nov&&S.nov.promessa?' Promessa prevista: '+new Date(S.nov.promessa).toLocaleDateString('pt-PT')+'.':''}</p><p class="note">Depois da Promessa, muda o teu papel para Pioneiro e recebes a insígnia de Conhecimento.</p>`;return;}
+  if(allDone){info.innerHTML=`<p><b>Sistema de Progresso concluído.</b> Os 18 Trilhos estão validados. Para os Guias: Anilha de Mérito.</p>`;return;}
+  const need=et; const falta=FACEIS.filter(f=>areaDone(f.k)<need);
+  info.innerHTML=`<p><b>${cur.n}.</b> ${esc(cur.d)}</p><p class="note" style="margin-top:6px">Para concluir esta etapa e receber a insígnia de <b>${ET_INFO[Math.min(3,et+1)].n}</b>, falta um Trilho validado em:</p><div class="falta">${falta.length?falta.map(f=>`<span class="chip o">${f.n}</span>`).join(''):'<span class="chip y">todas as áreas concluídas</span>'}</div>`;
+}
 function paintRoda(){
   const svg=$('#roda'); if(!svg) return; const cx=150,cy=150; const R=[38,74,108,142]; let out='';
   const pol=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
@@ -755,8 +811,9 @@ function paintRoda(){
   svg.innerHTML=out;
   const bar=$('#etapasBar'); if(bar){bar.innerHTML='';ETAPAS.forEach((e,i)=>{const b=document.createElement('button');b.type='button';b.textContent=e;b.disabled=true;b.style.cursor='default';b.setAttribute('aria-pressed',i<=et&&et<3||(et===3));if(i===et)b.classList.add('y');bar.appendChild(b);});}
   const total=FACEIS.reduce((a,f)=>a+areaDone(f.k),0);
-  $('#rodaSub').textContent=(et===0?'Desprendimento: até à Promessa. ':'Etapa atual: '+ETAPAS[et]+'. ')+total+' de 18 Trilhos concluídos. A etapa não se escolhe: é consequência dos Trilhos.';
-  const hp=$('#hEtapa'); if(hp) hp.textContent=et===3?'Progresso concluído':ETAPAS[et];
+  $('#rodaSub').textContent=total+' de 18 Trilhos validados. Cada anel pinta-se com um Trilho validado; a etapa muda quando todas as áreas têm mais um anel.';
+  const hp=$('#hEtapa'); if(hp) hp.textContent=et===3&&FACEIS.every(f=>areaDone(f.k)>=3)?'Progresso concluído':'Etapa · '+ETAPAS[et];
+  paintEtapas(et);
 }
 function paintRadar(){
   const svg=$('#radar'); const cx=150,cy=150,R=110; let out='';
@@ -802,7 +859,7 @@ function paintEsp(){
   S.esp.forEach((e,idx)=>{
     const d=document.createElement('div'); d.className='item';
     const cat=(ESP_CAT[e.area]||[]).find(x=>x[0]===e.nome); const lockedE=espLocked(e);
-    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div>${lockedE?'<div class="note"><b>Validada pela Equipa de Animação</b> · '+esc(lockedE.vd||'')+'</div>':''}</div>${(mode==='eu'&&!lockedE)?'<button class="del" title="Remover">×</button>':''}</div><div class="stage"></div><div class="acts row" style="margin-top:6px"></div>`;
+    d.innerHTML=`<div class="top"><div><div class="nm">${esc(e.nome)}</div><div class="meta">${AREAS[e.area]}${cat?' · '+esc(cat[1]):''}${e.mentor?' · mentor: '+esc(e.mentor):''}${e.onde?' · usar em: '+esc(e.onde):''} · <a href="https://especialidades.escutismo.pt/${espSlug(e.nome)}/" target="_blank" rel="noopener">requisitos</a></div>${lockedE?'<div class="note"><b>Validada pelos Viriatos</b> · '+esc(lockedE.vd||'')+'</div>':''}</div>${(mode==='eu'&&!lockedE)?'<button class="del" title="Remover">×</button>':''}</div><div class="stage"></div><div class="acts row" style="margin-top:6px"></div>`;
     const sg=d.querySelector('.stage');
     STAGES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=s;if(i<=e.st)b.className=i>=3?'fin':'on';if(mode==='eu'&&!lockedE)b.onclick=()=>{e.st=i;save();paintEsp();};else b.disabled=true;sg.appendChild(b);});
     const del=d.querySelector('.del');if(del)del.onclick=()=>{if(confirm('Remover '+e.nome+'?')){S.esp.splice(idx,1);save();paintEsp();}};
@@ -832,19 +889,19 @@ const ATT={
   },
   createSession(o){return db.collection('sessions').add(Object.assign({by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},o)).catch(e=>toast('Erro: '+e.code));},
   mark(sid,equipa,uid,p){const ref=db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-'));
-    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só a Equipa de Animação altera':'Erro: '+e.code));},
+    ref.set({sid,equipa,pres:{[uid]:p},by:PROFILE.nome,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado: só aos Viriatos alteram':'Erro: '+e.code));},
   validate(sid,equipa,on){db.collection('presencas').doc(sid+'_'+equipa.replace(/\//g,'-')).set({sid,equipa,validated:on,vby:PROFILE.nome,vat:new Date().toLocaleDateString('pt-PT')},{merge:true}).then(()=>toast(on?'Validado':'Reaberto')).catch(e=>toast('Erro: '+e.code));},
   justify(sid,uid,txt){db.collection('avisos').doc(sid+'_'+uid).set({sid,uid,equipa:PROFILE.equipa||'',txt,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>toast('Erro: '+e.code));},
-  members(){return USERS.filter(u=>u.role!=='ea');},
+  members(){return USERS.map(u=>u.role==='ea'?Object.assign({},u,{equipa:'Viriatos'}):u);},
   me(){return ME.uid;},
-  myEquipa(){return PROFILE.equipa||'';},
+  myEquipa(){return PROFILE.role==='ea'?'Viriatos':(PROFILE.equipa||'');},
   canMark(equipa){return PROFILE.role==='ea'||(PROFILE.role==='guia'&&equipa===PROFILE.equipa);},
   canValidate(){return PROFILE.role==='ea';},
   canCreate(){return PROFILE.role==='ea';},
   canMap(){return PROFILE.role!=='jovem';}
 };
 let ATTD={sessions:[],eq:{},just:{}};
-function eqDoc(sid,equipa){return ATTD.eq[sid+'|'+equipa]||{pres:{}};}
+function eqDoc(sid,equipa){const e=ATTD.eq[sid+'|'+equipa]||{};return Object.assign({pres:{}},e,{pres:e.pres||{}});}
 function fmtDate(d){if(!d)return '';const x=new Date(d+'T00:00:00');return {d:x.getDate(),m:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][x.getMonth()],full:x.toLocaleDateString('pt-PT')};}
 function paintAssid(){
   const me=ATT.me(), eq=ATT.myEquipa();
@@ -858,12 +915,12 @@ function paintAssid(){
   const hp=$('#hAssid');if(hp)hp.textContent=V?pct+'% assiduidade':'';
   // my sessions
   const list=$('#assList');list.innerHTML='';
-  if(!sess.length)list.innerHTML='<p class="note">Ainda não há sessões criadas pela Equipa de Animação.</p>';
+  if(!sess.length)list.innerHTML='<p class="note">Ainda não há sessões criadas pelos Viriatos.</p>';
   [...sess].reverse().forEach(x=>{const e=eqDoc(x.id,eq);const p=e.pres[me];const fd=fmtDate(x.date);const just=(ATTD.just[x.id]||{})[me];
-    const d=document.createElement('div');d.className='sess';
+    const d=document.createElement('div');d.className='sess'+(/acamp/i.test(x.type||'')?' camp':'');
     const lbl=p==='P'?'Presente':p==='F'?'Falta':p==='J'?'Justificada':'Por registar';
     d.innerHTML=`<div class="dt"><b>${fd.d}</b><span>${fd.m}</span></div><div class="ti"><div class="nm">${esc(x.title)}</div><div class="meta">${esc(x.type||'')}${just?' · avisei: '+esc(just):''}</div></div><span class="pres ${p||'N'} ${e.validated?'V':''}">${lbl}</span>`;
-    if(mode==='eu'&&x.date>=today&&!e.validated){const b=document.createElement('button');b.className='btn sm ghost';b.textContent=just?'Editar aviso':'Vou faltar';b.style.marginLeft='6px';b.onclick=()=>{const t=prompt('Motivo (fica visível ao Guia e à Equipa de Animação):',just||'');if(t!==null)ATT.justify(x.id,me,t.trim());};d.appendChild(b);}
+    if(mode==='eu'&&x.date>=today&&!e.validated){const b=document.createElement('button');b.className='btn sm ghost';b.textContent=just?'Editar aviso':'Vou faltar';b.style.marginLeft='6px';b.onclick=()=>{const t=prompt('Motivo (fica visível ao Guia e aos Viriatos):',just||'');if(t!==null)ATT.justify(x.id,me,t.trim());};d.appendChild(b);}
     list.appendChild(d);});
   // map (guia / ea)
   const canMap=ATT.canMap(); $('#assMapCard').style.display=canMap?'':'none'; $('#assNewCard').style.display=ATT.canCreate()?'':'none';
@@ -877,14 +934,14 @@ function paintAssid(){
   const members=ATT.members(); const byEq={}; members.forEach(m=>{(byEq[m.equipa||'Sem Equipa']=byEq[m.equipa||'Sem Equipa']||[]).push(m);});
   Object.keys(byEq).sort().forEach(equipa=>{
     const e=eqDoc(sid,equipa); const locked=!!e.validated; const editable=ATT.canMark(equipa)&&(!locked||ATT.canValidate());
-    const h=document.createElement('div');h.innerHTML=`<h3>${esc(equipa)} <span class="lock">${locked?'· validado pela Equipa de Animação '+esc(e.vat||''):(e.by?'· registado pelo '+esc(e.by):'· por registar')}</span></h3>`;box.appendChild(h);
+    const h=document.createElement('div');h.innerHTML=`<h3>${esc(equipa)} <span class="lock">${locked?'· validado pelos Viriatos '+esc(e.vat||''):(e.by?'· registado pelo '+esc(e.by):'· por registar')}</span></h3>`;box.appendChild(h);
     byEq[equipa].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(m=>{const p=e.pres[m.uid];const just=(ATTD.just[sid]||{})[m.uid];
       const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(m.nome)}${just?`<div class="note">avisou: ${esc(just)}</div>`:''}</div><div class="pbtns"></div>`;
       const pb=r.querySelector('.pbtns');['P','F','J'].forEach(k=>{const b=document.createElement('button');b.type='button';b.className=k;b.textContent=k;b.setAttribute('aria-pressed',p===k);b.disabled=!editable;b.title=k==='P'?'Presente':k==='F'?'Falta':'Falta justificada';b.onclick=()=>ATT.mark(sid,equipa,m.uid,k);pb.appendChild(b);});
       box.appendChild(r);});
     if(ATT.canValidate()){const b=document.createElement('button');b.className='btn sm '+(locked?'ghost':'y');b.textContent=(locked?'Reabrir ':'Validar ')+equipa;b.onclick=()=>ATT.validate(sid,equipa,!locked);acts.appendChild(b);}
   });
-  if(mode==='guia'){const n=document.createElement('p');n.className='note';n.textContent='Depois de validado pela Equipa de Animação, o registo fica bloqueado para ti.';acts.appendChild(n);}
+  if(mode==='guia'){const n=document.createElement('p');n.className='note';n.textContent='Depois de validado pelos Viriatos, o registo fica bloqueado para ti.';acts.appendChild(n);}
 }
 $('#nsAdd').onclick=()=>{const dt=$('#nsDate').value,t=$('#nsTitle').value.trim();if(!dt||!t)return toast('Data e título são precisos');ATT.createSession({date:dt,title:t,type:$('#nsType').value});$('#nsTitle').value='';toast('Sessão criada');};
 $('#nsGen').onclick=()=>{if(!confirm('Criar uma sessão "Reunião de Comunidade" em cada sábado de 3 Out 2026 a 24 Jul 2027 que ainda não exista?'))return;const have=new Set(ATTD.sessions.map(x=>x.date));let d=new Date('2026-10-03T00:00:00'),n=0;while(d<=new Date('2027-07-24T00:00:00')){const iso=d.toISOString().slice(0,10);if(!have.has(iso)){ATT.createSession({date:iso,title:'Reunião de Comunidade',type:'Reunião'});n++;}d.setDate(d.getDate()+7);}toast(n+' sessões criadas');};
@@ -895,7 +952,7 @@ function paintLadder(){const box=$('#ladder');box.innerHTML='';LADDER.forEach((l
 function paintAuto(){const box=$('#autoTest');box.innerHTML='';AUTOTEST.forEach((t,i)=>{const l=document.createElement('label');l.className='chk item';l.innerHTML=`<input type="checkbox" ${S.auto[i]?'checked':''}> ${t}`;l.querySelector('input').onchange=e=>{S.auto[i]=e.target.checked;save();};box.appendChild(l);});}
 
 /* comments */
-function paintCmts(){const box=$('#cmtList');box.innerHTML='';if(!CMTS.length)box.innerHTML='<p class="note">Ainda sem comentários.</p>';CMTS.forEach(c=>{const d=document.createElement('div');d.className='cmt'+(c.role==='ea'?' ea':'');d.innerHTML=`<div class="by">${esc(c.by)} · ${c.role==='ea'?'Equipa de Animação':'Guia'} · ${c.at&&c.at.toDate?c.at.toDate().toLocaleDateString('pt-PT'):''}</div><p>${esc(c.txt)}</p>`;box.appendChild(d);});}
+function paintCmts(){const box=$('#cmtList');box.innerHTML='';if(!CMTS.length)box.innerHTML='<p class="note">Ainda sem comentários.</p>';CMTS.forEach(c=>{const d=document.createElement('div');d.className='cmt'+(c.role==='ea'?' ea':'');d.innerHTML=`<div class="by">${esc(c.by)} · ${c.role==='ea'?'Viriato':'Guia'} · ${c.at&&c.at.toDate?c.at.toDate().toLocaleDateString('pt-PT'):''}</div><p>${esc(c.txt)}</p>`;box.appendChild(d);});}
 $('#cmtAdd').onclick=()=>{const txt=$('#cmtTxt').value.trim();if(!txt)return toast('Escreve o comentário');db.collection('cards').doc(VIEW).collection('comments').add({uid:ME.uid,by:PROFILE.nome,role:PROFILE.role,txt,at:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{$('#cmtTxt').value='';toast('Comentário guardado');}).catch(e=>toast('Erro: '+e.code));};
 
 /* mode */
@@ -942,10 +999,10 @@ function paintPainel(){
   $('#painelSub').textContent=role==='ea'?'Toda a Comunidade':'A tua Equipa '+(PROFILE.equipa||'');
   if(role==='ea'){ $('#admin').style.display=''; if(document.activeElement!==$('#admEquipas'))$('#admEquipas').value=(CONFIG.equipas||[]).join(', ');
     const t=$('#admUsers');t.innerHTML='<tr><td><b>Nome</b></td><td><b>Equipa</b></td><td><b>Papel</b></td></tr>';
-    USERS.forEach(u=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${esc(u.nome)}<br><span class="note">${esc(u.email||'')}</span></td><td><select data-f="equipa"><option value="">-</option>${(CONFIG.equipas||[]).map(x=>`<option ${u.equipa===x?'selected':''}>${esc(x)}</option>`).join('')}</select></td><td><select data-f="role"><option value="jovem" ${u.role==='jovem'?'selected':''}>Jovem</option><option value="guia" ${u.role==='guia'?'selected':''}>Guia</option><option value="ea" ${u.role==='ea'?'selected':''}>Eq. Animação</option></select></td>`;
+    USERS.forEach(u=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${esc(u.nome)}<br><span class="note">${esc(u.email||'')}</span></td><td><select data-f="equipa"><option value="">-</option>${(CONFIG.equipas||[]).map(x=>`<option ${u.equipa===x?'selected':''}>${esc(x)}</option>`).join('')}</select></td><td><select data-f="role"><option value="jovem" ${u.role==='jovem'?'selected':''}>Pioneiro</option><option value="guia" ${u.role==='guia'?'selected':''}>Guia</option><option value="ea" ${u.role==='ea'?'selected':''}>Viriato</option></select></td>`;
       tr.querySelectorAll('select').forEach(sel=>sel.onchange=()=>db.collection('users').doc(u.uid).update({[sel.dataset.f]:sel.value}).then(()=>{toast('Guardado');if(sel.dataset.f==='equipa')db.collection('cards').doc(u.uid).set({equipa:sel.value},{merge:true}).catch(()=>{});}).catch(e=>toast('Erro: '+e.code)));t.appendChild(tr);});
     const tt=$('#admTrilhos'); if(!tt.dataset.built){ tt.dataset.built='1'; tt.innerHTML='<tr><td><b>Área</b></td><td><b>Trilho</b></td><td><b>Nome (se diferente)</b></td><td><b>Objetivo (Diário de Bordo)</b></td></tr>';
-      FACEIS.forEach(f=>[0,1,2].forEach(i=>{const k=f.k+i;const cfg=(CONFIG.trilhos||{})[k]||{};const tr=document.createElement('tr');tr.innerHTML=`<td>${f.n}</td><td>${i+1} · ${ETAPAS[i+1]}</td><td><input data-k="${k}" data-f="n" value="${esc(cfg.n)}" placeholder="${esc(TRILHOS[f.k][i].n)}" style="width:150px"></td><td><input data-k="${k}" data-f="d" value="${esc(cfg.d)}" placeholder="objetivo do Trilho (opcional)" style="width:260px"></td>`;tt.appendChild(tr);})); }
+      FACEIS.forEach(f=>[0,1,2].forEach(i=>{const k=f.k+i;const cfg=(CONFIG.trilhos||{})[k]||{};const tr=document.createElement('tr');tr.innerHTML=`<td>${f.n}</td><td>${i+1}</td><td><input data-k="${k}" data-f="n" value="${esc(cfg.n)}" placeholder="${esc(TRILHOS[f.k][i].n)}" style="width:150px"></td><td><input data-k="${k}" data-f="d" value="${esc(cfg.d)}" placeholder="objetivo do Trilho (opcional)" style="width:260px"></td>`;tt.appendChild(tr);})); }
   }
 }
 $('#filtroEquipa').onchange=paintPainel;
@@ -957,9 +1014,9 @@ async function boot(user){
   const uref=db.collection('users').doc(user.uid); let us=await uref.get();
   if(!us.exists){ await uref.set({nome:user.displayName||'',email:user.email||'',role:'jovem',equipa:'',created:firebase.firestore.FieldValue.serverTimestamp()}); us=await uref.get(); }
   PROFILE=Object.assign({uid:user.uid},us.data());
-  uref.onSnapshot(sn=>{const old=PROFILE.role;PROFILE=Object.assign({uid:user.uid},sn.data()||{});$('#ubRole').textContent=PROFILE.role==='ea'?'Equipa de Animação':PROFILE.role==='guia'?'Guia':'Jovem';if(old!==PROFILE.role)location.reload();});
+  uref.onSnapshot(sn=>{const old=PROFILE.role;PROFILE=Object.assign({uid:user.uid},sn.data()||{});$('#ubRole').textContent=PROFILE.role==='ea'?'Viriato':PROFILE.role==='guia'?'Guia':'Pioneiro';if(old!==PROFILE.role)location.reload();});
   db.collection('config').doc('app').onSnapshot(sn=>{CONFIG=sn.exists?sn.data():{equipas:[]};fillEquipas();paintFaceis();paintPainel();});
-  $('#ubName').textContent=PROFILE.nome||user.email; $('#ubRole').textContent=PROFILE.role==='ea'?'Equipa de Animação':PROFILE.role==='guia'?'Guia':'Jovem';
+  $('#ubName').textContent=PROFILE.nome||user.email; $('#ubRole').textContent=PROFILE.role==='ea'?'Viriato':PROFILE.role==='guia'?'Guia':'Pioneiro';
   if(PROFILE.role!=='jovem'){ $('#tabPainel').style.display=''; $('#filtroEquipaWrap').style.display=PROFILE.role==='ea'?'':'none';
     const uq=PROFILE.role==='ea'?db.collection('users'):db.collection('users').where('equipa','==',PROFILE.equipa||'-');
     uq.onSnapshot(sn=>{USERS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPainel();},e=>toast('Painel: '+e.code));
