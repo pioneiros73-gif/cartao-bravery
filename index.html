@@ -704,7 +704,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
         <p>Preenche em casa com o encarregado de educação: contactos, Cartão de Cidadão, SNS, seguro de saúde, alergias, medicação regular e prescrição, vacinas. Serve para agir depressa em campo. Só tu e a Viriato a veem; o Guia não. A ficha em papel assinada continua a ser necessária.</p>
       </details>
       <details><summary>Equipa: Noviço, Guia, Aventuras, comentários</summary>
-        <p>Secção Noviço (padrinho, data prevista da Promessa), secção Guia (sucessão, delegação, teste de autonomia de Tomar), as Aventuras que a Equipa escolhe e os comentários do Guia e da Viriato, que lês mas não alteras.</p>
+        <p>No topo, "A nossa Equipa": o nome (e grito) que a Equipa escolheu; o Guia regista e aparece no cabeçalho de todos os cartões da Equipa. Secção Noviço (padrinho, data prevista da Promessa), secção Guia (sucessão, delegação, teste de autonomia de Tomar), as Aventuras que a Equipa escolhe e os comentários do Guia e da Viriato, que lês mas não alteras.</p>
       </details>
       <details><summary>Entrar, guardar e privacidade</summary>
         <ul>
@@ -843,6 +843,11 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
 
   <!-- ===== EQUIPA ===== -->
   <section class="panel" id="p-equipa">
+    <div class="card" id="eqNomeCard">
+      <h2>A nossa Equipa <small id="eqNomeSub">O nome que a Equipa escolheu. O Guia regista; aparece em todos os cartões da Equipa.</small></h2>
+      <div class="grid2"><div class="field"><label>Nome da Equipa</label><input id="eqNome" placeholder="Ex.: Águias do Norte"></div><div class="field"><label>Grito / lema (opcional)</label><input id="eqGrito"></div></div>
+      <button class="btn sm" id="eqNomeSave" style="display:none">Guardar nome da Equipa</button>
+    </div>
     <div class="card">
       <h2>Eu na Equipa</h2>
       <div class="field"><label>Como contribuo</label><input data-path="eq.contribuo"></div>
@@ -1027,7 +1032,7 @@ function paintHeader(){ paintFoto();
   $('#hName').textContent=(S.id.nome||'O meu cartão')+(S.id.totem?' · '+S.id.totem:'');
   $('#hRole').textContent=isViriatoCard()?('Viriato'+(S.id.papel?' · '+S.id.papel:'')):(S.id.papel||'Pioneiro');
   const isV=isViriatoCard();['#hTeam','#hGoal','#hEtapa'].forEach(x=>{const el=$(x);if(el)el.style.display=isV?'none':'';});const pr=$('.hero .progress');if(pr)pr.style.display=isV?'none':'';['faceis','esp'].forEach(t=>{const b=$$('.tabs button').find(x=>x.dataset.tab===t);if(b)b.style.display=isV?'none':'';});if(isV&&['faceis','esp'].includes(($$('.panel').find(p=>p.classList.contains('on'))||{id:''}).id.replace('p-','')))showTabId('bravery');
-  $('#hTeam').textContent=(S.id.equipa||(PROFILE&&PROFILE.equipa))?('Equipa '+(S.id.equipa||PROFILE.equipa)):'Equipa';
+  $('#hTeam').textContent=(S.id.equipa||(PROFILE&&PROFILE.equipa))?('Equipa '+eqNome(S.id.equipa||PROFILE.equipa)):((S.missaoEquipa||(S.missao&&S.missao.done))?'Equipa por descobrir':'Equipa');
   const ua=!!S.id.ultimoAno; const g=ua?'Anilha de Mérito':'Insígnia de Mérito';
   $('#hGoal').textContent=g; const uac=$('#ultimoAno'); if(uac&&document.activeElement!==uac)uac.checked=ua;
   $('#metaSub').textContent=ua?'Anilha de Mérito (último ano na Comunidade): concluir o Sistema de Progresso, os 18 Trilhos validados':'Insígnia de Mérito: pelo menos uma Especialidade em 6 das 8 áreas';
@@ -1205,10 +1210,13 @@ function paintMissaoPainel(){const box=$('#misPainel');if(!box)return;const user
   if(document.activeElement&&document.activeElement.id==='misFrases')return;
   let h=`<div class="field"><label>Frases (uma por Equipa, por ordem das Equipas: ${esc(eqs.join(', ')||'defina as Equipas primeiro')}). Cada frase com 9 palavras, uma por elemento.</label><textarea id="misFrases" rows="3">${esc((cfg.frases||MIS_DEMO_FRASES).join('\n'))}</textarea></div>
     <div class="field"><label>Composição secreta das Equipas (invisível aos Pioneiros até se encontrarem)</label><div id="misComp"></div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" id="misSave">Guardar frases e composição</button><button class="btn sm y" id="misDist">Distribuir as palavras</button></div>
+    <label class="chk" style="margin:6px 0"><input type="checkbox" id="misOculta" ${cfg.oculta?'checked':''}> <span><b>Equipas escondidas até à Missão Bravely</b>: quem se regista fica "Equipa por descobrir" até os 9 confirmarem a frase.</span></label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" id="misSave">Guardar frases e composição</button><button class="btn sm y" id="misDist">Distribuir as palavras</button><button class="btn sm ghost" id="misHide">Esconder as Equipas já atribuídas</button></div>
     <p class="note" style="margin-top:6px" id="misStatus"></p>`;
-  box.innerHTML=h;const comp=$('#misComp');users.forEach(u=>{const c=CARDS.find(x=>x.uid===u.uid)||{};const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(u.nome||'')} <span class="note">${c.missaoPalavra?'· '+esc(c.missaoPalavra):''}${c.missao&&c.missao.done?' · passo 1 ✓':''}${c.missao&&c.missao.equipaOk?' · encontrou ✓':''}</span></div><select data-uid="${u.uid}"><option value="">-</option>${eqs.map(e=>`<option ${c.missaoEquipa===e?'selected':''}>${esc(e)}</option>`).join('')}</select>`;comp.appendChild(r);});
+  box.innerHTML=h;const comp=$('#misComp');users.forEach(u=>{const c=CARDS.find(x=>x.uid===u.uid)||{};const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(u.nome||'')} <span class="note">${c.missaoPalavra?'· '+esc(c.missaoPalavra):''}${c.missao&&c.missao.done?' · passo 1 ✓':''}${c.missao&&c.missao.equipaOk?' · encontrou ✓':''}</span></div><select data-uid="${u.uid}"><option value="">-</option>${eqs.map(e=>`<option ${(c.missaoEquipa||u.equipa)===e?'selected':''}>${esc(e)}</option>`).join('')}</select>`;comp.appendChild(r);});
   const done=CARDS.filter(c=>c.missao&&c.missao.done).length,found=CARDS.filter(c=>c.missao&&c.missao.equipaOk).length;$('#misStatus').textContent=done+' terminaram o passo 1 · '+found+' encontraram a Equipa';
+  $('#misOculta').onchange=e=>{db.collection('config').doc('app').set({missao:{oculta:e.target.checked}},{merge:true}).then(()=>toast(e.target.checked?'Equipas escondidas no registo':'Equipas visíveis no registo'));};
+  $('#misHide').onclick=()=>{if(!confirm('Esconder a Equipa de todos os Pioneiros e Guias já registados? A Equipa fica guardada em segredo e volta a aparecer quando confirmarem a frase.'))return;const b=db.batch();users.forEach(u=>{const c=CARDS.find(x=>x.uid===u.uid)||{};const eq=u.equipa||c.missaoEquipa||'';if(!eq)return;b.set(db.collection('users').doc(u.uid),{equipa:''},{merge:true});b.set(db.collection('cards').doc(u.uid),{equipa:'',missaoEquipa:eq,id:{equipa:''}},{merge:true});});b.set(db.collection('config').doc('app'),{missao:{oculta:true}},{merge:true});b.commit().then(()=>toast('Equipas escondidas')).catch(e=>toast('Erro: '+e.code));};
   $('#misSave').onclick=()=>{const frases=$('#misFrases').value.split('\n').map(x=>x.trim()).filter(Boolean);db.collection('config').doc('app').set({missao:{frases}},{merge:true});
     const b=db.batch();comp.querySelectorAll('select').forEach(sel=>{b.set(db.collection('cards').doc(sel.dataset.uid),{missaoEquipa:sel.value},{merge:true});});b.commit().then(()=>toast('Guardado')).catch(e=>toast('Erro: '+e.code));};
   $('#misDist').onclick=()=>{const frases=$('#misFrases').value.split('\n').map(x=>x.trim()).filter(Boolean);if(frases.length<eqs.length)return toast('Falta uma frase por Equipa');
@@ -1614,9 +1622,21 @@ function adesValidate(id,on){const ref=db.collection('cards').doc(VIEW).collecti
 function adesGuiaSet(id,ok,who){const r=adesList().find(x=>x.id===id);db.collection('cards').doc(VIEW).collection('reviews').doc('guia').set({adesg:{[id]:{ok,who:who||'Guia',by:PROFILE.nome,at:new Date().toLocaleDateString('pt-PT')}}},{merge:true}).then(()=>{toast(ok?'Validação registada':'Validação retirada');if(ok){logEvent('Adesão','Desafio "'+(r?r.t:id)+'" de '+(S.id.nome||'')+' validado ('+(who||'Guia')+')',{notify:[VIEW],ea:true});const all=adesList().every(x=>x.id===id||adesDone(x.id,x));if(all)logEvent('Adesão concluída',(S.id.nome||'')+' concluiu a Etapa de Adesão: pronto para a Promessa',{notify:[VIEW],ea:true});}}).catch(e=>toast('Erro: '+e.code));}
 function adesSaveList(list){db.collection('config').doc('app').set({adesao:list},{merge:true}).then(()=>toast('Provas guardadas para todos os Noviços'));}
 
+/* ===== NOME DA EQUIPA (o Guia regista; aparece a toda a Equipa) ===== */
+function eqNome(key){const n=(typeof EQNOMES!=='undefined'&&EQNOMES[key]&&EQNOMES[key].nome)||'';return n||key||'';}
+let EQNOMES={};
+function paintEqNome(){const card=$('#eqNomeCard');if(!card)return;const key=S.id.equipa||'';const e=EQNOMES[key]||{};const ro=!eqCanEdit();
+  $('#eqNome').value=e.nome||'';$('#eqGrito').value=e.grito||'';$('#eqNome').disabled=ro;$('#eqGrito').disabled=ro;$('#eqNomeSave').style.display=ro?'none':'';
+  $('#eqNomeSub').textContent=key?(e.nome?'Equipa '+key+' · "'+e.nome+'"'+(e.grito?' · '+e.grito:''):'Equipa '+key+': ainda sem nome. '+(ro?'O Guia regista o nome escolhido pela Equipa.':'Regista o nome escolhido pela Equipa.')):'Ainda sem Equipa.';}
+$('#eqNomeSave').onclick=()=>{const key=S.id.equipa||'';if(!key)return toast('Sem Equipa');eqNomeSave(key,{nome:$('#eqNome').value.trim(),grito:$('#eqGrito').value.trim()});};
+function eqCanEdit(){return !!PROFILE&&(PROFILE.role==='ea'||(PROFILE.role==='guia'&&PROFILE.equipa&&PROFILE.equipa===(S.id.equipa||'')));}
+
+function eqNomesLoad(){db.collection('equipas').onSnapshot(sn=>{EQNOMES={};sn.docs.forEach(d=>EQNOMES[d.id]=d.data());paintEqNome();paintHeader();paintContactos();if(typeof paintPainel==='function')paintPainel();},()=>{});}
+function eqNomeSave(key,d){db.collection('equipas').doc(key).set(Object.assign({key,by:PROFILE.nome,at:new Date().toISOString()},d),{merge:true}).then(()=>{toast('Nome da Equipa guardado');logEvent('Nome da Equipa','A Equipa '+key+' chama-se agora "'+(d.nome||'')+'"',{notify:['all'],ea:true});}).catch(e=>toast(e.code==='permission-denied'?'Só o Guia desta Equipa (ou a Viriato) regista o nome':'Erro: '+e.code));}
+
 /* ===== CONTACTOS (roster visível a toda a Comunidade) ===== */
 function paintContactos(){const box=$('#contactos');if(!box)return;const r=(typeof finRoster==='function'?finRoster():[]).slice();box.innerHTML='';if(!r.length){box.innerHTML='<p class="note">Ainda sem contactos.</p>';return;}
-  const grupos={};r.forEach(p=>{const g=p.role==='ea'?'Viriato':('Equipa '+(p.equipa||'sem Equipa'));(grupos[g]=grupos[g]||[]).push(p);});
+  const grupos={};r.forEach(p=>{const g=p.role==='ea'?'Viriato':('Equipa '+(p.equipa?eqNome(p.equipa):'por descobrir'));(grupos[g]=grupos[g]||[]).push(p);});
   Object.keys(grupos).sort((a,b)=>a==='Viriato'?-1:b==='Viriato'?1:a.localeCompare(b)).forEach(g=>{const h=document.createElement('h3');h.textContent=g;h.style.margin='8px 0 2px';box.appendChild(h);
     grupos[g].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(p=>{const d=document.createElement('div');d.className='mrow';d.innerHTML=`<div class="nm">${esc(p.nome||'')}${p.papel?' <span class="note">· '+esc(p.papel)+'</span>':''}</div><div>${p.tlm?`<a href="tel:${esc(String(p.tlm).replace(/\s+/g,''))}" class="btn sm ghost" style="text-decoration:none">${esc(p.tlm)}</a>`:'<span class="note">sem telemóvel</span>'}</div>`;box.appendChild(d);});});}
 
@@ -1746,7 +1766,7 @@ if(auth.isSignInWithEmailLink(location.href)){let e=null;try{e=localStorage.getI
 $('#btnBack').onclick=()=>{openCard(ME.uid);showTab('painel');};
 function clearSubs(){unsubs.forEach(u=>u());unsubs=[];}
 function fillFields(){ $$('[data-path]').forEach(el=>{const v=get(el.dataset.path);el.value=v!=null?v:'';}); $$('[data-choice]').forEach(box=>box._paint&&box._paint()); if(window._syncCargo)window._syncCargo(); }
-function paintAll(){fillFields();paintAssid();paintFun();paintJam();paintFin();paintMissao();paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();roleUI();paintHeader();}
+function paintAll(){fillFields();paintAssid();paintFun();paintJam();paintFin();paintMissao();paintEqNome();paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();roleUI();paintHeader();}
 function openCard(uid){
   clearSubs(); VIEW=uid; const own=uid===ME.uid; REV={g:{},e:{}}; CMTS=[];
   setMode(own?'eu':(PROFILE.role==='ea'?'ea':'guia'));
@@ -1767,7 +1787,7 @@ function etapaDe(u,c){const ea=EAREV[u.uid]||{};const done={};FACEIS.forEach(f=>
   if(u.role==='ea')return '-';if(papel==='Noviço')return 'Desprendimento';if(FACEIS.every(f=>done[f.k]>=3))return 'Concluído';return ETAPAS[Math.min(3,1+min)];}
 function paintRetrato(){const box=$('#retrato');if(!box||!isStaff())return;box.innerHTML='';const list=membrosVisiveis();if(!list.length){box.innerHTML='<p class="note">Ainda sem elementos.</p>';return;}
   let eqCur=null;list.forEach(u=>{const c=CARDS.find(x=>x.uid===u.uid)||{};const id=c.id||{};
-    if(PROFILE.role==='ea'&&u.equipa!==eqCur){eqCur=u.equipa;const h=document.createElement('h3');h.textContent='Equipa '+(eqCur||'sem Equipa');h.style.margin='10px 0 4px';box.appendChild(h);}
+    if(PROFILE.role==='ea'&&u.equipa!==eqCur){eqCur=u.equipa;const h=document.createElement('h3');h.textContent='Equipa '+(eqCur?eqNome(eqCur):'por descobrir');h.style.margin='10px 0 4px';box.appendChild(h);}
     const d=document.createElement('div');d.className='mrow';const ini=(u.nome||'?').trim().charAt(0).toUpperCase();
     d.innerHTML=`<div style="display:flex;gap:10px;align-items:center;width:100%"><div class="av" style="width:42px;height:42px;border-radius:10px;overflow:hidden;background:var(--azul);color:#fff;display:grid;place-items:center;font-weight:900;flex:none">${id.foto?`<img src="${id.foto}" style="width:100%;height:100%;object-fit:cover">`:ini}</div>
       <div style="flex:1;min-width:0"><div class="nm">${esc(u.nome||'')}${id.totem?' <span class="note">· '+esc(id.totem)+'</span>':''}</div>
@@ -1860,9 +1880,11 @@ async function boot(user){
   if(!us.exists){
     let pre=null; try{const ps=await db.collection('preregistos').doc((user.email||'').toLowerCase()).get(); if(ps.exists) pre=ps.data();}catch(e){}
     lmsg('Primeira entrada: a criar o perfil'+(pre?' a partir do registo da Viriato':'')+'...');
-    try{await uref.set({nome:(pre&&pre.nome)||user.displayName||'',email:user.email||'',role:(pre&&pre.role)||'jovem',equipa:(pre&&pre.equipa)||'',created:firebase.firestore.FieldValue.serverTimestamp()});}
+    let oculta=false;try{const cs=await db.collection('config').doc('app').get();oculta=!!(cs.exists&&cs.data().missao&&cs.data().missao.oculta);}catch(e){}
+    const eqVis=(pre&&pre.equipa&&!oculta)?pre.equipa:'';
+    try{await uref.set({nome:(pre&&pre.nome)||user.displayName||'',email:user.email||'',role:(pre&&pre.role)||'jovem',equipa:eqVis,created:firebase.firestore.FieldValue.serverTimestamp()});}
     catch(e){throw new Error('não foi possível criar o perfil ('+(e.code||'')+'). Confirme as Regras do Firestore. '+e.message);}
-    if(pre){ try{ await db.collection('cards').doc(user.uid).set({nome:pre.nome||user.displayName||'',equipa:pre.equipa||'',papel:pre.papel||'',id:{nome:pre.nome||user.displayName||'',equipa:pre.equipa||'',papel:pre.papel||'',totem:pre.totem||''}},{merge:true}); }catch(e){} }
+    if(pre){ try{ await db.collection('cards').doc(user.uid).set({nome:pre.nome||user.displayName||'',equipa:eqVis,missaoEquipa:pre.equipa||'',papel:pre.papel||'',id:{nome:pre.nome||user.displayName||'',equipa:eqVis,papel:pre.papel||'',totem:pre.totem||''}},{merge:true}); }catch(e){} }
     us=await uref.get(); setTimeout(()=>logEvent('Nova entrada',(us.data().nome||user.email)+' entrou pela primeira vez ('+(us.data().role==='ea'?'Viriato':us.data().role==='guia'?'Guia':'Pioneiro')+(us.data().equipa?', Equipa '+us.data().equipa:'')+')',{}),1500); }
   PROFILE=Object.assign({uid:user.uid},us.data());
   if(PROFILE.role==='jovem'){try{const cs=await db.collection('cards').doc(user.uid).get();PROFILE.sub=!!(cs.exists&&cs.data().id&&cs.data().id.papel==='Subguia');}catch(e){}}
@@ -1877,7 +1899,7 @@ async function boot(user){
     cq.onSnapshot(sn=>{CARDS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPainel();},()=>{});
   }
   $('#login').style.display='none';
-  ATT.subscribe(d=>{ATTD=d;paintAssid();paintCal();paintNov();if(typeof paintPend==='function')paintPend();});matsLoad();propsLoad();eventsLoad();
+  ATT.subscribe(d=>{ATTD=d;paintAssid();paintCal();paintNov();if(typeof paintPend==='function')paintPend();});matsLoad();propsLoad();eventsLoad();eqNomesLoad();
   openCard(user.uid); if(isStaff()) showTab('painel');
 }
 auth.getRedirectResult().catch(e=>{lmsg('Não entrou ('+(e.code||'')+'): '+e.message);});
@@ -1914,7 +1936,7 @@ function paintPend(){const box=$('#pendList');if(!box||!isStaff())return;const r
     if(semReg)items.push('Presenças por registar pelo Guia: '+semReg+' sessão(ões)');if(porVal)items.push('Presenças por validar pela Viriato: '+porVal);
     const semResp=TRAIL.filter(t=>{const a=(typeof MATS!=='undefined'&&MATS[t.id])||{mat:[],resp:{}};return a.mat.length&&!a.resp[e];}).map(t=>t.ttl);if(semResp.length)items.push('Resposta da Equipa em falta: '+semResp.join(', '));
     const d=document.createElement('div');d.className='req'+(items.length?'':' done');d.innerHTML=`<div class="nm">Equipa ${esc(e)}</div>`+(items.length?'<ul class="note" style="margin:4px 0 0 16px">'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul>':'<div class="note" style="color:#2E9E5B;font-weight:800">Tudo em dia</div>');tb.appendChild(d);});}
-paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();paintFun();paintJam();paintFin();paintMed();paintNov();paintContactos();paintMissao();roleUI();paintHeader();
+paintTrail();paintFaceis();paintEsp();paintChips();paintLadder();paintAuto();paintCmts();paintFun();paintJam();paintFin();paintMed();paintNov();paintContactos();paintMissao();paintEqNome();roleUI();paintHeader();
 })();
 </script>
 
