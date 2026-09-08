@@ -718,7 +718,8 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       </details>
       <details><summary>Assiduidade e calendário</summary>
         <p>O resumo está no topo do separador Bravery: a tua percentagem e a média da tua Equipa (só dias validados). As presenças marcam-se em cada atividade da Caminhada: "Estive presente" ou "Vou faltar / Faltei" com o motivo. O <span class="r g">Guia</span> confirma a Equipa (usa as declarações, corrige e confirma) e a <span class="r v">Viriato</span> valida; depois só a Viriato altera. Nos acampamentos e raides marca-se um dia de cada vez.</p>
-        <p>No calendário do ano, os dias com atividade aparecem a cor. Depois da validação final, a tua presença fica a <b>verde</b>, a falta justificada a <b>amarelo</b> e a falta a <b>vermelho</b>. Os sábados sem atividade aparecem riscados ("Dia livre") e não contam.</p>
+        <p>No calendário do ano, os dias com atividade aparecem a cor (as atividades da Caminhada já lá estão). Depois da validação final, a tua presença fica a <b>verde</b>, a falta justificada a <b>amarelo</b> e a falta a <b>vermelho</b>. Os sábados sem atividade aparecem riscados ("Dia livre") e não contam.</p>
+        <p>Cada sessão é dirigida a alguém: <b>Comunidade</b> (todos os Pioneiros), <b>Cristóvão Colombo</b> (todos os Guias e Subguias), <b>Viriato</b>, ou <b>Pioneiros escolhidos</b> um a um. Cada um só vê as sessões que lhe dizem respeito e só marca presença nessas; as sessões de Cristóvão Colombo contam para a assiduidade dos Guias e Subguias. Toca num dia do calendário para declarar a presença numa sessão que não esteja na Caminhada.</p>
       </details>
       <details><summary>Tarefas a aguardar validação e "O que já alcancei"</summary>
         <p>No topo do separador Bravery, a caixa <b>Tarefas a aguardar validação</b> mostra a cada um o que lhe cabe: ao Pioneiro, o que submeteu e em que nível está; ao Guia, as submissões da sua Equipa e as presenças por confirmar; a Cristóvão Colombo, as submissões de outras Equipas já validadas pelo Guia; à Viriato, tudo o que aguarda a validação final.</p>
@@ -751,7 +752,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
           <li><b>Equipas, Trilhos, requisitos do Jamboree e pagamentos</b>: editam-se nos respetivos separadores e ficam iguais para toda a Comunidade.</li>
           <li><b>Validar</b>: a caixa "Tarefas a aguardar validação" (separador Bravery do teu cartão) junta tudo o que já passou pelo Guia e por Cristóvão Colombo; podes validar aí ou no cartão de cada um. Presenças em cada atividade da Caminhada; pagamentos no Financeiro; requisitos no Jamboree. Depois de validado, só a Viriato reabre.</li>
           <li><b>Revelação</b>: em Equipa → Contactos, o botão "Revelar Viriato aos Pioneiros" mostra a Viriato a todos (27 Set). No Painel, "Pendentes" mostra, por Equipa, o que aguarda o Guia ou Cristóvão Colombo.</li>
-          <li><b>Sessões e calendário</b>: no separador Caminhada crias sessões (ou geras os sábados e as atividades base), acrescentas atividades à Caminhada e, tocando num dia do calendário, alteras ou eliminas.</li>
+          <li><b>Sessões e calendário</b>: no separador Caminhada crias sessões (ou geras os sábados), escolhes para quem são (Comunidade, Cristóvão Colombo, Viriato ou Pioneiros escolhidos) e acrescentas atividades à Caminhada. Tocando num dia do calendário alteras, cancelas ou marcas dia livre, também nas atividades base da Caminhada. Nas sessões de Cristóvão Colombo e da Viriato és tu que registas e validas as presenças.</li>
           <li><b>Novidades</b> mostra tudo o que foi registado; com o script de notificações, chega também por email.</li>
         </ul>
       </details>
@@ -1703,6 +1704,11 @@ function paintFun(){const box=$('#funList');box.innerHTML='';S.fun=S.fun||[];if(
     if(mode==='eu'){const b=document.createElement('button');b.className='btn sm ghost';b.style.marginTop='6px';b.textContent=f.bal?'Editar balanço':'Depois da atividade: o que correu bem / o que aprendi';b.onclick=()=>{const t=prompt('Balanço da função:',f.bal||'');if(t!==null){f.bal=t.trim();save();paintFun();}};d.appendChild(b);}
     box.appendChild(d);});}
 $('#funAdd').onclick=()=>{S.fun=S.fun||[];S.fun.push({ativ:$('#funAtiv').value,funcao:$('#funFun').value,esp:$('#funEsp').value.trim(),at:Date.now()});$('#funEsp').value='';save();paintFun();toast('Função registada');};
+
+/* ===== AJUDA ===== */
+let helpFrom='mapa';
+$('#btnHelp').onclick=()=>{const cur=$$('.panel').find(p=>p.classList.contains('on'));helpFrom=cur?cur.id.replace('p-',''):'mapa';if(helpFrom==='ajuda')helpFrom='mapa';$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',false));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-ajuda'));window.scrollTo({top:0,behavior:'smooth'});};
+$('#btnHelpBack').onclick=()=>{const b=$$('.tabs button').find(x=>x.dataset.tab===helpFrom);if(b)b.click();else{$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-mapa'));}};
 
 /* ===== JAMBOREE ===== */
 const JAM_DEFAULT=[
