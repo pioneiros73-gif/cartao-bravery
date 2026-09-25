@@ -739,6 +739,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
           <li><b>Validar</b>: a caixa "Tarefas a aguardar validação" (separador Bravery do teu cartão) junta tudo o que já passou pelo Guia e por Cristóvão Colombo; podes validar aí ou no cartão de cada um. Presenças em cada atividade da Caminhada; pagamentos no Financeiro. Depois de validado, só a Viriato reabre.</li>
           <li><b>Revelação</b>: em Equipa → Contactos, o botão "Revelar Viriato aos Pioneiros" mostra a Viriato a todos (27 Set). No Painel, "Pendentes" mostra, por Equipa, o que aguarda o Guia ou Cristóvão Colombo.</li>
           <li><b>Atividades e calendário</b>: no separador Caminhada há um único formulário, "Atividade da Caminhada" (data, fim opcional, tipo Reunião / Atividade / Raide / Acampamento / Dia livre, título, objetivo, para quem), ou "Gerar sábados até Julho". Tudo aparece na Caminhada e no calendário. As atividades novas nascem reservadas: os Pioneiros veem só a data e o tipo até carregares em "Revelar aos Pioneiros" (na atividade ou no calendário); marca "Revelar já" no formulário se não quiseres reserva. Tocando num dia do calendário alteras, cancelas ou marcas dia livre, também nas atividades base do ano. Nas sessões de Cristóvão Colombo e da Viriato és tu que registas e validas as presenças.</li>
+          <li><b>Apagar um cartão</b>: em Utilizadores e permissões, o "×" apaga o cartão, o acesso e o registo prévio (confirma-se escrevendo o nome). A conta Google só se apaga na consola do Firebase.</li>
           <li><b>Pedidos de acesso</b>: quem entra com uma conta não registada pede acesso (nome completo, data de nascimento, telemóvel). Recebes a Novidade e o email; no Painel → Pedidos de acesso confirmas os dados, escolhes Equipa, estado e Cargo e aprovas ou recusas. Ninguém entra sem esta aprovação.</li>
           <li><b>"O que levo"</b>: no dia seguinte a cada atividade, os Pioneiros (e Guias) só entram na app depois de escreverem o que levam. No Painel → Pendentes vês "O que levo: em falta" por Pioneiro.</li>
           <li><b>Atividades reservadas</b>: ao criar uma atividade, deixa "Revelar já" desmarcado para os Pioneiros verem só a data e o tipo. Revela na Caminhada ("Revelar aos Pioneiros") ou no calendário quando quiseres; podes voltar a esconder.</li>
@@ -2408,6 +2409,7 @@ function paintPainel(){
     const t=$('#admUsers');t.innerHTML='<tr><td><b>Nome</b></td><td><b>Equipa</b></td><td><b>Acesso</b></td><td><b>Estado</b></td><td><b>Cargo</b></td></tr>';
     USERS.forEach(u=>{const tr=document.createElement('tr');const c=cardOf(u); const papel=u.papel||(c.id&&c.id.papel)||''; const cargo=u.cargo||'';
       tr.innerHTML=`<td>${esc(u.nome)}<br><span class="note">${esc(u.email||'')}</span></td><td><select data-f="equipa"><option value="">-</option>${(CONFIG.equipas||[]).map(x=>`<option ${u.equipa===x?'selected':''}>${esc(x)}</option>`).join('')}</select></td><td><select data-f="role"><option value="jovem" ${u.role==='jovem'?'selected':''}>Pioneiro / Noviço</option><option value="guia" ${u.role==='guia'?'selected':''}>Guia</option><option value="ea" ${u.role==='ea'?'selected':''}>Viriato</option></select></td><td>${u.role==='ea'?'-':`<select data-f="papel"><option value="">-</option>${['Noviço','Pioneiro','Subguia','Guia'].map(x=>`<option ${papel===x?'selected':''}>${x}</option>`).join('')}</select>`}</td><td>${u.role==='ea'?'-':`<select data-f="cargo"><option value="">-</option>${['Guia de Equipa','Sub-Guia','Secretário / Cronista','Tesoureiro','Guarda de Material','Socorrista','Animador','Cozinheiro / Intendente','Relações Públicas / Informático'].map(x=>`<option ${cargo===x?'selected':''}>${esc(x)}</option>`).join('')}</select>`}</td>`;
+      if(u.uid!==ME.uid){const td=document.createElement('td');td.innerHTML='<button class="del" title="Apagar cartão e acesso">×</button>';td.querySelector('button').onclick=()=>cardDelete(u);tr.appendChild(td);}
       tr.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ if(sel.dataset.f==='papel'){db.collection('users').doc(u.uid).update({papel:sel.value}).then(()=>db.collection('cards').doc(u.uid).set({id:{papel:sel.value},papel:sel.value},{merge:true})).then(()=>toast('Guardado')).catch(e=>toast('Erro: '+e.code));return;} if(sel.dataset.f==='cargo'){db.collection('users').doc(u.uid).update({cargo:sel.value}).then(()=>db.collection('cards').doc(u.uid).set({id:{cargo:sel.value}},{merge:true})).then(()=>toast('Cargo guardado')).catch(e=>toast('Erro: '+e.code));return;} db.collection('users').doc(u.uid).update({[sel.dataset.f]:sel.value}).then(()=>{toast('Guardado');if(sel.dataset.f==='equipa')db.collection('cards').doc(u.uid).set({equipa:sel.value},{merge:true}).catch(()=>{});}).catch(e=>toast('Erro: '+e.code));});t.appendChild(tr);});
     const tt=$('#admTrilhos'); if(!tt.dataset.built){ tt.dataset.built='1'; tt.innerHTML='<tr><td><b>Área</b></td><td><b>#</b></td><td><b>Trilho</b></td><td><b>Oportunidade Educativa</b></td></tr>';
       FACEIS.forEach(f=>[0,1,2].forEach(i=>{const k=f.k+i;const cfg=(CONFIG.trilhos||{})[k]||{};const tr=document.createElement('tr');tr.innerHTML=`<td>${f.n}</td><td>${i+1}</td><td><b>${esc(TRILHOS[f.k][i].n)}</b></td><td><input data-k="${k}" data-f="d" value="${esc(cfg.d)}" placeholder="oportunidade educativa que concretiza este Trilho (opcional)" style="width:280px"></td>`;tt.appendChild(tr);})); }
@@ -2432,6 +2434,24 @@ $('#preBulk').onclick=async()=>{const lines=$('#preBulkTxt').value.split('\n').m
   for(const l of lines){const [nome,email,equipa,estado,totem]=l.split(/;|\t/).map(x=>(x||'').trim());const est=(estado||'').toLowerCase();const role=est.startsWith('viri')?'ea':est.startsWith('guia')?'guia':'jovem';const papel=est.startsWith('viri')?'':est.startsWith('sub')?'Subguia':est.startsWith('guia')?'Guia':est.startsWith('nov')?'Noviço':'Pioneiro';
     if(email&&email.includes('@')){await preSave({nome,email,equipa,role,papel,totem});n++;}}
   $('#preBulkTxt').value='';toast(n+' elementos registados');};
+/* Apagar cartão (só Viriato): cartão + subcoleções, acesso, registo prévio e registos ligados ao uid. A conta Google (Authentication) apaga-se na consola. */
+async function cardDelete(u){
+  const nome=u.nome||u.email||u.uid;
+  const typed=prompt('Apagar o cartão e o acesso de '+nome+'? Isto não se desfaz: perde-se o Perfil, o questionário médico, os Trilhos, as presenças declaradas e os pagamentos registados.\n\nPara confirmar, escreve o nome exatamente como aparece: '+nome);
+  if(typed===null)return; if(typed.trim()!==String(nome).trim())return toast('O nome não coincide; nada foi apagado');
+  toast('A apagar...'); let n=0; const del=async ref=>{try{await ref.delete();n++;}catch(e){console.warn('apagar',ref.path,e.code);}};
+  try{
+    const card=db.collection('cards').doc(u.uid);
+    for(const d of ['medica','docs'])await del(card.collection('private').doc(d));
+    for(const d of ['guia','cc','ea'])await del(card.collection('reviews').doc(d));
+    for(const col of ['comments']){const sn=await card.collection(col).get().catch(()=>null);if(sn)for(const d of sn.docs)await del(d.ref);}
+    for(const col of ['avisos','validacoes','pagamentos','autorizacoes','autform']){const sn=await db.collection(col).where('uid','==',u.uid).get().catch(()=>null);if(sn)for(const d of sn.docs)await del(d.ref);}
+    await del(card); await del(db.collection('users').doc(u.uid)); await del(db.collection('pedidos').doc(u.uid));
+    if(u.email)await del(db.collection('preregistos').doc((u.email||'').toLowerCase()));
+    logEvent('Cartão apagado','A Viriato apagou o cartão e o acesso de '+nome,{ea:true});
+    toast('Apagado ('+n+' registos). Para apagar também a conta Google: Firebase → Authentication → Utilizadores.');
+  }catch(e){toast('Erro ao apagar: '+(e.code||e.message));}
+}
 /* Pedido de acesso: conta sem registo prévio pede à Viriato (nome completo + data de nascimento + telemóvel); só a Viriato aprova */
 async function pedidoFlow(user){
   const box=$('#pedidoBox'); let ped=null;
