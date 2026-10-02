@@ -220,6 +220,7 @@ textarea{resize:vertical;min-height:64px}
 .fa{border:1.5px solid var(--line);border-radius:14px;padding:12px;background:var(--bg);min-width:0;overflow:hidden}
 .fa .hd>div{min-width:0}
 .fa .hd{display:flex;align-items:center;gap:10px}
+.card.col-closed>*:not(h2):not(.colbtn){display:none!important}.card.colcard>h2{margin-bottom:0}.card.colcard:not(.col-closed)>h2{margin-bottom:10px}.card .colbtn{position:absolute;right:10px;top:10px}
 .colhead.fahead{margin:4px 0 0;cursor:pointer}.colhead.fahead .lbl{display:flex;align-items:center;gap:8px}.fahead .letter.sm{width:28px;height:28px;border-radius:8px;font-size:18px;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:900;color:#fff;background:var(--azul)}
 .fa .letter{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-size:26px;font-weight:900;color:#fff;background:var(--azul)}
 .fa .nm{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:800;text-transform:uppercase}
@@ -683,6 +684,9 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       <details open><summary>Primeiros passos (1.º acesso)</summary>
         <p>Ao entrares pela primeira vez, no separador Caminhada aparece a caixa <b>Primeiros passos</b>, com o que falta para receberes a tua palavra na Revelação: 1) fotografia e identificação (Perfil → Quem sou); 2) contactos do encarregado de educação (se tiveres menos de 18 anos); 3) Missão Bravely, passo 1 (separador Empreendimento). Cada passo tem o botão "Ir preencher". A caixa desaparece quando tudo estiver feito.</p>
       </details>
+      <details><summary>Como se usa no telemóvel</summary>
+        <p>Todos os cartões aparecem fechados, só com o título: toca em "+" (ou no título) para abrir e em "−" para fechar. A app lembra-se do que deixaste aberto. Nas listas longas (Cargos, Trilhos, áreas FACEIS, atividades da Caminhada) cada item também abre e fecha.</p>
+      </details>
       <details><summary>A dinâmica em 1 minuto</summary>
         <p><b>1. Conhecer</b> (Setembro e Outubro): a Revelação (27 Set) e as atividades de diagnóstico ajudam-te a perceber onde estás. Preenches o Bravery (a dificuldade que aceitas treinar) e os pontos de partida FACEIS.</p>
         <p><b>2. Escolher</b> (Compromisso Bravely, 7 Nov): fecham-se os Trilhos que vais trabalhar, as Especialidades, o Cargo e a meta de Mérito.</p>
@@ -1101,10 +1105,14 @@ function paintResumo(){const box=$('#hResumo');if(!box)return;if(isViriatoCard()
 
 /* v44: disposição dos separadores. Equipa → Empreendimento (bloco "A nossa Equipa"); Contactos → Perfil; Equipa só para a Viriato, como "Comunidade" (tabelas) */
 function comunidadeOn(){return (typeof PROFILE!=='undefined'&&PROFILE)?isViriatoCard():mode==='ea';}
-function cardColapsavel(id,key){const c=$('#'+id);if(!c||c.dataset.col)return;c.dataset.col='1';const h2=c.querySelector('h2');if(!h2)return;const open=colGet(key,false);const b=document.createElement('button');b.type='button';b.className='plus';b.style.cssText='position:absolute;right:10px;top:10px';b.textContent=open?'−':'+';b.setAttribute('aria-expanded',open);c.style.position='relative';c.appendChild(b);
-  const rest=[...c.children].filter(x=>x!==h2&&x!==b);const apply=o=>{rest.forEach(x=>x.style.display=o?'':'none');b.textContent=o?'−':'+';b.setAttribute('aria-expanded',o);};apply(open);b.onclick=()=>{const o=b.textContent==='+';apply(o);colSet(key,o);};
-  new MutationObserver(()=>{const o=b.getAttribute('aria-expanded')==='true';[...c.children].filter(x=>x!==h2&&x!==b&&!o&&x.style.display!=='none').forEach(x=>x.style.display='none');}).observe(c,{childList:true});}
-function layoutV44(){const pb=$('#p-bravery'),pf=$('#p-ficha'),pe=$('#p-equipa');if(!pb||!pe)return;cardColapsavel('histCard','hist');
+function cardColapsavel(id,key){const c=$('#'+id);if(!c||c.dataset.col)return;const h2=[...c.children].find(x=>x.tagName==='H2');if(!h2)return;c.dataset.col='1';key=key||('card:'+id);const open=colGet(key,false);
+  const b=document.createElement('button');b.type='button';b.className='plus colbtn';b.textContent=open?'−':'+';b.setAttribute('aria-expanded',open);b.title=open?'Fechar':'Abrir';c.style.position='relative';c.classList.add('colcard');h2.style.paddingRight='40px';c.appendChild(b);
+  const apply=o=>{c.classList.toggle('col-closed',!o);b.textContent=o?'−':'+';b.setAttribute('aria-expanded',o);b.title=o?'Fechar':'Abrir';};apply(open);b.onclick=e=>{e.stopPropagation();const o=c.classList.contains('col-closed');apply(o);colSet(key,o);};
+  h2.style.cursor='pointer';h2.onclick=e=>{if(e.target.closest('button,a,input,select,textarea,label'))return;b.click();};}
+/* v48: todos os cartões (com h2) de todos os separadores aparecem fechados, com "+" para abrir; exceções: Primeiros passos, ecrãs obrigatórios e cartões só com título */
+const COL_SKIP=new Set(['ppCard','eqBloco','trailAdmin']);
+function colapsarTudo(){if(window.__noCollapse)return;let n=0;$$('.panel .card').forEach(c=>{if(c.dataset.col||COL_SKIP.has(c.id)||c.closest('.gate')||c.closest('#login'))return;const h2=[...c.children].find(x=>x.tagName==='H2');if(!h2)return;if([...c.children].filter(x=>x!==h2).length===0)return;if(!c.id){const pn=c.closest('.panel');c.id='card_'+((pn&&pn.id)||'x')+'_'+(n++)+'_'+h2.textContent.trim().slice(0,24).toLowerCase().replace(/[^a-z0-9]+/g,'-');}cardColapsavel(c.id);});}
+function layoutV44(){const pb=$('#p-bravery'),pf=$('#p-ficha'),pe=$('#p-equipa');if(!pb||!pe)return;
   ['missaoCard','luzCard'].forEach(id=>{const el=$('#'+id);if(el)el.style.display='none';});
   if(!$('#eqBloco')){const h=document.createElement('div');h.className='card';h.id='eqBloco';h.style.cssText='padding:10px 14px';h.innerHTML='<h2 style="margin:0">A nossa Equipa <small>O que é da Equipa: nome, mural, tarefas, Noviço, Guia, aventuras e comentários.</small></h2>';pb.appendChild(h);}
   ['eqNomeCard','alergCard','muralCard','tarefasCard','eqMeCard','cardNovico','cardGuia','avCard','cmtCard'].forEach(id=>{const el=$('#'+id);if(el)pb.appendChild(el);});
@@ -1446,7 +1454,7 @@ function calEditForm(x,info){const f=document.createElement('div');f.className='
 /* Empreendimento do ano (config/app.projeto online; demo: fixo) */
 function paintProjeto(){const el=$('#hProjeto');if(!el)return;const n=(typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.projeto)||'Bravery';el.textContent=n;document.title='Empreendimento '+n+' · Comunidade 25 · 73 Carnide';}
 paintProjeto();
-layoutV44();
+layoutV44();colapsarTudo();
 /* ===== MÉTODO ESCUTISTA (cartão da Viriato) ===== */
 const METODO=[
  {k:'lei',n:'Lei e Promessa',d:'O compromisso pessoal e livre com valores: a Promessa é a adesão voluntária e a Lei é o código de vida que o Pioneiro escolhe viver, dentro e fora do escutismo.'},
@@ -1772,7 +1780,7 @@ function paintAssid(){
   const st=$('#assStats');if(st)st.innerHTML=`<div><b>${P}</b><span>presenças</span></div><div><b>${J}</b><span>justificadas</span></div><div><b>${F}</b><span>faltas</span></div>`;
   const cmp=$('#assCmp');if(cmp){cmp.innerHTML=V?`<div class="progress" style="margin-top:12px"><div class="lbl" style="display:flex;justify-content:space-between;gap:12px;color:var(--ink-2)"><span><b>Eu</b> · ${pct}%</span><span>${tN?`<b>${eq==='Viriato'?'Assiduidade coletiva da Viriato':'Média da Equipa '+esc(eqNome(eq))}</b> · ${tpct}%`:''}</span></div><div class="bar" style="background:var(--line);margin-top:4px"><i style="width:${tpct}%;background:var(--azul-2)"></i></div></div><p class="note" style="margin-top:6px">${eq==='Viriato'?'A Viriato conta nas sessões de Comunidade e nas suas reuniões.':pct>tpct+3?'Estás acima da média da tua Equipa. Puxa pelos outros.':pct<tpct-3?'Estás abaixo da média da tua Equipa. A Equipa conta contigo.':'Estás a par da tua Equipa.'}</p>`:'<p class="note" style="margin-top:6px">As presenças marcam-se em cada atividade, no separador Caminhada.</p>';}
   const bar=$('#assBar');if(bar)bar.style.width=pct+'%';const tx=$('#assTxt');if(tx)tx.textContent=V?pct+'% de assiduidade em '+V+' dia(s) já realizado(s) e validado(s)':'Ainda sem dias realizados e validados';
-  const hp=$('#hAssid');if(hp)hp.textContent='';if(typeof paintResumo==='function')paintResumo();
+  const hp=$('#hAssid');if(hp){hp.textContent=pct+'% assiduidade';hp.style.display='';}if(typeof paintResumo==='function')paintResumo();
   const ac=$('#assCard');if(ac)ac.style.display='';
 }
 /* bloco de presenças de uma etapa da Caminhada (um dia por linha) */
@@ -2280,7 +2288,7 @@ function setMode(m){mode=m;
   const canCmt=ro&&PROFILE&&PROFILE.role!=='jovem'; $('#cmtForm').style.display=canCmt?'':'none'; $('#cmtNote').style.display=canCmt?'none':'';
 }
 /* tabs */
-$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.tab));window.scrollTo({top:0,behavior:'smooth'});});
+$$('.tabs button').forEach(b=>b.onclick=()=>{try{colapsarTudo();}catch(e){}$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.tab));window.scrollTo({top:0,behavior:'smooth'});});
 
 /* ===== AUTH + DATA ===== */
 function showTab(id){$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x.dataset.tab===id));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+id));window.scrollTo({top:0});}
