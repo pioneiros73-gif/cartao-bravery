@@ -713,6 +713,10 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
         <p>Quando abres a app e tens alguma coisa por tratar, aparece primeiro a lista <b>Está em falta</b>: dados do Perfil (fotografia, nome completo, data de nascimento, telemóvel, contactos do encarregado de educação se fores menor, Cargo), presenças por declarar em atividades já realizadas, "O que guardo deste dia" por escrever e pagamentos com o prazo passado.</p>
         <p>Em cada ponto, <b>Ir preencher</b> leva-te ao separador e ao cartão certos. O que guardas de cada atividade escreve-se logo ali. <b>Mais tarde</b> fecha a lista até à próxima vez que abrires a app; entretanto, o botão laranja <b>Em falta: n</b>, no cabeçalho do teu cartão, volta a abri-la. A Viriato não vê este ecrã: acompanha o mesmo resumo, por Pioneiro, em Painel → Pendentes.</p>
       </details>
+      <details><summary>Como se calcula a assiduidade</summary>
+        <p>A percentagem é o número de dias em que estiveste presente a dividir pelos dias já realizados e validados pela Viriato. Conta o que ficou registado no mapa de presenças; se a Viriato validou um dia sem registo para ti, vale a tua declaração ("Estive presente" ou falta justificada). Um dia validado em que não tens registo nem declaração não entra na tua conta.</p>
+        <p>Quando a Viriato valida um dia, as declarações passam sozinhas para o mapa e ninguém fica em branco.</p>
+      </details>
       <details><summary>Presenças numa caixa e tabelas com a 1.ª coluna fixa</summary>
         <p>Em cada atividade da Caminhada, as <b>Presenças</b> ficam numa caixa fechada, como "Materiais para a Atividade". O título diz logo o estado (por exemplo "2 dias · ainda por realizar" ou "1 por declarar"); toca para abrir e declarar a presença ou justificar a falta.</p>
         <p>Nas tabelas que deslizam para o lado (Painel, Comunidade, Administração), a primeira coluna, com o nome, fica sempre visível enquanto deslizas o resto.</p>
@@ -1469,13 +1473,13 @@ function sessGroups(x){const p=sessPara(x);const t=sessTargets(x);const g={};if(
 /* assiduidade coletiva de um grupo (Equipa, Cristóvão Colombo ou Viriato): presenças ÷ registos em dias validados */
 /* atividade já realizada: dia anterior a hoje, ou hoje depois da hora de fim (só estas contam para a assiduidade) */
 function sessRealizada(x){const now=new Date();const today=now.toISOString().slice(0,10);if(!x||!x.date)return false;const d=x.parent?x.date:((x.end&&x.end>x.date)?x.end:x.date);if(d<today)return true;if(d>today)return false;const hm=now.toTimeString().slice(0,5);return hm>=(x.hFim||'23:59');}
-function assidGrupo(grp){let P=0,N=0,V=0;daySessions().filter(x=>!isFreeS(x)&&sessRealizada(x)).forEach(x=>{const p=sessPara(x);const ok=grp==='Viriato'?(p==='comunidade'||p==='viriato'):grp==='Cristóvão Colombo'?p==='cc':(p==='comunidade');if(!ok)return;const e=eqDoc(x.id,grp);if(!e.validated)return;V++;Object.entries(e.pres).forEach(([u,q])=>{if(isServico(u))return;if(q==='P'||q==='F'||q==='J'){N++;if(q==='P')P++;}});});return {pct:N?Math.round(100*P/N):0,dias:V,n:N};}
+function assidGrupo(grp){let P=0,N=0,V=0;daySessions().filter(x=>!isFreeS(x)&&sessRealizada(x)).forEach(x=>{const p=sessPara(x);const ok=grp==='Viriato'?(p==='comunidade'||p==='viriato'):grp==='Cristóvão Colombo'?p==='cc':(p==='comunidade');if(!ok)return;const e=eqDoc(x.id,grp);if(!e.validated)return;V++;presUids(x,grp).forEach(u=>{const q=presEf(x.id,grp,u);if(q==='P'||q==='F'||q==='J'){N++;if(q==='P')P++;}});});return {pct:N?Math.round(100*P/N):0,dias:V,n:N};}
 function virAmanha(){const t=new Date();t.setDate(t.getDate()+1);const k=t.toISOString().slice(0,10);return daySessions().filter(x=>x.date===k&&!isFreeS(x)&&canSeeSess(x));}
 /* atividades reservadas: a Viriato cria escondidas (revelada:false) e revela quando quiser; base do ano e reuniões geradas nascem reveladas */
 function sessHidden(x){return x.revelada===false&&myKind()!=='ea';}
 function sessTitle(x){return sessHidden(x)?'Atividade a revelar pela Viriato':(x.title||'');}
 function sessClass(x){if(/livre/i.test(x.type||''))return 'free';if(sessHidden(x))return 'hid';if(isJam(x))return 'jam';const p=sessPara(x);if(p==='viriato')return 'vir';if(p==='cc')return 'cc';if(/acamp/i.test(x.type||''))return 'camp';if(/ativ|raide/i.test(x.type||''))return 'ativ';return 'reun';}
-function myPresClass(key,byDay){if(typeof PROFILE!=='undefined'&&PROFILE&&VIEW!==ME.uid)return '';const me=ATT.me();const ss=daySessions().filter(x=>x.date===key&&amTarget(x));for(const x of ss){const e=eqDoc(x.id,myGroupFor(x));if(e.validated&&e.pres[me])return ' p'+e.pres[me];}return '';}
+function myPresClass(key,byDay){if(typeof PROFILE!=='undefined'&&PROFILE&&VIEW!==ME.uid)return '';const me=ATT.me();const ss=daySessions().filter(x=>x.date===key&&amTarget(x));for(const x of ss){const e=eqDoc(x.id,myGroupFor(x));const pe=presEf(x.id,myGroupFor(x),me);if(e.validated&&pe)return ' p'+pe;}return '';}
 function paintCal(){const box=$('#cal');if(!box)return;box.innerHTML='';const byDay={};daySessions().filter(canSeeSess).forEach(x=>{(byDay[x.date]=byDay[x.date]||[]).push(x);});
   const today=new Date().toISOString().slice(0,10);const months=[];for(let y=2026,m=8;!(y===2027&&m===8);m++){if(m>11){m=0;y++;}months.push([y,m]);}
   const MN=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1489,7 +1493,7 @@ let CAL_SEL='';
 function calDay(key,ss){const info=$('#calInfo');const fd=fmtDate(key);const adm=typeof isAdmin==='function'&&isAdmin();info.innerHTML='';CAL_SEL=key;$$('#cal i.sel').forEach(x=>x.classList.remove('sel'));const cell=$('#cal i[data-d="'+key+'"]');if(cell)cell.classList.add('sel');info.style.cssText='margin-top:8px;border:1.5px solid var(--laranja);border-radius:12px;padding:8px 10px;background:var(--bg)';
   const h=document.createElement('div');h.innerHTML=`<b>${fd.full}</b>`;info.appendChild(h);
   (ss||[]).forEach(x=>{const parent=allSessions().find(z=>z.id===(x.parent||x.id))||x;const r=document.createElement('div');r.className='row';r.style.margin='4px 0';
-    const me=ATT.me();const e=eqDoc(x.id,myGroupFor(x));const p=e.pres[me];
+    const me=ATT.me();const e=eqDoc(x.id,myGroupFor(x));const p=presEf(x.id,myGroupFor(x),me);
     r.innerHTML=`<span>${esc(sessTitle(x))} ${sessHidden(x)?'':`<i>(${esc(x.type||'')} · ${esc(PARA_LBL[sessPara(x)]||'')}${parent.end&&parent.end>parent.date?' · '+fmtWhen(parent.date,parent.end):''})</i>`}${(!sessHidden(x)&&fmtQuando(parent))?`<div class="note" style="font-weight:700;color:var(--azul)">${esc(fmtQuando(parent))}</div>`:''}${(!sessHidden(x)&&fmtCusto(parent))?`<div class="note" style="font-weight:700;color:var(--laranja)">${esc(fmtCusto(parent))}</div>`:''}${(amTarget(x)&&p&&e.validated)?` <span class="pres ${p}">${p==='P'?'Presente':p==='J'?'Justificada':'Falta'}</span>`:''}</span>`;
     if(adm){const be=document.createElement('button');be.className='btn sm ghost';be.textContent='Alterar';be.onclick=()=>calEditForm(parent,info);const bd=document.createElement('button');bd.className='btn sm ghost';bd.textContent=parent.base?'Cancelar atividade':'Eliminar';bd.onclick=()=>{if(parent.base){if(confirm('Cancelar a atividade "'+(parent.title||'')+'" da Caminhada? Deixa de aparecer na Caminhada e no calendário.'))ATT.createSession(Object.assign(baseSessionData(parent),{cancelled:true}));return;}if(confirm('Eliminar a sessão "'+(parent.title||'')+'"'+(parent.end?' (todos os dias)':'')+'? As presenças já registadas deixam de contar.'))ATT.deleteSession(parent.id);};
       const bl=document.createElement('button');bl.className='btn sm ghost';bl.textContent=isFreeS(parent)?'Repor atividade':'Marcar dia livre';bl.onclick=()=>{if(parent.base){ATT.createSession(Object.assign(baseSessionData(parent),{type:'Dia livre',title:'Dia livre'}));return;}ATT.setType(parent.id,isFreeS(parent)?'Reunião':'Dia livre');};
@@ -1513,7 +1517,7 @@ function calEditForm(x,info){const f=document.createElement('div');f.className='
 (function(){const box=$('#ajudaOE');if(!box)return;box.innerHTML=FACEIS.map(f=>`<h3 style="margin:8px 0 4px">${esc(f.n)}</h3>`+TRILHOS[f.k].map((t,i)=>{const oe=TRILHO_OE[f.k+i]||{oes:[],enq:''};return `<details style="margin:4px 0"><summary style="font-size:13px"><b>${i+1}. ${esc(t.n)}</b> · ${oe.oes.map(x=>x.c).join(', ')}</summary><p class="note" style="margin:4px 0">${esc(oe.enq)}</p><ul style="margin:4px 0;padding-left:18px;font-size:14px">${oe.oes.map(x=>`<li><b>${esc(x.c)}</b> ${esc(x.t)}</li>`).join('')}</ul></details>`;}).join('')).join('');})();
 /* Empreendimento do ano (config/app.projeto online; demo: fixo) */
 function paintProjeto(){const el=$('#hProjeto');if(!el)return;const n=(typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.projeto)||'Bravery';el.textContent=n;document.title='Empreendimento '+n+' · Comunidade 25 · 73 Carnide';}
-const APP_VERSION='v51';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
+const APP_VERSION='v52';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
 paintProjeto();
 layoutV44();colapsarTudo();
 /* ===== MÉTODO ESCUTISTA (cartão da Viriato) ===== */
@@ -1830,6 +1834,9 @@ const ATT={
 function sessReveal(sid,on){db.collection('sessions').doc(sid).set({revelada:on},{merge:true}).then(()=>{toast(on?'Atividade revelada aos Pioneiros':'Atividade escondida');if(on){const x=(ATTD.sessions||[]).find(z=>z.id===sid);const tok=x?(sessPara(x)==='comunidade'?['all']:sessPara(x)==='cc'?['guias']:sessPara(x)==='alguns'?(x.uids||[]):['ea']):['all'];logEvent('Atividade revelada','A Viriato revelou a atividade "'+((x&&x.title)||'')+'" ('+(x?fmtWhen(x.date,x.end):'')+')',{notify:tok,ea:true});}}).catch(e=>toast('Erro: '+e.code));}
 let ATTD={sessions:[],eq:{},just:{}};window.ATT=ATT;
 function decl(sid,uid){const j=(ATTD.just[sid]||{})[uid];if(!j)return null;return typeof j==='string'?{p:'J',txt:j}:j;}
+/* v52: presença efetiva de uma pessoa num dia: o registo do mapa; num dia já validado sem registo, vale a declaração da própria pessoa (P ou J); sem uma nem outra, '' (esse dia não conta para ela) */
+function presEf(sid,grp,uid){const e=eqDoc(sid,grp);const p=(e.pres||{})[uid];if(p)return p;if(!e.validated)return '';const dc=decl(sid,uid);return dc?(dc.p==='P'?'P':'J'):'';}
+function presUids(x,grp){const s=new Set(Object.keys(eqDoc(x.id,grp).pres||{}));try{((sessGroups(x)||{})[grp]||[]).forEach(m=>s.add(m.uid));}catch(e){}return [...s].filter(u=>!isServico(u));}
 function eqDoc(sid,equipa){const e=ATTD.eq[sid+'|'+equipa]||{};return Object.assign({pres:{}},e,{pres:e.pres||{}});}
 function fmtDate(d){if(!d)return '';const x=new Date(d+'T00:00:00');return {d:x.getDate(),m:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][x.getMonth()],full:x.toLocaleDateString('pt-PT')};}
 function isFreeS(x){return /livre/i.test(x.type||'');}
@@ -1841,13 +1848,13 @@ function sessionsOf(t){const all=daySessions().filter(x=>!isFreeS(x)&&canSeeSess
 /* resumo (topo do separador Empreendimento) */
 /* assiduidade própria: só dias já realizados e validados */
 function myAssid(){const me=ATT.me();const sess=daySessions().filter(x=>amTarget(x)&&!isFreeS(x)&&sessRealizada(x));let P=0,F=0,J=0,V=0;
-  sess.forEach(x=>{const e=eqDoc(x.id,myGroupFor(x));if(e.validated){V++;const p=e.pres[me];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
+  sess.forEach(x=>{const e=eqDoc(x.id,myGroupFor(x));if(e.validated){const p=presEf(x.id,myGroupFor(x),me);if(!p)return;V++;if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
   return {P,F,J,V,pct:V?Math.round(100*P/V):0,sess};}
 function assidTxt(){const a=myAssid();return a.V?a.pct+'% ('+a.P+' presença(s) em '+a.V+' dia(s) validado(s))':'(sem dias validados)';}
 function paintAssid(){
   const me=ATT.me(), eq=myKind()==='ea'?'Viriato':ATT.myEquipa();
   const {P,F,J,V,pct,sess}=myAssid();
-  let tP=0,tN=0;sess.filter(x=>sessPara(x)==='comunidade'||(eq==='Viriato'&&sessPara(x)==='viriato')).forEach(x=>{const e=eqDoc(x.id,eq);if(e.validated){Object.entries(e.pres).forEach(([u,p])=>{if(isServico(u))return;if(p==='P'||p==='F'||p==='J'){tN++;if(p==='P')tP++;}});}});
+  let tP=0,tN=0;sess.filter(x=>sessPara(x)==='comunidade'||(eq==='Viriato'&&sessPara(x)==='viriato')).forEach(x=>{const e=eqDoc(x.id,eq);if(e.validated){presUids(x,eq).forEach(u=>{const p=presEf(x.id,eq,u);if(p==='P'||p==='F'||p==='J'){tN++;if(p==='P')tP++;}});}});
   const tpct=tN?Math.round(100*tP/tN):0;
   const st=$('#assStats');if(st)st.innerHTML=`<div><b>${P}</b><span>presenças</span></div><div><b>${J}</b><span>justificadas</span></div><div><b>${F}</b><span>faltas</span></div>`;
   const cmp=$('#assCmp');if(cmp){cmp.innerHTML=V?`<div class="progress" style="margin-top:12px"><div class="lbl" style="display:flex;justify-content:space-between;gap:12px;color:var(--ink-2)"><span><b>Eu</b> · ${pct}%</span><span>${tN?`<b>${eq==='Viriato'?'Assiduidade coletiva da Viriato':'Média · '+esc(eqLabel(eq))}</b> · ${tpct}%`:''}</span></div><div class="bar" style="background:var(--line);margin-top:4px"><i style="width:${tpct}%;background:var(--azul-2)"></i></div></div><p class="note" style="margin-top:6px">${eq==='Viriato'?'A Viriato conta nas sessões de Comunidade e nas suas reuniões.':pct>tpct+3?'Estás acima da média da tua Equipa. Puxa pelos outros.':pct<tpct-3?'Estás abaixo da média da tua Equipa. A Equipa conta contigo.':'Estás a par da tua Equipa.'}</p>`:'<p class="note" style="margin-top:6px">As presenças marcam-se em cada atividade, no separador Caminhada.</p>';}
@@ -1920,10 +1927,10 @@ function presBlock(t,box){
   const me=ATT.me(), today=new Date().toISOString().slice(0,10);
   const w=document.createElement('div');w.className='presb';w.innerHTML='<h4>Presenças'+(days.length>1?' · '+days.length+' dias':'')+'</h4>';
   const cnt={falta:0,decl:0,reg:0,fut:0};
-  days.forEach(x=>{const tgt=amTarget(x);const e=eqDoc(x.id,myGroupFor(x));const p=e.pres[me];const dc=decl(x.id,me);const fd=fmtDate(x.date);
+  days.forEach(x=>{const tgt=amTarget(x);const e=eqDoc(x.id,myGroupFor(x));const p=presEf(x.id,myGroupFor(x),me);const dc=decl(x.id,me);const fd=fmtDate(x.date);
     const r=document.createElement('div');r.className='dayrow';if(!tgt&&!ATT.canMap())return;const futuro=!sessRealizada(x);
     if(tgt){if(p)cnt.reg++;else if(dc)cnt.decl++;else if(futuro)cnt.fut++;else cnt.falta++;}
-    const lbl=p==='P'?'Presente':p==='F'?'Falta':p==='J'?'Justificada':'Por registar';
+    const lbl=p==='P'?'Presente':p==='F'?'Falta':p==='J'?'Justificada':e.validated?'Sem registo':'Por registar';
     r.innerHTML=`<span class="dl">${fd.d} ${fd.m}${x.day?' · dia '+x.day:''}</span>${tgt?`<span class="pres ${p||'N'} ${e.validated?'V':''}" title="${e.validated?'validado pela Viriato':e.gval?'confirmado pelo Guia':''}">${lbl}${e.validated?' ✓':e.gval?' · Guia':''}</span>`:`<span class="note">${esc(PARA_LBL[sessPara(x)]||'')}</span>`}${dc&&tgt?`<span class="note">${dc.p==='P'?'declarei presença':'avisei falta: '+esc(dc.txt||'')}</span>`:''}${futuro?'<span class="note">ainda por realizar</span>':''}`;
     if(tgt&&(mode==='eu'||typeof ME!=='undefined'&&ME&&VIEW===ME.uid)&&!e.validated&&!e.gval){const bp=document.createElement('button');bp.className='btn sm '+(dc&&dc.p==='P'?'':'ghost');bp.textContent=dc&&dc.p==='P'?'✓ Estive presente':'Estive presente';bp.onclick=()=>ATT.declare(x.id,me,'P','',myGroupFor(x));if(futuro)bp.style.display='none';
       const bj=document.createElement('button');bj.className='btn sm '+(dc&&dc.p==='J'?'':'ghost');bj.textContent=dc&&dc.p==='J'?'✓ Falta justificada (editar)':(x.date>=today?'Vou faltar (justificar)':'Faltei (justificar)');bj.onclick=()=>{const tx=prompt('Motivo da falta (obrigatório; o Guia confirma):',(dc&&dc.txt)||'');if(tx===null)return;if(!tx.trim())return toast('Indica o motivo');ATT.declare(x.id,me,'J',tx.trim(),myGroupFor(x));};
@@ -1953,7 +1960,11 @@ function presMap(x,w){const sid=x.id;const byEq=sessGroups(x);const special=['Cr
     const acts=document.createElement('div');acts.className='row';acts.style.margin='4px 0';
     if(editable&&!e.gval){const b=document.createElement('button');b.className='btn sm ghost';b.textContent='Usar as declarações';b.title='Presença declarada → P, falta justificada → J, sem declaração → F';b.onclick=()=>{byEq[equipa].forEach(m=>{if(e.pres[m.uid])return;const dc=decl(sid,m.uid);ATT.mark(sid,equipa,m.uid,dc?(dc.p==='P'?'P':'J'):'F');});};acts.appendChild(b);}
     if(!sp&&ATT.canMark(equipa)&&!locked){const b=document.createElement('button');b.className='btn sm '+(e.gval?'ghost':'');b.textContent=e.gval?'Reabrir (Guia)':'Confirmar (Guia)';b.onclick=()=>{if(!e.gval&&byEq[equipa].some(m=>!e.pres[m.uid]))return toast('Falta registar alguém');ATT.gvalidate(sid,equipa,!e.gval);};acts.appendChild(b);}
-    if(ATT.canValidate()){const b=document.createElement('button');b.className='btn sm '+(locked?'ghost':'y');b.textContent=locked?'Reabrir':'Validar (Viriato)';b.onclick=()=>ATT.validate(sid,equipa,!locked);acts.appendChild(b);}
+    if(ATT.canValidate()){const b=document.createElement('button');b.className='btn sm '+(locked?'ghost':'y');b.textContent=locked?'Reabrir':'Validar (Viriato)';b.onclick=()=>{if(locked)return ATT.validate(sid,equipa,false);
+      /* v52: ao validar, as declarações passam para o mapa (P / J) e ninguém fica em branco */
+      const semReg=[];byEq[equipa].forEach(m=>{if(e.pres[m.uid])return;const dc=decl(sid,m.uid);if(dc)ATT.mark(sid,equipa,m.uid,dc.p==='P'?'P':'J');else semReg.push(m);});
+      if(semReg.length){if(!confirm('Sem registo nem declaração: '+semReg.map(m=>m.nome).join(', ')+'.\n\nOK = marcar Falta a estes elementos e validar.\nCancelar = voltar ao mapa para os registar.'))return;semReg.forEach(m=>ATT.mark(sid,equipa,m.uid,'F'));}
+      setTimeout(()=>ATT.validate(sid,equipa,true),semReg.length||byEq[equipa].length?250:0);};acts.appendChild(b);}
     if(acts.children.length)det.appendChild(acts);});
   w.appendChild(det);}
 /* sessões: criar, gerar, editar, eliminar (só a Viriato) */
@@ -2625,7 +2636,7 @@ function fillPreEquipas(){const se=$('#preEquipa');if(!se)return;const cur=se.va
 /* Matriz da Comunidade + exportação */
 async function buildRows(){
   const rows=[]; const users=USERS.filter(u=>!u.servico&&(PROFILE.role==='ea'||u.equipa===PROFILE.equipa));
-  const sess=ATTD.sessions||[];
+  const sess=daySessions();
   for(const u of users){
     const c=CARDS.find(x=>x.uid===u.uid)||{}; let ea={};
     try{const sn=await db.collection('cards').doc(u.uid).collection('reviews').doc('ea').get(); ea=sn.exists?sn.data():{};}catch(e){}
@@ -2634,7 +2645,7 @@ async function buildRows(){
     const etapa=u.role==='ea'?'-':papel==='Noviço'?'Desprendimento':(FACEIS.every(f=>done[f.k]>=3)?'Concluído':ETAPAS[Math.min(3,1+min)]);
     const espv=ea.espv||{}; const esps=(c.esp||[]).map(e=>e.nome+(espv[e.id]?' ✓':'')).join(', ');
     const eq=u.role==='ea'?'Viriato':(u.equipa||''); const eqTxt=u.role==='ea'?'Viriato':(u.equipa?eqLabelFull(u.equipa):''); let P=0,V=0,F=0,J=0;
-    sess.filter(x=>!x.cancelled&&!isFreeS(x)&&sessRealizada(x)).forEach(x=>{const d=ATTD.eq[x.id+'|'+eq];if(d&&d.validated){V++;const p=(d.pres||{})[u.uid];if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
+    sess.filter(x=>!x.cancelled&&!isFreeS(x)&&sessRealizada(x)).forEach(x=>{const d=ATTD.eq[x.id+'|'+eq];if(d&&d.validated){const p=presEf(x.id,eq,u.uid);if(!p)return;V++;if(p==='P')P++;else if(p==='J')J++;else if(p==='F')F++;}});
     rows.push({Nome:u.nome||'','Nome completo':(c.id&&c.id.nomeCompleto)||'','Data de nascimento':(c.id&&c.id.nascimento)?new Date(c.id.nascimento).toLocaleDateString('pt-PT'):'',Totem:(c.id&&c.id.totem)||'',Equipa:eqTxt,Estado:u.role==='ea'?'Viriato':papelLabel(papel,generoDe(u,c)),'Último ano':(c.id&&c.id.ultimoAno)?'Sim':'','Meta':u.role==='ea'?'':((c.id&&c.id.ultimoAno)?'Anilha de Mérito':'Insígnia de Mérito'),Cargo:(c.id&&c.id.cargo)||'','Cargo 2':u.cargo2||(c.id&&c.id.cargo2)||'',Etapa:etapa,'Farol':(c.nov&&c.nov.Farol)||'','Adesão':(papel==='Noviço')?(adesList().filter(r=>(ea.adesv||{})[r.id]).length+'/'+adesList().length):'','Trilhos validados':Object.values(done).reduce((s,n)=>s+n,0),'Trilhos concretizados (datas)':Object.entries(c.tri||{}).filter(([k,t])=>t&&t.conc).map(([k,t])=>k+' '+new Date(t.conc).toLocaleDateString('pt-PT')).join('; '),'F':done.F,'A':done.A,'C':done.C,'E':done.E,'I':done.I,'S':done.S,'Bravery':(c.brv&&c.brv.dificuldade)||'','Especialidades':esps,'Áreas Mérito':new Set((c.esp||[]).filter(e=>espv[e.id]).map(e=>e.area)).size,'Presenças':P,'Justificadas':J,'Faltas':F,'Angariação validada (€)':(()=>{const av=ea.angv||{};return Object.keys(av).reduce((s,k)=>s+(Number(av[k].valor)||0),0);})(),'Assiduidade %':V?Math.round(100*P/V):'' ,'Pagamentos em falta':u.role==='ea'?'':pagList().filter(p=>!((ea.pagv||{})[p.id])).map(p=>p.ativ+(((c.pag||{})[p.id]||{}).pago?' (registado)':'')).join('; '),'Sessões validadas':V,_foto:(c.id&&c.id.foto)||''});
   }
   return rows.sort((a,b)=>a.Equipa.localeCompare(b.Equipa)||a.Nome.localeCompare(b.Nome));
