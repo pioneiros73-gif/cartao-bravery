@@ -328,7 +328,8 @@ textarea{resize:vertical;min-height:64px}
 .insct td{background:var(--card);color:var(--ink)}
 .step.camp .insct td,.step.camp .insct td b{color:var(--ink)}
 .insct td .note{color:var(--ink-2)!important;font-size:11.5px;margin-top:2px}
-.insct .geqr td{background:var(--sel)!important;font-weight:800}.inscbox textarea{font:inherit;border-radius:8px;border:1px solid var(--line);padding:6px}
+.insct .geqr td{background:var(--sel)!important;font-weight:800}
+.missab{margin:6px 0 2px;padding:6px 8px;border:1px dashed var(--line);border-radius:10px}.step.camp .missab{border-color:rgba(255,255,255,.4)}.inscbox textarea{font:inherit;border-radius:8px;border:1px solid var(--line);padding:6px}
 .pres.P{background:#D7F3E1;color:#136B3A}.pres.F{background:#FDE0E0;color:#9B1C1C}.pres.J{background:#FDF1C7;color:#6E5300}.pres.N{background:var(--line);color:var(--ink-2)}
 .pres.V::after{content:" ✓"}
 .pbtns{display:flex;gap:4px}
@@ -759,6 +760,12 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       </details>
       <details><summary>Autorizações em papel</summary>
         <p>A autorização de saída em atividades, a autorização de saída sem adulto e a ficha médica entregam-se em papel à Viriato; a app não guarda o seu conteúdo. A Viriato regista apenas que foram entregues, e em que data. Enquanto faltar alguma, aparece no teu ecrã "Está em falta".</p>
+      </details>
+      <details><summary>Como concretizei (Trilhos)</summary>
+        <p>Em cada Trilho há a caixa "Como concretizei os Objetivos Educativos": descreve, por palavras tuas, como o concretizaste, além das oportunidades educativas (data e atividade). É preciso preenchê-la antes de "Proponho ao Guia: concluído", e o que escreveres segue com a validação, para o Guia, a Cristóvão Colombo e a Viriato lerem. Nas Provas do Passaporte do Desprendimento usa a caixa "Como vou concretizar".</p>
+      </details>
+      <details><summary>Presenças na missa</summary>
+        <p>No mapa de presenças de cada dia (Guia e Viriato) há o bloco "Missa": primeiro indica-se se houve missa; havendo, marca-se P ou F por elemento. Nos acampamentos, raides e Jamboree não há registo de missa. Não conta para a assiduidade: é só registo. Cada um vê a sua presença na missa na linha do dia, na Caminhada.</p>
       </details>
       <details><summary>Inscrição nas atividades</summary>
         <p>Quando a Viriato pede inscrição numa atividade, aparece na Caminhada, dentro da atividade, a caixa "Inscrição". Toca em "Inscrever-me" se vais. Se não fores, toca em "Não vou" e escreve porquê: fica registada a falta justificada nos dias da atividade. Podes mudar a resposta até ao prazo. Enquanto não responderes, a atividade aparece no ecrã "Está em falta". O teu Guia vê as respostas da tua Equipa e a Viriato vê as de todos.</p>
@@ -1744,7 +1751,7 @@ function calEditForm(x,info,opt){opt=opt||{};const old=info.querySelector(':scop
 (function(){const box=$('#ajudaOE');if(!box)return;box.innerHTML=FACEIS.map(f=>`<h3 style="margin:8px 0 4px">${esc(f.n)}</h3>`+TRILHOS[f.k].map((t,i)=>{const oe=TRILHO_OE[f.k+i]||{oes:[],enq:''};return `<details style="margin:4px 0"><summary style="font-size:13px"><b>${i+1}. ${esc(t.n)}</b> · ${oe.oes.map(x=>x.c).join(', ')}</summary><p class="note" style="margin:4px 0">${esc(oe.enq)}</p><ul style="margin:4px 0;padding-left:18px;font-size:14px">${oe.oes.map(x=>`<li><b>${esc(x.c)}</b> ${esc(x.t)}</li>`).join('')}</ul></details>`;}).join('')).join('');})();
 /* Empreendimento do ano (config/app.projeto online; demo: fixo) */
 function paintProjeto(){const el=$('#hProjeto');if(!el)return;const n=(typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.projeto)||'Bravery';el.textContent=n;document.title='Empreendimento '+n+' · Comunidade 25 · 73 Carnide';}
-const APP_VERSION='v60';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
+const APP_VERSION='v61';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
 paintProjeto();
 layoutV44();colapsarTudo();
 /* ===== MÉTODO ESCUTISTA (cartão da Viriato) ===== */
@@ -1875,18 +1882,20 @@ function trilhoEl(area,i){
     ${mode!=='eu'?`<details style="margin-top:4px"><summary style="font-size:13px">O que observar</summary><ul class="note" style="margin:4px 0 0;padding-left:18px">${T.o.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:''}
     <h4 style="margin:10px 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)">Oportunidades educativas</h4>
     <div class="ops"></div>
+    <div class="field tdw" style="margin-top:8px"><label>Como concretizei os Objetivos Educativos</label><textarea class="tdesc" rows="2" placeholder="Descreve, por palavras tuas, como concretizaste este Trilho">${esc(t.desc||'')}</textarea></div>
     <div class="acts"><span class="st">${TR_STATES[st]}</span>${t.ini?`<span class="note">Início: ${esc(new Date(t.ini).toLocaleDateString('pt-PT'))}</span>`:''}${t.conc&&st>=2?`<span class="note">Concretizado: ${esc(new Date(t.conc).toLocaleDateString('pt-PT'))}</span>`:''}${st===5?`<span class="note">Validado: ${esc(e.vd||histTrilho(key)||'')}</span>`:''}</div>`;
   const ops=d.querySelector('.ops');
   const paintOps=()=>{ops.innerHTML='';t.ops.forEach((o,j)=>{const r=document.createElement('div');r.className='item';r.style.padding='6px 10px';r.innerHTML=`<div class="top"><div><div class="meta">${esc(o.d?new Date(o.d).toLocaleDateString('pt-PT'):'sem data')}</div><div style="font-size:14px">${esc(o.t)}</div></div>${(mode==='eu'&&st<2)?'<button class="del" title="Remover">×</button>':''}</div>`;const del=r.querySelector('.del');if(del)del.onclick=()=>{t.ops.splice(j,1);save();paintOps();};ops.appendChild(r);});
     if(!t.ops.length)ops.innerHTML='<p class="note">Ainda sem oportunidades registadas.</p>';
     if(mode==='eu'&&st<2){const f=document.createElement('div');f.className='addrow';f.innerHTML=`<input type="date" style="flex:0 0 130px"><input placeholder="Atividade que me ajudou a concretizar este Trilho"><button class="btn sm" type="button">+</button>`;const [di,ti]=f.querySelectorAll('input');f.querySelector('button').onclick=()=>{if(!ti.value.trim())return toast('Escreve a oportunidade');t.ops.push({d:di.value,t:ti.value.trim()});if(st===0)t.s=1;save();paintFaceis();};ti.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();f.querySelector('button').click();}});ops.appendChild(f);}
   }; paintOps();
+  {const tw=d.querySelector('.tdw'),td=tw&&tw.querySelector('.tdesc');if(td){if(mode==='eu'&&(st<2||st===3)){td.oninput=()=>{t.desc=td.value;};td.onchange=()=>{t.desc=td.value.trim();save();};}else if((t.desc||'').trim()){const ro=document.createElement('div');ro.className='rev';ro.innerHTML='<b>Como concretizou</b>'+esc(t.desc);tw.replaceWith(ro);}else tw.remove();}}
   const acts=d.querySelector('.acts');
   const btn=(txt,cls,fn)=>{const b=document.createElement('button');b.type='button';b.className='btn sm '+cls;b.textContent=txt;b.onclick=fn;acts.appendChild(b);return b;};
   const repaint=()=>{save();paintFaceis();};
   if(mode==='eu'){
     if(st===0) btn('Começar este Trilho','',()=>{t.s=1;t.ini=isoLocal();repaint();});
-    if(st===1||st===3){ const dc=document.createElement('label');dc.className='note';dc.style.cssText='display:inline-flex;align-items:center;gap:6px';dc.innerHTML='Concretizado em <input type="date" class="tconc" style="width:auto;padding:4px 6px">';dc.querySelector('input').value=t.conc||isoLocal();acts.appendChild(dc); btn('Proponho ao Guia: concluído','o',()=>{if(!t.ops.length)return toast('Regista pelo menos uma oportunidade educativa');const cv=dc.querySelector('input').value;if(!cv)return toast('Indica a data em que concretizaste o Trilho');t.conc=cv;t.s=2;t.at=Date.now();repaint();valCreate({tipo:'trilho',key,titulo:'Trilho "'+nm+'" ('+area+')',detalhe:t.ops.map(o=>(o.d?new Date(o.d).toLocaleDateString('pt-PT')+' ':'')+o.t).join(' · ')});}); if(st===1) btn('Deixar','ghost',()=>{t.s=0;repaint();}); }
+    if(st===1||st===3){ const dc=document.createElement('label');dc.className='note';dc.style.cssText='display:inline-flex;align-items:center;gap:6px';dc.innerHTML='Concretizado em <input type="date" class="tconc" style="width:auto;padding:4px 6px">';dc.querySelector('input').value=t.conc||isoLocal();acts.appendChild(dc); btn('Proponho ao Guia: concluído','o',()=>{if(!t.ops.length)return toast('Regista pelo menos uma oportunidade educativa');if(!(t.desc||'').trim())return toast('Descreve como concretizaste os Objetivos Educativos (caixa "Como concretizei")');const cv=dc.querySelector('input').value;if(!cv)return toast('Indica a data em que concretizaste o Trilho');t.conc=cv;t.s=2;t.at=Date.now();repaint();valCreate({tipo:'trilho',key,titulo:'Trilho "'+nm+'" ('+area+')',detalhe:'Como concretizei: '+t.desc+' · '+t.ops.map(o=>(o.d?new Date(o.d).toLocaleDateString('pt-PT')+' ':'')+o.t).join(' · ')});}); if(st===1) btn('Deixar','ghost',()=>{t.s=0;repaint();}); }
   }
   if(mode==='guia' && PROFILE.role==='guia' && (st===2||st===3||st===4)){
     const ta=document.createElement('textarea');ta.placeholder='Porquê? O que vi na prática';ta.value=g.g||'';d.appendChild(ta);
@@ -2058,6 +2067,8 @@ const ATT={
   declare(sid,uid,p,txt,grp,extra){db.collection('avisos').doc(sid.replace(/[@\/]/g,'-')+'_'+uid).set(Object.assign({sid,uid,equipa:grp||PROFILE.equipa||'',p,txt:txt||'',at:firebase.firestore.FieldValue.serverTimestamp()},extra||{})).then(()=>{const ss=(ATTD.sessions||[]).find(x=>x.id===sid);if(extra&&extra.insc)return;toast(p==='P'?'Presença declarada':'Falta justificada');if(p==='J')logEvent('Aviso de falta',(PROFILE.nome||'')+' justificou falta a "'+(ss?ss.title:sid)+'": '+txt,{notify:['guia:'+(PROFILE.equipa||'')]});}).catch(e=>toast('Erro: '+e.code));},
   undeclare(sid,uid){db.collection('avisos').doc(sid.replace(/[@\/]/g,'-')+'_'+uid).delete().catch(e=>toast('Erro: '+e.code));},
   inscrever(sid,uid,v,txt,info){db.collection('inscricoes').doc(sid.replace(/[@\/]/g,'-')+'_'+uid).set(Object.assign({sid,uid,v,txt:txt||'',equipa:PROFILE.equipa||'',nome:PROFILE.nome||'',at:firebase.firestore.FieldValue.serverTimestamp()},info&&info.nome?{nome:info.nome}:{})).then(()=>toast(v==='sim'?'Inscrição feita':'Registado: não vais')).catch(e=>toast('Erro: '+e.code));},
+  missaSet(sid,equipa,on){const o={sid,equipa,missaH:on,missaBy:PROFILE.nome||''};if(!on)o.missa=firebase.firestore.FieldValue.delete();db.collection('presencas').doc((sid+'_'+equipa).replace(/[@\/]/g,'-')).set(o,{merge:true}).then(()=>toast(on?'Houve missa: marca as presenças':'Registado: não houve missa')).catch(e=>toast(e.code==='permission-denied'?'Dia já validado: só a Viriato altera':'Erro: '+e.code));},
+  missaMark(sid,equipa,uid,p){db.collection('presencas').doc((sid+'_'+equipa).replace(/[@\/]/g,'-')).set({sid,equipa,missa:{[uid]:p}},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Dia já validado: só a Viriato altera':'Erro: '+e.code));},
   gvalidate(sid,equipa,on){db.collection('presencas').doc((sid+'_'+equipa).replace(/[@\/]/g,'-')).set({sid,equipa,gval:on,gby:PROFILE.nome,gat:new Date().toLocaleDateString('pt-PT')},{merge:true}).then(()=>{toast(on?'Confirmado pelo Guia':'Reaberto');if(on){const ss=(ATTD.sessions||[]).find(x=>x.id===sid);logEvent('Presenças confirmadas','O Guia confirmou as presenças da '+eqFrase(equipa)+' ('+(ss?ss.title:sid)+'): aguarda validação da Viriato',{ea:true});}}).catch(e=>toast(e.code==='permission-denied'?'Registo já validado pela Viriato':'Erro: '+e.code));},
   members(){return USERS.filter(u=>!u.servico).map(u=>{const c=(typeof CARDS!=='undefined'?CARDS:[]).find(x=>x.uid===u.uid)||{};const papel=(c.id&&c.id.papel)||(u.role==='guia'?'Guia':'');return u.role==='ea'?Object.assign({},u,{equipa:'Viriato',papel}):Object.assign({},u,{papel});}).concat(typeof CONFIG!=='undefined'&&CONFIG.roster&&!USERS.length?[]:[]);},
   me(){return ME.uid;},
@@ -2242,6 +2253,7 @@ function presBlock(t,box){
     if(tgt){if(p)cnt.reg++;else if(dc)cnt.decl++;else if(futuro)cnt.fut++;else cnt.falta++;}
     const lbl=p==='P'?'Presente':p==='F'?'Falta':p==='J'?'Justificada':e.validated?'Sem registo':'Por registar';
     r.innerHTML=`<span class="dl">${fd.d} ${fd.m}${x.day?' · dia '+x.day:''}</span>${tgt?`<span class="pres ${p||'N'} ${e.validated?'V':''}" title="${e.validated?'validado pela Viriato':e.gval?'confirmado pelo Guia':''}">${lbl}${e.validated?' ✓':e.gval?' · Guia':''}</span>`:`<span class="note">${esc(PARA_LBL[sessPara(x)]||'')}</span>`}${dc&&tgt?`<span class="note">${dc.p==='P'?'declarei presença':'avisei falta: '+esc(dc.txt||'')}</span>`:''}${(tgt&&e.validated&&p)?`<span class="note">${(e.pres||{})[me]?'registo do mapa'+(e.by?' ('+esc(e.by)+')':''):'pela tua declaração'}</span>`:''}${futuro?'<span class="note">ainda por realizar</span>':''}`;
+    try{if(tgt&&missaAplica(x)&&e.missaH!==undefined&&e.missaH!==null){const mp=(e.missa||{})[me];r.insertAdjacentHTML('beforeend','<span class="note">· Missa: '+(e.missaH===false?'não houve':mp==='P'?'presente':mp==='F'?'falta':'por registar')+'</span>');}}catch(err){}
     if(tgt&&(mode==='eu'||typeof ME!=='undefined'&&ME&&VIEW===ME.uid)&&!e.validated&&!e.gval){const bp=document.createElement('button');bp.className='btn sm '+(dc&&dc.p==='P'?'':'ghost');bp.textContent=dc&&dc.p==='P'?'✓ Estive presente':'Estive presente';bp.onclick=()=>ATT.declare(x.id,me,'P','',myGroupFor(x));if(futuro)bp.style.display='none';
       const bj=document.createElement('button');bj.className='btn sm '+(dc&&dc.p==='J'?'':'ghost');bj.textContent=dc&&dc.p==='J'?'✓ Falta justificada (editar)':(x.date>=today?'Vou faltar (justificar)':'Faltei (justificar)');bj.onclick=()=>{const tx=prompt('Motivo da falta (obrigatório; o Guia confirma):',(dc&&dc.txt)||'');if(tx===null)return;if(!tx.trim())return toast('Indica o motivo');ATT.declare(x.id,me,'J',tx.trim(),myGroupFor(x));};
       r.append(bp,bj);}
@@ -2257,6 +2269,8 @@ function presBlock(t,box){
 }
 /* mapa de presenças de um dia, por Equipa (Guia e Viriato) */
 const PRES_OPEN=new Set();
+/* v61: há missa? (Guia e Viriato marcam; não se aplica a acampamentos, raides e Jamboree) */
+function missaAplica(x){if(!x||isFreeS(x)||sessHidden(x))return false;const t=(typeof tipoDe==='function'?tipoDe(x):(x.type||''))||'';if(/acamp|raide|jamboree/i.test(t)||isJamS(x))return false;return true;}
 function presMap(x,w){const sid=x.id;const byEq=sessGroups(x);const special=['Cristóvão Colombo','Viriato'];
   const det=document.createElement('details');det.style.margin='2px 0 6px';det.open=PRES_OPEN.has(sid);det.addEventListener('toggle',()=>{if(det.open)PRES_OPEN.add(sid);else PRES_OPEN.delete(sid);});const eqs=Object.keys(byEq).filter(e=>special.includes(e)?ATT.canValidate():(ATT.canValidate()||ATT.canMark(e)));if(!eqs.length)return;
   const pendN=eqs.filter(e=>{const d=eqDoc(sid,e);return !d.validated;}).length;
@@ -2267,6 +2281,16 @@ function presMap(x,w){const sid=x.id;const byEq=sessGroups(x);const special=['Cr
       const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(m.nome)}${dc?`<div class="note">${dc.p==='P'?'declarou presença':'justificou falta: '+esc(dc.txt||'')}</div>`:'<div class="note">sem declaração</div>'}</div><div class="pbtns"></div>`;
       const pb=r.querySelector('.pbtns');['P','F','J'].forEach(k=>{const b=document.createElement('button');b.type='button';b.className=k;b.textContent=k;b.setAttribute('aria-pressed',p===k);b.disabled=!editable;b.title=k==='P'?'Presente':k==='F'?'Falta':'Falta justificada';b.onclick=()=>ATT.mark(sid,equipa,m.uid,k);pb.appendChild(b);});
       det.appendChild(r);});
+    /* v61: presenças na missa */
+    if(missaAplica(x)){const mw=document.createElement('div');mw.className='missab';const mh=e.missaH;const canM=sp?ATT.canValidate():(ATT.canValidate()||(ATT.canMark(equipa)&&!locked));
+      const head=document.createElement('div');head.className='row';head.style.cssText='align-items:center;gap:6px';head.innerHTML='<b style="font-size:13px">Missa</b>';
+      const bt=(t,fn,cls)=>{const b=document.createElement('button');b.type='button';b.className='btn sm '+(cls||'ghost');b.textContent=t;b.onclick=fn;head.appendChild(b);};
+      if(mh===undefined||mh===null){if(canM){bt('Houve missa',()=>ATT.missaSet(sid,equipa,true));bt('Não houve missa',()=>ATT.missaSet(sid,equipa,false));}else head.insertAdjacentHTML('beforeend','<span class="note">por indicar</span>');}
+      else if(mh===false){head.insertAdjacentHTML('beforeend','<span class="note">não houve missa</span>');if(canM)bt('Afinal houve',()=>ATT.missaSet(sid,equipa,true));}
+      else if(canM)bt('Não houve missa',()=>{if(confirm('Marcar "não houve missa"? As presenças na missa desta Equipa neste dia deixam de contar.'))ATT.missaSet(sid,equipa,false);});
+      mw.appendChild(head);
+      if(mh===true)byEq[equipa].sort(special.includes(equipa)?ordNome:ordEq).forEach(m=>{const mp=(e.missa||{})[m.uid];const r=document.createElement('div');r.className='mrow';r.innerHTML=`<div class="nm">${esc(m.nome)}</div><div class="pbtns"></div>`;const pb=r.querySelector('.pbtns');[['P','Presente na missa'],['F','Faltou à missa']].forEach(([k,tt])=>{const b=document.createElement('button');b.type='button';b.className=k;b.textContent=k;b.setAttribute('aria-pressed',mp===k);b.disabled=!canM;b.title=tt;b.onclick=()=>ATT.missaMark(sid,equipa,m.uid,k);pb.appendChild(b);});mw.appendChild(r);});
+      det.appendChild(mw);}
     const acts=document.createElement('div');acts.className='row';acts.style.margin='4px 0';
     if(editable&&!e.gval){const b=document.createElement('button');b.className='btn sm ghost';b.textContent='Usar as declarações';b.title='Presença declarada → P, falta justificada → J, sem declaração → F';b.onclick=()=>{byEq[equipa].forEach(m=>{if(e.pres[m.uid])return;const dc=decl(sid,m.uid);ATT.mark(sid,equipa,m.uid,dc?(dc.p==='P'?'P':'J'):'F');});};acts.appendChild(b);}
     if(!sp&&ATT.canMark(equipa)&&!locked){const b=document.createElement('button');b.className='btn sm '+(e.gval?'ghost':'');b.textContent=e.gval?'Reabrir (Guia)':'Confirmar (Guia)';b.onclick=()=>{if(!e.gval&&byEq[equipa].some(m=>!e.pres[m.uid]))return toast('Falta registar alguém');ATT.gvalidate(sid,equipa,!e.gval);};acts.appendChild(b);}
@@ -2568,6 +2592,9 @@ function chainState(tipo,key,subAt,eaLocked){if(eaLocked)return 'ok';if(!subAt)r
   if(g&&(g.at||0)>=subAt&&g.ok===false)return 'dev';if(c&&(c.at||0)>=subAt&&c.ok===false)return 'dev';if(c&&(c.at||0)>=subAt&&c.ok)return 'ea';if(g&&(g.at||0)>=subAt&&g.ok)return 'cc';return 'guia';}
 /* VAL online: coleção validacoes + reviews/guia, reviews/cc, reviews/ea */
 function valMe(){return VIEW;}
+/* v61: abrir o cartão certo a partir de "Tarefas a aguardar validação" (faltava no online: ReferenceError travava o passo do Guia nos Trilhos) */
+function valOpenCard(v){if(typeof openCard==='function'&&ME&&v.uid!==VIEW)openCard(v.uid);const tp=v.tipo==='reab'?(REAB_TAB[v.key.split(':')[0]]||'bravery'):v.tipo;showTabId(tp==='noites'?'ficha':tp==='trilho'?'faceis':tp==='esp'?'esp':tp==='ades'?'faceis':['ficha','fin','jamb','mapa','bravery'].includes(tp)?tp:'bravery');}
+
 function valRole(){return PROFILE.role==='ea'?'ea':PROFILE.role==='guia'?'guia':'eu';}
 function gvGet(tipo,key){return (REV.g||{})[tipo+':'+key]||null;}
 function gvSet(uid,tipo,key,d){if(VIEW==='preview')return;db.collection('cards').doc(uid).collection('reviews').doc('guia').set({[tipo+':'+key]:Object.assign({by:PROFILE.nome},d)},{merge:true}).catch(e=>toast(e.code==='permission-denied'?'Só o Guia desta Equipa valida aqui':'Erro: '+e.code));}
