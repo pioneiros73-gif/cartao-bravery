@@ -329,7 +329,10 @@ textarea{resize:vertical;min-height:64px}
 .step.camp .insct td,.step.camp .insct td b{color:var(--ink)}
 .insct td .note{color:var(--ink-2)!important;font-size:11.5px;margin-top:2px}
 .insct .geqr td{background:var(--sel)!important;font-weight:800}
-.missab{margin:6px 0 2px;padding:6px 8px;border:1px dashed var(--line);border-radius:10px}.step.camp .missab{border-color:rgba(255,255,255,.4)}.inscbox textarea{font:inherit;border-radius:8px;border:1px solid var(--line);padding:6px}
+.missab{margin:6px 0 2px;padding:6px 8px;border:1px dashed var(--line);border-radius:10px}
+/* v62: a caixa de administração "Gerir as provas" é sempre editável pela Viriato, mesmo a ver o cartão de um Noviço */
+.ro #adesAdmin textarea,.ro #adesAdmin input{opacity:1;pointer-events:auto;background:var(--card)}
+.ro #adesAdmin .field label::after{content:none}.step.camp .missab{border-color:rgba(255,255,255,.4)}.inscbox textarea{font:inherit;border-radius:8px;border:1px solid var(--line);padding:6px}
 .pres.P{background:#D7F3E1;color:#136B3A}.pres.F{background:#FDE0E0;color:#9B1C1C}.pres.J{background:#FDF1C7;color:#6E5300}.pres.N{background:var(--line);color:var(--ink-2)}
 .pres.V::after{content:" ✓"}
 .pbtns{display:flex;gap:4px}
@@ -481,6 +484,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
   <section class="panel" id="p-painel">
     <div class="card" id="retratoCard"><h2>Retrato da Equipa <small>Nome, Totem, papel, Cargo, etapa de Progresso e telemóvel. Toca para abrir o cartão.</small></h2><div id="retrato"></div></div>
     <div class="card" id="pendCard"><h2>Pendentes <small>O que cada elemento ainda tem por preencher, entregar ou pagar. Toca num nome para abrir o cartão.</small></h2><div class="list" id="pendList"></div><h3 style="margin-top:12px">Da Equipa</h3><div class="list" id="pendTeam" style="margin-top:6px"></div></div>
+    <div class="card" id="concCard"><h2>Concretizações <small>O que cada Pioneiro escreveu nos Trilhos ("Como concretizei" e oportunidades educativas) e nas Provas ("Como vou concretizar" e "O que fiz e o que aprendi"), com o estado da validação. Usa o filtro de Equipa lá em cima; toca numa linha para abrir o cartão.</small></h2><div class="row"><button class="btn sm ghost" id="concCsv">Exportar (CSV)</button></div><div class="hscroll" style="margin-top:8px"><table class="tbl" id="concTable"></table></div></div>
     <div class="card" id="finPainelCard" style="display:none"><h2>Financeiro da Comunidade <small>Por pagamento: confirmados, registados por confirmar e em falta. A lista de pagamentos gere-se no separador Financeiro.</small></h2><div class="list" id="finPainel"></div></div>
     <div class="card" id="painelStats"><h2>Painel <small id="painelSub"></small></h2><div class="stat" id="stats"></div></div>
     <div class="card"><h2>Cartões <small>Toca num cartão para o abrir</small></h2>
@@ -491,6 +495,7 @@ details summary{cursor:pointer;font-weight:800;color:var(--azul)}
       <div id="matriz" style="margin-top:10px"></div></div>
     <div class="card" id="admin" style="display:none"><h2>Administração <small>Só a Viriato vê isto</small></h2>
       <div class="field"><label>Empreendimento do ano (aparece no cabeçalho: "Empreendimento ...")</label><input id="admProjeto" placeholder="Bravery"><button class="btn sm" id="admProjetoSave" style="margin-top:6px">Guardar</button></div>
+      <div class="field" style="margin-top:10px"><label>NIF do CNE / Agrupamento (verificado nas faturas)</label><input id="admNif" placeholder="500972052" inputmode="numeric" maxlength="9"><button class="btn sm" id="admNifSave" style="margin-top:6px">Guardar NIF</button></div>
       <h3>Equipas</h3><p class="note">Cada Equipa tem um identificador fixo ("Equipa 1", "Equipa 2", ...), que fica nos registos e nunca muda, e um Nome e um Grito escolhidos pelos Pioneiros. Em toda a app aparece o Nome. O Guia de cada Equipa também pode escrever o Nome e o Grito no seu cartão (Empreendimento → A nossa Equipa). Só se remove uma Equipa sem elementos.</p>
       <div id="admEqWrap"><div id="admEqSug"></div><div class="hscroll"><table class="adm" id="admEqTable"></table></div><button class="btn sm ghost" id="admEqAdd" style="margin-top:6px">+ Acrescentar Equipa</button></div>
       <div class="field" style="margin-top:10px" id="admNotifWrap"><label>Notificações por email</label><div class="row" style="align-items:center;gap:8px"><span class="pill" id="admNotifEstado">...</span><button class="btn sm" id="admNotifToggle">...</button></div><div class="hint">Enquanto estiverem em pausa, o script não envia nenhum email (registos, véspera das atividades, reuniões, "O que guardo"); os registos feitos durante a pausa não são enviados mais tarde. As Novidades dentro da app continuam. Requer o notificacoes.gs da v57 no Google Apps Script.</div></div>
@@ -761,8 +766,11 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       <details><summary>Autorizações em papel</summary>
         <p>A autorização de saída em atividades, a autorização de saída sem adulto e a ficha médica entregam-se em papel à Viriato; a app não guarda o seu conteúdo. A Viriato regista apenas que foram entregues, e em que data. Enquanto faltar alguma, aparece no teu ecrã "Está em falta".</p>
       </details>
+      <details><summary>Faturas e Extrato de conta (Viriato)</summary>
+        <p>No separador Financeiro, a Viriato tem o grupo "Faturas": carrega-se a fatura por fotografia ou PDF e a app tenta ler o NIF (diz se é o do CNE ou outro), a data e o valor - os campos ficam sempre editáveis, porque a leitura automática pode falhar, sobretudo em fotografias. Regista-se quem fez a despesa (um elemento da Viriato ou "Outro") e a data do reembolso; sem data, a fatura fica "por reembolsar". Um PDF só pode ter até ~700 KB; maior, tira-se uma fotografia. No "Extrato de conta" escolhem-se as datas e saem as entradas (pagamentos confirmados pela Viriato e donativos registados à mão) e as despesas (faturas), com totais e saldo, em CSV ou numa versão para imprimir/guardar em PDF e enviar à direção. O NIF verificado define-se em Painel → Administração.</p>
+      </details>
       <details><summary>Como concretizei (Trilhos)</summary>
-        <p>Em cada Trilho há a caixa "Como concretizei os Objetivos Educativos": descreve, por palavras tuas, como o concretizaste, além das oportunidades educativas (data e atividade). É preciso preenchê-la antes de "Proponho ao Guia: concluído", e o que escreveres segue com a validação, para o Guia, a Cristóvão Colombo e a Viriato lerem. Nas Provas do Passaporte do Desprendimento usa a caixa "Como vou concretizar".</p>
+        <p>Em cada Trilho há a caixa "Como concretizei os Objetivos Educativos": descreve, por palavras tuas, como o concretizaste, além das oportunidades educativas (data e atividade). É preciso preenchê-la antes de "Proponho ao Guia: concluído", e o que escreveres segue com a validação, para o Guia, a Cristóvão Colombo e a Viriato lerem. Nas Provas do Passaporte do Desprendimento a caixa equivalente começa como "Sugestão da Viriato - podes alterar": podes usar a sugestão tal como está ou escrever a tua própria concretização. A Viriato vê tudo junto em Painel → Concretizações.</p>
       </details>
       <details><summary>Presenças na missa</summary>
         <p>No mapa de presenças de cada dia (Guia e Viriato) há o bloco "Missa": primeiro indica-se se houve missa; havendo, marca-se P ou F por elemento. Nos acampamentos, raides e Jamboree não há registo de missa. Não conta para a assiduidade: é só registo. Cada um vê a sua presença na missa na linha do dia, na Caminhada.</p>
@@ -921,6 +929,31 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
     <div class="card" id="tesCard" style="display:none">
       <h2>Tesouraria da Equipa <small>Só o Tesoureiro vê esta caixa: o estado de cada elemento da Equipa em cada pagamento e a entrega do dinheiro recebido a um elemento da Viriato.</small></h2>
       <div id="tesList"></div>
+    </div>
+    <div class="card" id="fatCard" style="display:none">
+      <h2>Faturas <small>Só a Viriato vê este grupo. Carrega a fatura por fotografia ou PDF: a app tenta ler o NIF, a data e o valor - confirma e completa antes de guardar. Fica registado quem fez a despesa e a data do reembolso.</small></h2>
+      <div class="row" style="align-items:center"><label class="btn sm y" style="cursor:pointer">Carregar fatura (foto ou PDF)<input type="file" id="fatFile" accept="image/*,application/pdf" style="display:none"></label><span class="note" id="fatOcrMsg"></span></div>
+      <div id="fatForm" style="display:none;margin-top:8px">
+        <div class="row" style="align-items:center"><img id="fatPrev" alt="" style="max-width:140px;max-height:140px;border-radius:8px;border:1px solid var(--line);display:none"><span class="note" id="fatPdfNote" style="display:none">PDF anexado</span><span class="pill" id="fatNifPill" style="display:none"></span></div>
+        <div class="grid2"><div class="field"><label>Data da fatura</label><input type="date" id="fatData"></div><div class="field"><label>Valor (€)</label><input type="number" step="0.01" min="0" id="fatValor"></div></div>
+        <div class="grid2"><div class="field"><label>NIF na fatura</label><input id="fatNif" inputmode="numeric" maxlength="12"></div><div class="field"><label>Fornecedor (opcional)</label><input id="fatForn"></div></div>
+        <div class="grid2"><div class="field"><label>Quem fez a despesa</label><select id="fatQuem"></select><input id="fatQuemOutro" placeholder="Nome de quem pagou" style="display:none;margin-top:4px"></div><div class="field"><label>Reembolsado em (vazio = por reembolsar)</label><input type="date" id="fatReemb"></div></div>
+        <div class="field"><label>Nota (opcional)</label><input id="fatNota"></div>
+        <div class="row"><button class="btn sm y" id="fatSave">Guardar fatura</button><button class="btn sm ghost" id="fatCancel">Cancelar</button></div>
+      </div>
+      <div class="hscroll" style="margin-top:8px"><table class="tbl" id="fatTable"></table></div>
+    </div>
+    <div class="card" id="extCard" style="display:none">
+      <h2>Extrato de conta <small>Entradas (pagamentos confirmados pela Viriato e donativos) e despesas (faturas) entre duas datas, com saldo. Exporta em CSV ou imprime/guarda em PDF para enviar à direção.</small></h2>
+      <details class="matwrap"><summary><b>Donativos e outras entradas</b> <span class="note">· registadas à mão</span></summary>
+        <div class="grid2" style="margin-top:6px"><div class="field"><label>Data</label><input type="date" id="entData"></div><div class="field"><label>Valor (€)</label><input type="number" step="0.01" min="0" id="entValor"></div></div>
+        <div class="field"><label>Origem / descrição</label><input id="entDesc" placeholder="ex.: Donativo da direção"></div>
+        <button class="btn sm" id="entAdd">Registar entrada</button>
+        <div id="entList" style="margin-top:6px"></div>
+      </details>
+      <div class="row" style="margin-top:8px"><div class="field"><label>De</label><input type="date" id="extDe"></div><div class="field"><label>Até</label><input type="date" id="extAte"></div></div>
+      <div class="row"><button class="btn sm y" id="extVer">Ver extrato</button><button class="btn sm ghost" id="extCsv">Exportar CSV</button><button class="btn sm ghost" id="extPrint">Imprimir / guardar em PDF</button></div>
+      <div class="hscroll" style="margin-top:8px"><table class="tbl" id="extTable"></table></div>
     </div>
   </section>
 
@@ -1751,7 +1784,7 @@ function calEditForm(x,info,opt){opt=opt||{};const old=info.querySelector(':scop
 (function(){const box=$('#ajudaOE');if(!box)return;box.innerHTML=FACEIS.map(f=>`<h3 style="margin:8px 0 4px">${esc(f.n)}</h3>`+TRILHOS[f.k].map((t,i)=>{const oe=TRILHO_OE[f.k+i]||{oes:[],enq:''};return `<details style="margin:4px 0"><summary style="font-size:13px"><b>${i+1}. ${esc(t.n)}</b> · ${oe.oes.map(x=>x.c).join(', ')}</summary><p class="note" style="margin:4px 0">${esc(oe.enq)}</p><ul style="margin:4px 0;padding-left:18px;font-size:14px">${oe.oes.map(x=>`<li><b>${esc(x.c)}</b> ${esc(x.t)}</li>`).join('')}</ul></details>`;}).join('')).join('');})();
 /* Empreendimento do ano (config/app.projeto online; demo: fixo) */
 function paintProjeto(){const el=$('#hProjeto');if(!el)return;const n=(typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.projeto)||'Bravery';el.textContent=n;document.title='Empreendimento '+n+' · Comunidade 25 · 73 Carnide';}
-const APP_VERSION='v61';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
+const APP_VERSION='v63';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
 paintProjeto();
 layoutV44();colapsarTudo();
 /* ===== MÉTODO ESCUTISTA (cartão da Viriato) ===== */
@@ -2360,7 +2393,8 @@ function paintAdes(){const nov=S.id.papel==='Noviço'&&!isViriatoCard();const zo
     const d=document.createElement('div');d.className='req'+(ok?' done':'');
     const mat=(r.mat||[]).length?`<details class="oe" style="margin-top:6px"><summary style="font-size:13px"><b>O que preciso de saber</b></summary>${r.mat.map(m=>`<details style="margin:4px 0 4px 8px"><summary style="font-size:13px">${esc(m.h)}</summary>${(m.p||[]).map(x=>`<p class="note" style="margin:4px 0">${esc(x)}</p>`).join('')}${(m.li||[]).length?`<ul class="note" style="margin:4px 0;padding-left:18px">${m.li.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</details>`).join('')}</details>`:'';
     const como=(st.como!==undefined&&st.como!==null)?st.como:(r.sug||'');
-    const comoBox=`<div class="field" style="margin-top:6px"><label>Como vou concretizar (oportunidade educativa; podes alterar)</label><textarea class="como" ${(mode!=='eu'||ok)?'disabled':''} style="min-height:56px">${esc(como)}</textarea></div>`;
+    const isSug=!!r.sug&&((st.como===undefined||st.como===null)||st.como===r.sug);
+    const comoBox=`<div class="field" style="margin-top:6px"><label>${isSug?'Sugestão da Viriato - podes alterar':'Como vou concretizar (oportunidade educativa)'}</label><textarea class="como" ${(mode!=='eu'||ok)?'disabled':''} style="min-height:56px">${esc(como)}</textarea></div>`;
     d.innerHTML=`<div class="top"><label class="chk"><input type="checkbox" class="okc" ${st.ok?'checked':''} ${(mode!=='eu'||ok)?'disabled':''}></label><div style="flex:1"><div class="nm">${idx+1}. ${esc(r.t)} <span class="grp">· valida ${esc(r.v||'G')} · ${esc(ADES_VAL[r.v]||'Guia')}</span></div><div class="d"><b>O que tenho de fazer:</b> ${esc(r.d||'')}</div>
       ${mat}${comoBox}
       ${(mode==='eu'&&!ok)?`<input class="apr" placeholder="⭐ O que fiz e o que aprendi sobre mim" value="${esc(st.apr||'')}" style="margin-top:6px;width:100%;border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px">`:st.apr?`<div class="note" style="margin-top:4px">⭐ ${esc(st.apr)}</div>`:''}
@@ -2477,7 +2511,7 @@ function finRecipients(pay){const eq=S.id.equipa||(typeof PROFILE!=='undefined'&
 function myCargoTes(){return medOwnerEditing()&&!isViriatoCard()&&isTesoureiro({cargo:S.id.cargo||'',cargo2:S.id.cargo2||'',fun:S.fun||[]});}
 function tesGet(pid,eq){return (TES||{})[pid+'|'+eq]||null;}
 function pagEstado(p,st,lk,uid){if(lk)return {k:'v',t:'Confirmado pela Viriato · '+(lk.vd||'')};if(!st||!st.pago)return {k:'',t:'Por pagar'};const r=recebGet(p.id,uid);if(r)return {k:'r',t:'Recebido por '+(r.by||st.paraNome||'')+(r.at?' · '+r.at:'')+' · aguarda a Viriato'};return {k:'p',t:'Registado · aguarda confirmação de '+(st.paraNome||'quem recebeu')};}
-function paintTes(){const card=$('#tesCard');if(!card)return;const show=myCargoTes()||mode==='ea';card.style.display=show?'':'none';if(!show)return;const box=$('#tesList');box.innerHTML='';const eq=S.id.equipa||(typeof PROFILE!=='undefined'&&PROFILE?PROFILE.equipa:'Equipa')||'';
+function paintTes(){try{if(typeof paintFinEA==='function')paintFinEA();}catch(e){}const card=$('#tesCard');if(!card)return;const show=myCargoTes()||mode==='ea';card.style.display=show?'':'none';if(!show)return;const box=$('#tesList');box.innerHTML='';const eq=S.id.equipa||(typeof PROFILE!=='undefined'&&PROFILE?PROFILE.equipa:'Equipa')||'';
   const vir=finRoster().filter(p=>p.role==='ea');const membros=finRoster().filter(p=>p.role!=='ea'&&p.equipa===eq);
   pagListVis().forEach(p=>{const t=tesGet(p.id,eq);const recebidos=tesRecebidos(p.id,eq);const d=document.createElement('div');d.className='req pay'+(t?' done':'');
     const rows=membros.map(m=>{const st=pagRecords(m.uid)[p.id]||{};const lk=(typeof pagLockedFor==='function')?pagLockedFor(m.uid,p.id):null;const e=pagEstado(p,st,lk,m.uid);return `<tr><td>${esc(m.nome)}</td><td><span class="st ${e.k}">${esc(e.t)}</span>${st.pago?`<div class="note">${esc(eur(st.valor!==undefined&&st.valor!==null?st.valor:p.valor))} · ${esc(st.met||'Numerário')}${st.paraNome?' · a '+esc(st.paraNome):''}${st.at?' · '+esc(st.at):''}</div>`:''}</td></tr>`;}).join('');
@@ -2573,6 +2607,138 @@ function paintFinPainel(){const box=$('#finPainel');if(!box||PROFILE.role!=='ea'
     if(acts.children.length)d.appendChild(acts);box.appendChild(d);});}
 let EAREV={};
 function loadEaReviews(){if(!isStaff())return;USERS.forEach(u=>{if(EAREV['_s'+u.uid])return;EAREV['_s'+u.uid]=true;db.collection('cards').doc(u.uid).collection('reviews').doc('guia').onSnapshot(sn=>{REVS_G[u.uid]=sn.exists?sn.data():{};paintPend();},()=>{});db.collection('cards').doc(u.uid).collection('reviews').doc('ea').onSnapshot(sn=>{EAREV[u.uid]=sn.exists?sn.data():{};if(typeof FINV!=='undefined')FINV[u.uid]=EAREV[u.uid].pagv||{};paintFinPainel();paintPend();paintRetrato();if(typeof trailRepaintSoon==='function')trailRepaintSoon();if(typeof paintFin==='function')paintFin();},()=>{});});}
+
+/* ===== v63: FATURAS e EXTRATO DE CONTA (só a Viriato) =====
+   faturas/{id} {data, valor, nif, nifCNE, fornecedor, quemUid, quem, reembolso, nota, doc (base64), docTipo, by, at}
+   entradas/{id} {data, valor, desc, by, at} (donativos e outras entradas registadas à mão)
+   Leitura automática: fotografias por OCR (Tesseract.js, carregado só quando é preciso); PDFs digitais pelo texto (pdf.js);
+   PDF digitalizado: 1.ª página rasterizada e OCR. Os campos ficam sempre editáveis. */
+let FATS={},ENTRS={},FAT_PEND=null,FAT_WIRED=false;
+function fatLoad(){if(PROFILE.role!=='ea')return;
+  db.collection('faturas').onSnapshot(sn=>{FATS={};sn.docs.forEach(d=>FATS[d.id]=Object.assign({id:d.id},d.data()));paintFat();},e=>console.warn('faturas',e.code));
+  db.collection('entradas').onSnapshot(sn=>{ENTRS={};sn.docs.forEach(d=>ENTRS[d.id]=Object.assign({id:d.id},d.data()));paintEnt();},e=>console.warn('entradas',e.code));}
+function nifCfg(){return String((typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.nifCNE)||'500972052').replace(/\D/g,'');}
+function nifValido(n){n=String(n||'').replace(/\D/g,'');if(n.length!==9)return false;let s=0;for(let i=0;i<8;i++)s+=Number(n[i])*(9-i);const r=11-(s%11);return (r>=10?0:r)===Number(n[8]);}
+function fatNum(s){s=String(s).trim();if(/,\d{2}$/.test(s))return Number(s.replace(/\./g,'').replace(',','.'));const v=Number(s.replace(/,/g,''));return isFinite(v)?v:null;}
+function fatParse(txt){const T=String(txt||'');const out={nif:'',nifCNE:false,data:'',valor:null};const alvo=nifCfg();
+  const nifs=[];let m;const re=/\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d/g;
+  while((m=re.exec(T))){const n=m[0].replace(/\D/g,'');if(n.length===9&&nifValido(n)&&!nifs.includes(n))nifs.push(n);}
+  if(nifs.includes(alvo)){out.nif=alvo;out.nifCNE=true;}
+  else{let best='';const ctx=/(?:NIF|N\.?\s?I\.?\s?F|CONTRIBUINTE|NIPC|VAT)[^0-9]{0,14}(\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d[ .]?\d)/gi;
+    while((m=ctx.exec(T))){const n=m[1].replace(/\D/g,'');if(nifValido(n)){best=n;break;}}
+    out.nif=best||nifs[0]||'';}
+  let dm=T.match(/\b(20\d{2})[-\/.](\d{1,2})[-\/.](\d{1,2})\b/);
+  if(dm)out.data=dm[1]+'-'+String(dm[2]).padStart(2,'0')+'-'+String(dm[3]).padStart(2,'0');
+  else{dm=T.match(/\b(\d{1,2})[-\/.](\d{1,2})[-\/.](20\d{2})\b/);if(dm)out.data=dm[3]+'-'+String(dm[2]).padStart(2,'0')+'-'+String(dm[1]).padStart(2,'0');}
+  const linhas=T.split(/\n/);const tot=[],todos=[];
+  linhas.forEach(l=>{const r2=/(\d{1,3}(?:\.\d{3})+,\d{2}|\d+,\d{2}|\d+\.\d{2})(?!\d)/g;let mm;const loc=[];
+    while((mm=r2.exec(l))){const v=fatNum(mm[1]);if(v!==null&&v<100000)loc.push(v);}
+    if(loc.length){todos.push(...loc);if(/total/i.test(l))tot.push(...loc);}});
+  out.valor=tot.length?Math.max(...tot):(todos.length?Math.max(...todos):null);
+  return out;}
+function fatScript(src){return new Promise((ok,err)=>{const sc=document.createElement('script');sc.src=src;sc.onload=ok;sc.onerror=()=>err(new Error('sem ligação a '+src));document.head.appendChild(sc);});}
+async function fatOcrImg(durl){if(!window.Tesseract)await fatScript('https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js');const r=await Tesseract.recognize(durl,'por');return (r&&r.data&&r.data.text)||'';}
+function fatImg(file,maxDim,q){return new Promise((ok,err)=>{const rd=new FileReader();rd.onerror=err;rd.onload=()=>{const im=new Image();im.onerror=err;im.onload=()=>{const sc=Math.min(1,maxDim/Math.max(im.width,im.height));const cv=document.createElement('canvas');cv.width=Math.round(im.width*sc);cv.height=Math.round(im.height*sc);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);ok(cv.toDataURL('image/jpeg',q));};im.src=rd.result;};rd.readAsDataURL(file);});}
+async function fatTexto(file){if(file.type==='application/pdf'){
+    if(!window.pdfjsLib){await fatScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let t='';
+    for(let i=1;i<=Math.min(pdf.numPages,3);i++){const pg=await pdf.getPage(i);const c=await pg.getTextContent();t+=c.items.map(x=>x.str).join('\n')+'\n';}
+    if(t.replace(/\s/g,'').length>40)return t;
+    const pg=await pdf.getPage(1);const vp=pg.getViewport({scale:2});const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
+    await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;return await fatOcrImg(cv.toDataURL('image/jpeg',0.9));}
+  return await fatOcrImg(await fatImg(file,1600,0.9));}
+function fatFormReset(){FAT_PEND=null;const f=$('#fatForm');if(!f)return;f.style.display='none';['fatData','fatValor','fatNif','fatForn','fatQuemOutro','fatNota','fatReemb'].forEach(i=>{const e=$('#'+i);if(e)e.value='';});$('#fatPrev').style.display='none';$('#fatPdfNote').style.display='none';$('#fatNifPill').style.display='none';$('#fatOcrMsg').textContent='';const fi=$('#fatFile');if(fi)fi.value='';}
+function fatQuemFill(){const sel=$('#fatQuem');if(!sel)return;const eas=USERS.filter(u=>u.role==='ea'&&!u.servico).sort(ordNome);sel.innerHTML=eas.map(u=>`<option value="${u.uid}" ${u.uid===ME.uid?'selected':''}>${esc(u.nome||u.email||'')}</option>`).join('')+'<option value="outro">Outro…</option>';
+  sel.onchange=()=>{$('#fatQuemOutro').style.display=sel.value==='outro'?'':'none';};sel.onchange();}
+function fatNifPaint(){const n=String($('#fatNif').value||'').replace(/\D/g,'');const p=$('#fatNifPill');if(!p)return;if(!n){p.style.display='none';return;}
+  p.style.display='';const cne=n===nifCfg();p.textContent=cne?'NIF do CNE':(nifValido(n)?'outro NIF':'NIF inválido?');p.style.cssText='color:#fff;background:'+(cne?'var(--ok)':(nifValido(n)?'var(--laranja)':'#C62828'));}
+async function fatEscolhido(file){if(!file)return;const msg=$('#fatOcrMsg');fatFormReset();$('#fatForm').style.display='';fatQuemFill();
+  try{if(file.type==='application/pdf'){
+      if(file.size>700*1024){msg.textContent='PDF demasiado grande para guardar (máx. ~700 KB): tira antes uma fotografia à fatura.';$('#fatForm').style.display='none';return;}
+      const rd=new FileReader();const durl=await new Promise((ok,err)=>{rd.onerror=err;rd.onload=()=>ok(rd.result);rd.readAsDataURL(file);});
+      FAT_PEND={doc:durl,tipo:'pdf'};$('#fatPdfNote').style.display='';}
+    else{const store=await fatImg(file,1200,0.82);FAT_PEND={doc:store,tipo:'img'};const pv=$('#fatPrev');pv.src=store;pv.style.display='';}
+  }catch(e){msg.textContent='Não consegui ler o ficheiro: '+e.message;return;}
+  msg.textContent='A ler a fatura…';
+  try{const txt=await fatTexto(file);const r=fatParse(txt);
+    if(r.data)$('#fatData').value=r.data;if(r.valor!=null)$('#fatValor').value=r.valor;if(r.nif)$('#fatNif').value=r.nif;fatNifPaint();
+    msg.textContent=(r.nif||r.valor!=null||r.data)?'Leitura automática feita: confirma os campos.':'Não consegui ler nada: preenche à mão.';
+  }catch(e){msg.textContent='Leitura automática indisponível ('+e.message+'): preenche à mão.';}}
+function fatWire(){if(FAT_WIRED)return;const fi=$('#fatFile');if(!fi)return;FAT_WIRED=true;
+  fi.onchange=()=>fatEscolhido(fi.files&&fi.files[0]);
+  $('#fatNif').oninput=fatNifPaint;
+  $('#fatCancel').onclick=fatFormReset;
+  $('#fatSave').onclick=()=>{const data=$('#fatData').value;const valor=Number($('#fatValor').value);
+    if(!data||!(valor>0))return toast('Preenche a data e o valor');
+    const sel=$('#fatQuem');const outro=sel.value==='outro';const quem=outro?$('#fatQuemOutro').value.trim():(sel.selectedOptions[0]?sel.selectedOptions[0].textContent:'');
+    if(outro&&!quem)return toast('Escreve quem fez a despesa');
+    const nif=String($('#fatNif').value||'').replace(/\D/g,'');
+    db.collection('faturas').add({data,valor,nif,nifCNE:!!nif&&nif===nifCfg(),fornecedor:$('#fatForn').value.trim(),quemUid:outro?'':sel.value,quem,reembolso:$('#fatReemb').value||'',nota:$('#fatNota').value.trim(),doc:FAT_PEND?FAT_PEND.doc:'',docTipo:FAT_PEND?FAT_PEND.tipo:'',by:PROFILE.nome||'',at:firebase.firestore.FieldValue.serverTimestamp()})
+      .then(()=>{toast('Fatura guardada');fatFormReset();})
+      .catch(e=>toast(e.code==='permission-denied'?'Publica as novas regras do Firestore (v63) na consola':'Erro: '+e.code));};
+  $('#entAdd').onclick=()=>{const data=$('#entData').value;const valor=Number($('#entValor').value);const desc=$('#entDesc').value.trim();
+    if(!data||!(valor>0)||!desc)return toast('Preenche a data, o valor e a origem');
+    db.collection('entradas').add({data,valor,desc,by:PROFILE.nome||'',at:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{toast('Entrada registada');$('#entValor').value='';$('#entDesc').value='';})
+      .catch(e=>toast(e.code==='permission-denied'?'Publica as novas regras do Firestore (v63) na consola':'Erro: '+e.code));};
+  const hoje=isoLocal();$('#extDe').value='2026-09-01';$('#extAte').value=hoje;
+  $('#extVer').onclick=()=>paintExt();
+  $('#extCsv').onclick=()=>extCsv();
+  $('#extPrint').onclick=()=>extPrint();}
+function fatVer(id){const f=FATS[id];if(!f||!f.doc)return toast('Esta fatura não tem documento anexado');
+  const w=window.open('about:blank');if(!w)return toast('Permite janelas (pop-ups) para ver o documento');
+  w.document.write(f.docTipo==='pdf'?'<embed src="'+f.doc+'" style="width:100%;height:100vh">':'<img src="'+f.doc+'" style="max-width:100%">');w.document.close();}
+function paintFat(){const t=$('#fatTable');if(!t)return;fatWire();const list=Object.values(FATS).sort((a,b)=>String(b.data).localeCompare(String(a.data)));
+  t.innerHTML='<tr><th>Data</th><th>Valor</th><th>NIF</th><th>Quem pagou</th><th>Reembolso</th><th>Doc.</th><th></th></tr>';
+  if(!list.length){t.innerHTML+='<tr><td colspan="7" class="note">Ainda sem faturas.</td></tr>';return;}
+  let tot=0,porR=0;
+  list.forEach(f=>{tot+=Number(f.valor)||0;if(!f.reembolso)porR+=Number(f.valor)||0;const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${esc(String(f.data||'').split('-').reverse().join('/'))}${f.nota?'<div class="note">'+esc(f.nota)+'</div>':''}</td><td><b>${(Number(f.valor)||0).toFixed(2).replace('.',',')} €</b></td>`+
+      `<td>${f.nif?esc(f.nif)+'<div>'+(f.nifCNE?'<span class="ipill sim">NIF do CNE</span>':'<span class="ipill pend">outro NIF</span>')+'</div>':'<span class="note">-</span>'}${f.fornecedor?'<div class="note">'+esc(f.fornecedor)+'</div>':''}</td>`+
+      `<td>${esc(f.quem||'')}</td><td class="fr"></td><td class="fd"></td><td class="fx"></td>`;
+    const fr=tr.querySelector('.fr');const inp=document.createElement('input');inp.type='date';inp.value=f.reembolso||'';inp.style.width='140px';
+    inp.onchange=()=>db.collection('faturas').doc(f.id).set({reembolso:inp.value||''},{merge:true}).then(()=>toast(inp.value?'Reembolso registado':'Marcada por reembolsar')).catch(e=>toast('Erro: '+e.code));
+    fr.appendChild(inp);if(!f.reembolso)fr.insertAdjacentHTML('beforeend','<div><span class="ipill nao">por reembolsar</span></div>');
+    const fd=tr.querySelector('.fd');if(f.doc){const b=document.createElement('button');b.type='button';b.className='btn sm ghost';b.textContent='Ver';b.onclick=()=>fatVer(f.id);fd.appendChild(b);}else fd.innerHTML='<span class="note">-</span>';
+    const fx=tr.querySelector('.fx');const bx=document.createElement('button');bx.type='button';bx.className='btn sm ghost';bx.textContent='×';bx.title='Apagar a fatura';
+    bx.onclick=()=>{if(confirm('Apagar esta fatura ('+(f.quem||'')+', '+(Number(f.valor)||0).toFixed(2)+' €)? Não dá para desfazer.'))db.collection('faturas').doc(f.id).delete().then(()=>toast('Fatura apagada')).catch(e=>toast('Erro: '+e.code));};
+    fx.appendChild(bx);t.appendChild(tr);});
+  t.insertAdjacentHTML('beforeend',`<tr><td><b>Total</b></td><td><b>${tot.toFixed(2).replace('.',',')} €</b></td><td colspan="5" class="note">por reembolsar: ${porR.toFixed(2).replace('.',',')} €</td></tr>`);}
+function paintEnt(){const box=$('#entList');if(!box)return;const list=Object.values(ENTRS).sort((a,b)=>String(b.data).localeCompare(String(a.data)));
+  box.innerHTML=list.length?'':'<p class="note">Ainda sem donativos ou outras entradas.</p>';
+  list.forEach(e=>{const d=document.createElement('div');d.className='mrow';d.innerHTML=`<span>${esc(String(e.data||'').split('-').reverse().join('/'))} · ${esc(e.desc||'')} · <b>${(Number(e.valor)||0).toFixed(2).replace('.',',')} €</b></span>`;
+    const bx=document.createElement('button');bx.type='button';bx.className='btn sm ghost';bx.textContent='×';bx.onclick=()=>{if(confirm('Apagar esta entrada?'))db.collection('entradas').doc(e.id).delete().catch(er=>toast('Erro: '+er.code));};
+    d.appendChild(bx);box.appendChild(d);});}
+function isoFromPt(s){const m=String(s||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';}
+function extRows(de,ate){const inR=x=>x&&(!de||x>=de)&&(!ate||x<=ate);const rows=[];
+  USERS.filter(u=>!u.servico).forEach(u=>{const pv=(EAREV[u.uid]||{}).pagv||{};Object.entries(pv).forEach(([pid,v])=>{const st=(pagRecords(u.uid)||{})[pid]||{};const p=pagList().find(x=>x.id===pid);
+    const d=isoFromPt(v.vd)||isoFromPt(st.at)||'';if(!inR(d))return;
+    rows.push({tipo:'entrada',data:d,desc:'Pagamento · '+(p?p.ativ:pid)+' · '+(u.nome||''),valor:(st.valor!==undefined&&st.valor!==null?Number(st.valor):(p?Number(p.custo):0))||0});});});
+  Object.values(ENTRS).forEach(e=>{if(!inR(e.data))return;rows.push({tipo:'entrada',data:e.data,desc:'Donativo / entrada · '+(e.desc||''),valor:Number(e.valor)||0});});
+  Object.values(FATS).forEach(f=>{if(!inR(f.data))return;rows.push({tipo:'despesa',data:f.data,desc:'Fatura · '+(f.fornecedor||(f.nif?'NIF '+f.nif:''))+(f.quem?' · pago por '+f.quem:'')+(f.reembolso?'':' · POR REEMBOLSAR'),valor:Number(f.valor)||0});});
+  rows.sort((a,b)=>String(a.data).localeCompare(String(b.data)));return rows;}
+function extTotais(rows){const e=rows.filter(r=>r.tipo==='entrada').reduce((s,r)=>s+r.valor,0);const d=rows.filter(r=>r.tipo==='despesa').reduce((s,r)=>s+r.valor,0);return {e,d,saldo:e-d};}
+function eur(v){return (Number(v)||0).toFixed(2).replace('.',',')+' €';}
+function paintExt(){const t=$('#extTable');if(!t)return;const rows=extRows($('#extDe').value,$('#extAte').value);const tt=extTotais(rows);
+  t.innerHTML='<tr><th>Data</th><th>Descrição</th><th>Entrada</th><th>Despesa</th></tr>'+
+    (rows.length?rows.map(r=>`<tr><td>${esc(String(r.data).split('-').reverse().join('/'))}</td><td>${esc(r.desc)}</td><td>${r.tipo==='entrada'?eur(r.valor):''}</td><td>${r.tipo==='despesa'?eur(r.valor):''}</td></tr>`).join(''):'<tr><td colspan="4" class="note">Sem movimentos no período.</td></tr>')+
+    `<tr><td></td><td><b>Totais</b></td><td><b>${eur(tt.e)}</b></td><td><b>${eur(tt.d)}</b></td></tr><tr><td></td><td><b>Saldo</b></td><td colspan="2"><b>${eur(tt.saldo)}</b></td></tr>`;}
+function extCsv(){const de=$('#extDe').value,ate=$('#extAte').value;const rows=extRows(de,ate);if(!rows.length)return toast('Sem movimentos no período');const tt=extTotais(rows);
+  const L=[['Data','Descrição','Entrada (€)','Despesa (€)']].concat(rows.map(r=>[r.data,r.desc,r.tipo==='entrada'?String(r.valor).replace('.',','):'',r.tipo==='despesa'?String(r.valor).replace('.',','):'']));
+  L.push(['','Totais',String(tt.e).replace('.',','),String(tt.d).replace('.',',')]);L.push(['','Saldo',String(tt.saldo).replace('.',','),'']);
+  const csv='﻿'+L.map(l=>l.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='extrato-'+de+'-a-'+ate+'.csv';a.click();}
+function extPrint(){const de=$('#extDe').value,ate=$('#extAte').value;const rows=extRows(de,ate);const tt=extTotais(rows);
+  const fmt=s=>String(s||'').split('-').reverse().join('/');
+  const w=window.open('about:blank');if(!w)return toast('Permite janelas (pop-ups) para imprimir');
+  w.document.write(`<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><title>Extrato de conta</title><style>body{font:14px/1.5 Arial,sans-serif;color:#15284B;margin:28px}h1{font-size:20px;margin:0}h2{font-size:14px;font-weight:normal;margin:2px 0 16px;color:#44527A}table{border-collapse:collapse;width:100%}td,th{border:1px solid #C9D3E8;padding:6px 8px;font-size:13px;text-align:left}th{background:#EDF2FC}td.n,th.n{text-align:right}tfoot td{font-weight:bold}.rodape{margin-top:18px;font-size:12px;color:#44527A}</style></head><body>`+
+    `<h1>Extrato de conta · Comunidade 25 · Agrupamento 73 Carnide</h1><h2>Empreendimento Bravery · de ${fmt(de)} a ${fmt(ate)}</h2>`+
+    `<table><thead><tr><th>Data</th><th>Descrição</th><th class="n">Entrada</th><th class="n">Despesa</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td>${fmt(r.data)}</td><td>${r.desc.replace(/</g,'&lt;')}</td><td class="n">${r.tipo==='entrada'?eur(r.valor):''}</td><td class="n">${r.tipo==='despesa'?eur(r.valor):''}</td></tr>`).join('')+
+    `</tbody><tfoot><tr><td></td><td>Totais</td><td class="n">${eur(tt.e)}</td><td class="n">${eur(tt.d)}</td></tr><tr><td></td><td>Saldo</td><td class="n" colspan="2">${eur(tt.saldo)}</td></tr></tfoot></table>`+
+    `<p class="rodape">Gerado pela app Cartão BRAVERY em ${new Date().toLocaleDateString('pt-PT')} por ${(PROFILE.nome||'').replace(/</g,'&lt;')}.</p></body></html>`);
+  w.document.close();setTimeout(()=>{try{w.print();}catch(e){}},400);}
+function paintFinEA(){const on=PROFILE.role==='ea'&&VIEW===ME.uid&&!PROFILE.servico;['fatCard','extCard'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=on?'':'none';});if(on){fatWire();paintFat();paintEnt();}}
+try{window.fatTest={fatParse:fatParse,nifValido:nifValido,extRows:extRows,extTotais:extTotais};}catch(e){}
 
 /* (angariação removida em v31) */
 function angList(){return [];}
@@ -3032,6 +3198,7 @@ function notifPausada(){return !(CONFIG&&CONFIG.notifPausa===false);}
 function paintNotif(){const e=$('#admNotifEstado'),b=$('#admNotifToggle');if(!e||!b)return;const p=notifPausada();e.textContent=p?'Em pausa':'Ativas';e.className='pill';e.style.cssText='color:#fff;background:'+(p?'var(--laranja)':'var(--ok)');b.textContent=p?'Retomar notificações':'Pausar notificações';b.className='btn sm '+(p?'y':'ghost');}
 $('#admNotifToggle').onclick=()=>{const p=notifPausada();if(!confirm(p?'Retomar o envio de emails a todos?':'Pausar o envio de emails a todos?'))return;db.collection('config').doc('app').set({notifPausa:!p,notifBy:PROFILE.nome||'',notifAt:new Date().toISOString()},{merge:true}).then(()=>toast(p?'Notificações retomadas':'Notificações em pausa')).catch(e=>toast('Erro: '+e.code));};
 $('#admProjetoSave').onclick=()=>db.collection('config').doc('app').set({projeto:$('#admProjeto').value.trim()||'Bravery'},{merge:true}).then(()=>toast('Empreendimento guardado'));
+$('#admNifSave').onclick=()=>{const n=String($('#admNif').value||'').replace(/\D/g,'');if(n&&n.length!==9)return toast('O NIF tem 9 dígitos');db.collection('config').doc('app').set({nifCNE:n||'500972052'},{merge:true}).then(()=>toast('NIF guardado'));};
 /* v50: Equipas = identificador fixo ("Equipa 1", "Equipa 2", ...) + Nome + Grito. A lista junta config/app.equipas com as Equipas que já têm elementos (users, registo prévio, Missão). */
 function eqIds(){const set=new Set((CONFIG.equipas||[]).filter(Boolean));(USERS||[]).forEach(u=>{if(u.role!=='ea'&&u.equipa)set.add(u.equipa);});(PRE||[]).forEach(p=>{if(p.role!=='ea'&&p.equipa)set.add(p.equipa);});(CARDS||[]).forEach(c=>{if(c.missaoEquipa)set.add(c.missaoEquipa);});set.delete('Viriato');
   const num=k=>{const m=/^equipa\s+(\d+)$/i.exec(k);return m?Number(m[1]):null;};const cfg=CONFIG.equipas||[];
@@ -3076,7 +3243,7 @@ async function boot(user){
   PROFILE=Object.assign({uid:user.uid},us.data());
   PROFILE.sub=PROFILE.papel==='Subguia';
   uref.onSnapshot(sn=>{const old=PROFILE.role;const sub=PROFILE.sub;PROFILE=Object.assign({uid:user.uid},sn.data()||{});PROFILE.sub=sub;$('#ubRole').textContent=roleLabel();if(old!==PROFILE.role)location.reload();else{try{paintHeader();}catch(e){}}});
-  db.collection('config').doc('app').onSnapshot(sn=>{CONFIG=sn.exists?sn.data():{equipas:[]};METODO_TXT=CONFIG.metodo||{};if(typeof paintMetodo==='function')paintMetodo();if(typeof paintProjeto==='function')paintProjeto();fillEquipas();fillPreEquipas();paintFaceis();paintJam();paintFin();paintAng();paintAdes();paintContactos();paintPainel();paintNotif();});
+  db.collection('config').doc('app').onSnapshot(sn=>{CONFIG=sn.exists?sn.data():{equipas:[]};METODO_TXT=CONFIG.metodo||{};if(typeof paintMetodo==='function')paintMetodo();if(typeof paintProjeto==='function')paintProjeto();fillEquipas();fillPreEquipas();paintFaceis();paintJam();paintFin();paintAng();paintAdes();paintContactos();paintPainel();paintNotif();{const e=$('#admNif');if(e&&document.activeElement!==e)e.value=(CONFIG&&CONFIG.nifCNE)||'500972052';}});
   $('#ubName').textContent=PROFILE.nome||user.email; $('#ubRole').textContent=roleLabel();
   if(PROFILE.role==='ea'){ db.collection('preregistos').onSnapshot(sn=>{PRE=sn.docs.map(d=>d.data());paintPre();},()=>{}); db.collection('pedidos').onSnapshot(sn=>{PED=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintPedidos();},()=>{}); }
   if(isStaff()){ $('#tabPainel').style.display=''; $('#filtroEquipaWrap').style.display=PROFILE.role==='ea'?'':'none';
@@ -3087,7 +3254,7 @@ async function boot(user){
   }
   $('#login').style.display='none';$('#btnPreview').style.display=PROFILE.role==='ea'?'':'none';
   valsLoad(); if(PROFILE.role==='jovem'&&!PROFILE.sub){db.collection('users').where('equipa','==',PROFILE.equipa||'-').onSnapshot(sn=>{USERS=sn.docs.map(d=>Object.assign({uid:d.id},d.data()));paintTarefas();},()=>{});}
-  ATT.subscribe(d=>{ATTD=d;paintAssid();paintCal();paintTrail();paintNov();if(typeof paintPend==='function')paintPend();});matsLoad();propsLoad();eventsLoad();tesLoad();pagsLoad();eqNomesLoad();cmuralLoad();
+  ATT.subscribe(d=>{ATTD=d;paintAssid();paintCal();paintTrail();paintNov();if(typeof paintPend==='function')paintPend();});matsLoad();propsLoad();eventsLoad();tesLoad();pagsLoad();fatLoad();eqNomesLoad();cmuralLoad();
   openCard(user.uid); if(isStaff()) showTab('painel');
 }
 auth.getRedirectResult().catch(e=>{lmsg('Não entrou ('+(e.code||'')+'): '+e.message);});
@@ -3096,7 +3263,28 @@ auth.onAuthStateChanged(u=>{ if(u){ if(booting) return; booting=true; boot(u).ca
 window.addEventListener('error',e=>{const m=$('#loginMsg');if(m&&$('#login').style.display!=='none')m.textContent='Erro na página: '+e.message;});
 
 /* ===== PENDENTES (Guias, Subguias e Viriato) ===== */
-function paintPend(){const box=$('#pendList');if(!box||!isStaff())return;const role=PROFILE.role;const eq=$('#filtroEquipa').value;const today=isoLocal();
+/* v62: Concretizações - tudo o que os Pioneiros e Noviços escreveram nos Trilhos e nas Provas, com o estado */
+function concEstadoTrilho(u,key,t){const ea=((EAREV[u.uid]||{})[key])||{};if(ea.s===5)return 'Validado pela Viriato';const v=VALS.find(x=>!x.done&&x.tipo==='trilho'&&x.key===key&&x.uid===u.uid);if(v)return ({guia:'Aguarda o Guia',cc:'Aguarda Cristóvão Colombo',ea:'Aguarda a Viriato'})[v.nivel]||v.nivel;return (t.s||0)>=2?'Submetido':'Em curso';}
+function concRows(){const eq=$('#filtroEquipa')?$('#filtroEquipa').value:'';const role=PROFILE.role;
+  const users=USERS.filter(u=>u.role!=='ea'&&!u.servico&&(role==='ea'?(!eq||u.equipa===eq):u.equipa===PROFILE.equipa)).sort((a,b)=>ordEqKey(a.equipa,b.equipa)||ordEq(a,b));
+  const out=[];users.forEach(u=>{const c=CARDS.find(x=>x.uid===u.uid)||{};
+    Object.entries(c.tri||{}).forEach(([key,t])=>{if(!t)return;const txt=(t.desc||'').trim();const ops=(t.ops||[]).map(o=>(o.d?new Date(o.d).toLocaleDateString('pt-PT')+' ':'')+o.t).join(' · ');if(!txt&&!ops)return;
+      let nm=key;try{nm=trilhoName(key[0],Number(key.slice(1)))+' ('+key[0]+')';}catch(e){}
+      out.push({u,tipo:'Trilho',item:nm,txt,extra:ops,estado:concEstadoTrilho(u,key,t)});});
+    if((u.papel||(c.id&&c.id.papel))==='Noviço'){const av=((EAREV[u.uid]||{}).adesv)||{};adesList().forEach(r=>{const st=(c.ades||{})[r.id]||{};const txt=String(st.como!==undefined&&st.como!==null?st.como:'').trim();const apr=String(st.apr||'').trim();if(!txt&&!apr&&!st.ok)return;
+      out.push({u,tipo:'Prova',item:(r.g?r.g+' · ':'')+r.t,txt:txt||(r.sug?'(sugestão) '+r.sug:''),extra:apr?'⭐ '+apr:'',estado:av[r.id]?'Validada pela Viriato':st.ok?'Marcada · aguarda validação':'Em curso'});});}
+  });return out;}
+function paintConc(){const tb=$('#concTable');if(!tb||!isStaff())return;const rows=concRows();
+  tb.innerHTML='<tr><th>Pioneiro</th><th>Trilho / Prova</th><th>Como concretiza</th><th>Estado</th></tr>';
+  if(!rows.length){const tr=document.createElement('tr');tr.innerHTML='<td colspan="4" class="note">Ainda ninguém escreveu nada nos Trilhos nem nas Provas.</td>';tb.appendChild(tr);return;}
+  let last=null;rows.forEach(r=>{const gk=r.u.equipa||'';if(gk!==last){last=gk;const tr=document.createElement('tr');tr.innerHTML=`<td style="background:var(--sel);font-weight:800">${esc(eqLabel(gk)||'Sem Equipa')}</td><td colspan="3" style="background:var(--sel)"></td>`;tb.appendChild(tr);}
+    const tr=document.createElement('tr');tr.innerHTML=`<td><b>${esc(r.u.nome||'')}</b></td><td>${esc(r.tipo)} · ${esc(r.item)}</td><td>${esc(r.txt)}${r.extra?'<div class="note">'+esc(r.extra)+'</div>':''}</td><td style="white-space:nowrap">${esc(r.estado)}</td>`;
+    tr.style.cursor='pointer';tr.onclick=()=>openCard(r.u.uid);tb.appendChild(tr);});}
+function concCsv(){const rows=concRows();if(!rows.length)return toast('Sem dados');
+  const L=[['Equipa','Pioneiro','Tipo','Trilho / Prova','Como concretiza','Oportunidades / Aprendi','Estado']].concat(rows.map(r=>[eqLabel(r.u.equipa||''),r.u.nome||'',r.tipo,r.item,r.txt,r.extra,r.estado]));
+  const csv='\ufeff'+L.map(l=>l.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='concretizacoes-'+isoLocal()+'.csv';a.click();}
+function paintPend(){const box=$('#pendList');if(!box||!isStaff())return;try{paintConc();}catch(e){}const cb=$('#concCsv');if(cb&&!cb.onclick)cb.onclick=concCsv;const role=PROFILE.role;const eq=$('#filtroEquipa').value;const today=isoLocal();
   const users=USERS.filter(u=>u.role!=='ea'&&(role==='ea'?(!eq||u.equipa===eq):u.equipa===PROFILE.equipa));
   const rows=users.map(u=>{const c=CARDS.find(x=>x.uid===u.uid)||{};const ea=EAREV[u.uid]||{};const id=c.id||{};const m=[];
     const pd=[];if(!id.nomeCompleto)pd.push('nome completo');if(!id.nascimento)pd.push('data de nascimento');if(!id.totem)pd.push('Totem');if(!id.foto)pd.push('foto');if(!id.tlm)pd.push('telemóvel');if(pd.length)m.push({k:'Dados pessoais',t:pd.join(', ')});
