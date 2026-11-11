@@ -769,6 +769,10 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       <details><summary>Faturas e Extrato de conta (Viriato)</summary>
         <p>No separador Financeiro, a Viriato tem o grupo "Faturas": carrega-se a fatura por fotografia ou PDF e a app tenta ler o NIF (diz se é o do CNE ou outro), a data e o valor - os campos ficam sempre editáveis, porque a leitura automática pode falhar, sobretudo em fotografias. Regista-se quem fez a despesa (um elemento da Viriato ou "Outro") e a data do reembolso; sem data, a fatura fica "por reembolsar". Um PDF só pode ter até ~700 KB; maior, tira-se uma fotografia. No "Extrato de conta" escolhem-se as datas e saem as entradas (pagamentos confirmados pela Viriato e donativos registados à mão) e as despesas (faturas), com totais e saldo, em CSV ou numa versão para imprimir/guardar em PDF e enviar à direção. O NIF verificado define-se em Painel → Administração.</p>
       </details>
+      <details><summary>Depósitos, saldos e Conciliação de contas (Viriato)</summary>
+        <p>No grupo "Depósito na conta bancária" (por norma, regista o Tesoureiro da Viriato) guarda-se a data, o valor, quem depositou e o comprovativo (fotografia ou PDF). O depósito passa dinheiro da caixa para o banco: não muda o total, mas muda os dois saldos. No "Extrato de conta" definem-se os saldos iniciais de caixa e de banco, e o extrato mostra as entradas, as despesas, os depósitos e os três saldos (caixa, banco e total), também no CSV e na versão para imprimir.</p>
+        <p>Na "Conciliação de contas" fecham-se as contas do último fecho até à data escolhida: os saldos desse fecho ficam guardados e deixa de ser possível alterar faturas, pagamentos, donativos e depósitos até essa data. Fecham o Tesoureiro e a Guia de Equipa da Viriato (o Cargo escolhe-se no Perfil); só a Guia de Equipa da Viriato pode reabrir o último fecho, e a reabertura nunca altera os saldos guardados.</p>
+      </details>
       <details><summary>Como concretizei (Trilhos)</summary>
         <p>Em cada Trilho há a caixa "Como concretizei os Objetivos Educativos": descreve, por palavras tuas, como o concretizaste, além das oportunidades educativas (data e atividade). É preciso preenchê-la antes de "Proponho ao Guia: concluído", e o que escreveres segue com a validação, para o Guia, a Cristóvão Colombo e a Viriato lerem. Nas Provas do Passaporte do Desprendimento a caixa equivalente começa como "Sugestão da Viriato - podes alterar": podes usar a sugestão tal como está ou escrever a tua própria concretização. A Viriato vê tudo junto em Painel → Concretizações.</p>
       </details>
@@ -866,7 +870,7 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
       <details><summary>Assiduidade e calendário</summary>
         <p>O resumo está no topo do separador Empreendimento: a tua percentagem e a média da tua Equipa (só atividades já realizadas e validadas; as futuras não entram em nenhuma contagem). As presenças marcam-se em cada atividade da Caminhada: "Estive presente" ou "Vou faltar / Faltei" com o motivo. O <span class="r g">Guia</span> confirma a Equipa (usa as declarações, corrige e confirma) e a <span class="r v">Viriato</span> valida; depois só a Viriato altera. Nos acampamentos e raides marca-se um dia de cada vez.</p>
         <p>No calendário do ano, os dias com atividade aparecem a cor (as atividades da Caminhada já lá estão). Depois da validação final, a tua presença fica a <b>verde</b>, a falta justificada a <b>amarelo</b> e a falta a <b>vermelho</b>. Os sábados sem atividade aparecem riscados ("Dia livre") e não contam.</p>
-        <p>Cada sessão é dirigida a alguém: <b>Comunidade</b> (todos os Pioneiros), <b>Cristóvão Colombo</b> (todos os Guias e Subguias), <b>Viriato</b>, ou <b>Pioneiros escolhidos</b> um a um. Cada um só vê as sessões que lhe dizem respeito e só marca presença nessas; as sessões de Cristóvão Colombo contam para a assiduidade dos Guias e Subguias. Toca num dia do calendário para declarar a presença numa sessão que não esteja na Caminhada. A Viriato também conta: nas sessões de Comunidade e nas suas reuniões, o grupo "Viriato" aparece no mapa de presenças (marcado e validado pela própria Viriato) e o Painel mostra a assiduidade coletiva da Viriato e de cada Equipa.</p>
+        <p>Cada sessão é dirigida a alguém: <b>Comunidade</b> (todos os Pioneiros), <b>Cristóvão Colombo</b> (todos os Guias e Subguias), <b>Viriato</b>, ou <b>Pioneiros escolhidos</b> um a um. Cada um só vê as sessões que lhe dizem respeito e só marca presença nessas; as sessões de Cristóvão Colombo contam para a assiduidade dos Guias e Subguias. Toca num dia do calendário para declarar a presença numa sessão que não esteja na Caminhada. A Viriato também conta, e está sempre presente: o grupo "Viriato" aparece no mapa de presenças de todas as atividades (Comunidade, Cristóvão Colombo, Pioneiros escolhidos e reuniões da Viriato), marcado e validado pela própria Viriato, e todas contam para a assiduidade coletiva da Viriato, que o Painel mostra a par da de cada Equipa.</p>
       </details>
       <details><summary>Tarefas a aguardar validação e "O que já alcancei"</summary>
         <p>No topo do separador Empreendimento, a caixa <b>Tarefas a aguardar validação</b> mostra a cada um o que lhe cabe: ao Pioneiro, o que submeteu e em que nível está; ao Guia, as submissões da sua Equipa e as presenças por confirmar; a Cristóvão Colombo, as submissões de outras Equipas já validadas pelo Guia; à Viriato, tudo o que aguarda a validação final.</p>
@@ -951,9 +955,28 @@ Ana Pinto; ana@gmail.com; ; Viriato"></textarea></div>
         <button class="btn sm" id="entAdd">Registar entrada</button>
         <div id="entList" style="margin-top:6px"></div>
       </details>
+      <div class="row" style="margin-top:8px;align-items:flex-end"><div class="field"><label>Saldo inicial de caixa (€)</label><input type="number" step="0.01" id="extIniCaixa"></div><div class="field"><label>Saldo inicial de banco (€)</label><input type="number" step="0.01" id="extIniBanco"></div><button class="btn sm" id="extIniSave">Guardar saldos iniciais</button></div>
       <div class="row" style="margin-top:8px"><div class="field"><label>De</label><input type="date" id="extDe"></div><div class="field"><label>Até</label><input type="date" id="extAte"></div></div>
       <div class="row"><button class="btn sm y" id="extVer">Ver extrato</button><button class="btn sm ghost" id="extCsv">Exportar CSV</button><button class="btn sm ghost" id="extPrint">Imprimir / guardar em PDF</button></div>
       <div class="hscroll" style="margin-top:8px"><table class="tbl" id="extTable"></table></div>
+    </div>
+    <div class="card" id="depCard" style="display:none">
+      <h2>Depósito na conta bancária <small>Só a Viriato vê este grupo (por norma, regista o Tesoureiro da Viriato). O depósito passa dinheiro da caixa para a conta bancária: não altera o total, mas muda os saldos de caixa e de banco no extrato.</small></h2>
+      <button class="btn sm y" id="depNovo">Registar depósito</button>
+      <div id="depForm" style="display:none;margin-top:8px">
+        <div class="grid2"><div class="field"><label>Data do depósito</label><input type="date" id="depData"></div><div class="field"><label>Valor (€)</label><input type="number" step="0.01" min="0" id="depValor"></div></div>
+        <div class="grid2"><div class="field"><label>Quem depositou</label><select id="depQuem"></select><input id="depQuemOutro" placeholder="Nome de quem depositou" style="display:none;margin-top:4px"></div><div class="field"><label>Comprovativo (foto ou PDF, opcional)</label><input type="file" id="depFile" accept="image/*,application/pdf"></div></div>
+        <div class="field"><label>Nota (opcional)</label><input id="depNota"></div>
+        <div class="row"><button class="btn sm y" id="depSave">Guardar depósito</button><button class="btn sm ghost" id="depCancel">Cancelar</button></div>
+        <span class="note" id="depMsg"></span>
+      </div>
+      <div class="hscroll" style="margin-top:8px"><table class="tbl" id="depTable"></table></div>
+    </div>
+    <div class="card" id="fchCard" style="display:none">
+      <h2>Conciliação de contas <small>Fecha as contas do último fecho até à data escolhida: os saldos ficam guardados e deixa de ser possível alterar faturas, pagamentos, donativos e depósitos até essa data. Fecham o Tesoureiro e a Guia de Equipa da Viriato; só a Guia de Equipa da Viriato pode reabrir, sem alterar os saldos guardados.</small></h2>
+      <div class="row" id="fchNew" style="align-items:flex-end"><div class="field"><label>Fechar contas até</label><input type="date" id="fchAteIn"></div><button class="btn sm y" id="fchDo">Conciliar e fechar</button></div>
+      <p class="note" id="fchNote"></p>
+      <div class="hscroll" style="margin-top:8px"><table class="tbl" id="fchTable"></table></div>
     </div>
   </section>
 
@@ -1691,20 +1714,21 @@ function isVirMeet(x){return sessPara(x)==='viriato';}
 function canSeeVir(){return (typeof PROFILE!=='undefined'&&PROFILE)?PROFILE.role==='ea':mode==='ea';}
 function myKind(){if(typeof PROFILE!=='undefined'&&PROFILE)return VIEW==='preview'?'jovem':PROFILE.role==='ea'?'ea':(PROFILE.role==='guia'||PROFILE.sub||(S.id&&S.id.papel==='Subguia'&&VIEW===ME.uid))?'guia':'jovem';return mode==='ea'?'ea':(mode==='guia'||mode==='cc')?'guia':(S.id.papel==='Guia'||S.id.papel==='Subguia')?'guia':'jovem';}
 function canSeeSess(x){const p=sessPara(x),k=myKind();if(k==='ea')return true;if(p==='comunidade')return true;if(p==='cc')return k==='guia';if(p==='alguns')return (x.uids||[]).includes(ATT.me());return false;}
-function amTarget(x){const p=sessPara(x),k=myKind();if(isFreeS(x)||sessHidden(x)||souServico())return false;if(isJamS(x)&&!souJam())return false;if(p==='comunidade')return true;if(p==='cc')return k==='guia';if(p==='viriato')return k==='ea';if(p==='alguns')return (x.uids||[]).includes(ATT.me());return false;}
+function amTarget(x){const p=sessPara(x),k=myKind();if(isFreeS(x)||sessHidden(x)||souServico())return false;if(isJamS(x)&&!souJam())return false;if(k==='ea')return true;if(p==='comunidade')return true;if(p==='cc')return k==='guia';if(p==='viriato')return k==='ea';if(p==='alguns')return (x.uids||[]).includes(ATT.me());return false;}
 function myGroupFor(x){const p=sessPara(x);return p==='cc'?'Cristóvão Colombo':(p==='viriato'||myKind()==='ea')?'Viriato':ATT.myEquipa();}
-/* nas sessões de Comunidade a Viriato também é contada (grupo "Viriato", marcado e validado pela própria Viriato) */
+/* a Viriato é contada em todas as sessões (grupo "Viriato", marcado e validado pela própria Viriato) */
 function isVirMember(m){return m.role==='ea'||m.equipa==='Viriato';}
 /* v51: conta do Agrupamento (users.servico): mantém o acesso, mas não conta para presenças, assiduidade nem n.º de elementos */
 function isServico(uid){try{return typeof USERS!=='undefined'&&Array.isArray(USERS)&&USERS.some(u=>u.uid===uid&&u.servico);}catch(e){return false;}}
 function souServico(){try{return typeof PROFILE!=='undefined'&&!!PROFILE&&!!PROFILE.servico&&VIEW===ME.uid;}catch(e){return false;}}
 function sessTargets(x){const p=sessPara(x);const all=isJamS(x)?ATT.members().filter(m=>(typeof PROFILE==='undefined'||!PROFILE)?true:!!m.jamboree):ATT.members();if(p==='comunidade')return all;if(p==='cc')return all.filter(m=>m.role==='guia'||m.papel==='Guia'||m.papel==='Subguia');if(p==='viriato')return all.filter(isVirMember);return all.filter(m=>(x.uids||[]).includes(m.uid));}
-function sessGroups(x){const p=sessPara(x);const t=sessTargets(x);const g={};if(p==='cc'){g['Cristóvão Colombo']=t;return g;}if(p==='viriato'){g['Viriato']=t;return g;}t.forEach(m=>{const k=isVirMember(m)?'Viriato':(m.equipa||'Sem Equipa');(g[k]=g[k]||[]).push(m);});return g;}
+/* v64: a Viriato está sempre presente - o grupo "Viriato" aparece no mapa de TODAS as atividades (Comunidade, Cristóvão Colombo, Pioneiros escolhidos e reuniões da Viriato) */
+function sessGroups(x){const p=sessPara(x);const t=sessTargets(x);const g={};const vir=(isJamS(x)?ATT.members().filter(m=>!!m.jamboree):ATT.members()).filter(isVirMember);if(p==='cc'){g['Cristóvão Colombo']=t;if(vir.length)g['Viriato']=vir;return g;}if(p==='viriato'){g['Viriato']=t;return g;}t.forEach(m=>{const k=isVirMember(m)?'Viriato':(m.equipa||'Sem Equipa');(g[k]=g[k]||[]).push(m);});if(vir.length&&!g['Viriato'])g['Viriato']=vir;return g;}
 /* assiduidade coletiva de um grupo (Equipa, Cristóvão Colombo ou Viriato): presenças ÷ registos em dias validados */
 /* atividade já realizada: dia anterior a hoje, ou hoje depois da hora de fim (só estas contam para a assiduidade) */
 function sessRealizada(x){const now=new Date();const today=isoLocal(now);if(!x||!x.date)return false;const d=x.parent?x.date:((x.end&&x.end>x.date)?x.end:x.date);if(d<today)return true;if(d>today)return false;const hm=now.toTimeString().slice(0,5);return hm>=(x.hFim||'23:59');}
 function assidJam(){let P=0,N=0,V=0;daySessions().filter(x=>!isFreeS(x)&&sessRealizada(x)&&isJamS(x)&&!isReuniao(x)).forEach(x=>{let any=false;Object.keys(sessGroups(x)).forEach(g=>{const e=eqDoc(x.id,g);if(!e.validated)return;any=true;presUids(x,g).forEach(u=>{if(!vaiJam(u))return;const q=presEf(x.id,g,u);if(q==='P'||q==='F'||q==='J'){N++;if(q==='P')P++;}});});if(any)V++;});return {pct:N?Math.round(100*P/N):0,dias:V,n:N};}
-function assidGrupo(grp){let P=0,N=0,V=0;daySessions().filter(x=>!isFreeS(x)&&sessRealizada(x)&&!isReuniao(x)&&!isJamS(x)).forEach(x=>{const p=sessPara(x);const ok=grp==='Viriato'?(p==='comunidade'||p==='viriato'):grp==='Cristóvão Colombo'?p==='cc':(p==='comunidade');if(!ok)return;const e=eqDoc(x.id,grp);if(!e.validated)return;V++;presUids(x,grp).forEach(u=>{const q=presEf(x.id,grp,u);if(q==='P'||q==='F'||q==='J'){N++;if(q==='P')P++;}});});return {pct:N?Math.round(100*P/N):0,dias:V,n:N};}
+function assidGrupo(grp){let P=0,N=0,V=0;daySessions().filter(x=>!isFreeS(x)&&sessRealizada(x)&&!isReuniao(x)&&!isJamS(x)).forEach(x=>{const p=sessPara(x);const ok=grp==='Viriato'?true:grp==='Cristóvão Colombo'?p==='cc':(p==='comunidade');if(!ok)return;const e=eqDoc(x.id,grp);if(!e.validated)return;V++;presUids(x,grp).forEach(u=>{const q=presEf(x.id,grp,u);if(q==='P'||q==='F'||q==='J'){N++;if(q==='P')P++;}});});return {pct:N?Math.round(100*P/N):0,dias:V,n:N};}
 function virAmanha(){const t=new Date();t.setDate(t.getDate()+1);const k=isoLocal(t);return daySessions().filter(x=>x.date===k&&!isFreeS(x)&&canSeeSess(x));}
 /* atividades reservadas: a Viriato cria escondidas (revelada:false) e revela quando quiser; base do ano e reuniões geradas nascem reveladas */
 function sessHidden(x){return x.revelada===false&&myKind()!=='ea';}
@@ -1784,7 +1808,7 @@ function calEditForm(x,info,opt){opt=opt||{};const old=info.querySelector(':scop
 (function(){const box=$('#ajudaOE');if(!box)return;box.innerHTML=FACEIS.map(f=>`<h3 style="margin:8px 0 4px">${esc(f.n)}</h3>`+TRILHOS[f.k].map((t,i)=>{const oe=TRILHO_OE[f.k+i]||{oes:[],enq:''};return `<details style="margin:4px 0"><summary style="font-size:13px"><b>${i+1}. ${esc(t.n)}</b> · ${oe.oes.map(x=>x.c).join(', ')}</summary><p class="note" style="margin:4px 0">${esc(oe.enq)}</p><ul style="margin:4px 0;padding-left:18px;font-size:14px">${oe.oes.map(x=>`<li><b>${esc(x.c)}</b> ${esc(x.t)}</li>`).join('')}</ul></details>`;}).join('')).join('');})();
 /* Empreendimento do ano (config/app.projeto online; demo: fixo) */
 function paintProjeto(){const el=$('#hProjeto');if(!el)return;const n=(typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.projeto)||'Bravery';el.textContent=n;document.title='Empreendimento '+n+' · Comunidade 25 · 73 Carnide';}
-const APP_VERSION='v63';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
+const APP_VERSION='v64';{const v=$('#appVer');if(v)v.textContent='· app '+APP_VERSION;const v2=$('#appVerHelp');if(v2)v2.textContent='Versão '+APP_VERSION+' · ';}
 paintProjeto();
 layoutV44();colapsarTudo();
 /* ===== MÉTODO ESCUTISTA (cartão da Viriato) ===== */
@@ -2579,6 +2603,7 @@ function myCargoTes(){return !!(ME&&VIEW===ME.uid&&PROFILE&&PROFILE.role!=='ea'&
 function pagRecords(uid){if(ME&&(uid===ME.uid||uid==='me'))return S.pag||{};const c=(typeof CARDS!=='undefined'?CARDS:[]).find(x=>x.uid===uid)||{};if(c.pag)return c.pag;const out={};Object.values(PAGS).forEach(x=>{if(x.uid===uid)out[x.pid]={pago:true,valor:x.valor,met:x.met,para:x.para,paraNome:x.paraNome,at:x.at};});return out;}
 function pagLockedFor(uid,pid){if(ME&&(uid===ME.uid||uid==='me'))return pagLocked(pid);return ((EAREV[uid]||{}).pagv||{})[pid]||null;}
 function finValidateFor(uid,id,on,nome){const ref=db.collection('cards').doc(uid).collection('reviews').doc('ea');const p=pagList().find(x=>x.id===id);
+  if(typeof fchLocked==='function'&&p&&fchLocked(p.date)){toast(fchMsg());return Promise.resolve();}
   if(on)return ref.set({pagv:{[id]:{vd:new Date().toLocaleDateString('pt-PT'),by:PROFILE.nome}}},{merge:true}).then(()=>{toast('Pagamento confirmado');logEvent('Pagamento confirmado','A Viriato confirmou o pagamento de "'+(p?p.ativ:id)+'" de '+(nome||S.id.nome||''),{notify:[uid],ea:true});});
   return ref.set({pagv:{[id]:firebase.firestore.FieldValue.delete()}},{merge:true}).then(()=>{toast('Pagamento reaberto');reabResolve('fin',id);});}
 function finValidate(id,on){return finValidateFor(VIEW,id,on,S.id.nome||'');}
@@ -2616,7 +2641,9 @@ function loadEaReviews(){if(!isStaff())return;USERS.forEach(u=>{if(EAREV['_s'+u.
 let FATS={},ENTRS={},FAT_PEND=null,FAT_WIRED=false;
 function fatLoad(){if(PROFILE.role!=='ea')return;
   db.collection('faturas').onSnapshot(sn=>{FATS={};sn.docs.forEach(d=>FATS[d.id]=Object.assign({id:d.id},d.data()));paintFat();},e=>console.warn('faturas',e.code));
-  db.collection('entradas').onSnapshot(sn=>{ENTRS={};sn.docs.forEach(d=>ENTRS[d.id]=Object.assign({id:d.id},d.data()));paintEnt();},e=>console.warn('entradas',e.code));}
+  db.collection('entradas').onSnapshot(sn=>{ENTRS={};sn.docs.forEach(d=>ENTRS[d.id]=Object.assign({id:d.id},d.data()));paintEnt();},e=>console.warn('entradas',e.code));
+  db.collection('depositos').onSnapshot(sn=>{DEPS={};sn.docs.forEach(d=>DEPS[d.id]=Object.assign({id:d.id},d.data()));paintDep();},e=>console.warn('depositos',e.code));
+  db.collection('fechos').onSnapshot(sn=>{FCHS={};sn.docs.forEach(d=>FCHS[d.id]=Object.assign({id:d.id},d.data()));paintFch();paintFat();paintEnt();paintDep();},e=>console.warn('fechos',e.code));}
 function nifCfg(){return String((typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.nifCNE)||'500972052').replace(/\D/g,'');}
 function nifValido(n){n=String(n||'').replace(/\D/g,'');if(n.length!==9)return false;let s=0;for(let i=0;i<8;i++)s+=Number(n[i])*(9-i);const r=11-(s%11);return (r>=10?0:r)===Number(n[8]);}
 function fatNum(s){s=String(s).trim();if(/,\d{2}$/.test(s))return Number(s.replace(/\./g,'').replace(',','.'));const v=Number(s.replace(/,/g,''));return isFinite(v)?v:null;}
@@ -2670,6 +2697,7 @@ function fatWire(){if(FAT_WIRED)return;const fi=$('#fatFile');if(!fi)return;FAT_
   $('#fatCancel').onclick=fatFormReset;
   $('#fatSave').onclick=()=>{const data=$('#fatData').value;const valor=Number($('#fatValor').value);
     if(!data||!(valor>0))return toast('Preenche a data e o valor');
+    if(fchLocked(data))return toast(fchMsg());
     const sel=$('#fatQuem');const outro=sel.value==='outro';const quem=outro?$('#fatQuemOutro').value.trim():(sel.selectedOptions[0]?sel.selectedOptions[0].textContent:'');
     if(outro&&!quem)return toast('Escreve quem fez a despesa');
     const nif=String($('#fatNif').value||'').replace(/\D/g,'');
@@ -2678,12 +2706,27 @@ function fatWire(){if(FAT_WIRED)return;const fi=$('#fatFile');if(!fi)return;FAT_
       .catch(e=>toast(e.code==='permission-denied'?'Publica as novas regras do Firestore (v63) na consola':'Erro: '+e.code));};
   $('#entAdd').onclick=()=>{const data=$('#entData').value;const valor=Number($('#entValor').value);const desc=$('#entDesc').value.trim();
     if(!data||!(valor>0)||!desc)return toast('Preenche a data, o valor e a origem');
+    if(fchLocked(data))return toast(fchMsg());
     db.collection('entradas').add({data,valor,desc,by:PROFILE.nome||'',at:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{toast('Entrada registada');$('#entValor').value='';$('#entDesc').value='';})
       .catch(e=>toast(e.code==='permission-denied'?'Publica as novas regras do Firestore (v63) na consola':'Erro: '+e.code));};
   const hoje=isoLocal();$('#extDe').value='2026-09-01';$('#extAte').value=hoje;
   $('#extVer').onclick=()=>paintExt();
   $('#extCsv').onclick=()=>extCsv();
-  $('#extPrint').onclick=()=>extPrint();}
+  $('#extPrint').onclick=()=>extPrint();
+  {const b=$('#extIniSave');if(b)b.onclick=()=>{const c=Number($('#extIniCaixa').value)||0,k=Number($('#extIniBanco').value)||0;
+    db.collection('config').doc('app').set({saldoIniCaixa:c,saldoIniBanco:k},{merge:true}).then(()=>toast('Saldos iniciais guardados')).catch(e=>toast('Erro: '+e.code));};}
+  {const bn=$('#depNovo');if(bn)bn.onclick=()=>{depFormReset();$('#depForm').style.display='';depQuemFill();$('#depData').value=isoLocal();};
+   const fi=$('#depFile');if(fi)fi.onchange=()=>depEscolhido(fi.files&&fi.files[0]);
+   const bc=$('#depCancel');if(bc)bc.onclick=depFormReset;
+   const bs=$('#depSave');if(bs)bs.onclick=()=>{const data=$('#depData').value;const valor=Number($('#depValor').value);
+     if(!data||!(valor>0))return toast('Preenche a data e o valor');
+     if(fchLocked(data))return toast(fchMsg());
+     const sel=$('#depQuem');const outro=sel.value==='outro';const quem=outro?$('#depQuemOutro').value.trim():(sel.selectedOptions[0]?sel.selectedOptions[0].textContent:'');
+     if(outro&&!quem)return toast('Escreve quem depositou');
+     db.collection('depositos').add({data,valor,quemUid:outro?'':sel.value,quem,nota:$('#depNota').value.trim(),doc:DEP_PEND?DEP_PEND.doc:'',docTipo:DEP_PEND?DEP_PEND.tipo:'',by:PROFILE.nome||'',at:firebase.firestore.FieldValue.serverTimestamp()})
+       .then(()=>{toast('Depósito guardado');depFormReset();})
+       .catch(e=>toast(e.code==='permission-denied'?'Publica as novas regras do Firestore (v64) na consola':'Erro: '+e.code));};}
+  {const ai=$('#fchAteIn');if(ai&&!ai.value)ai.value=hoje;const bd=$('#fchDo');if(bd)bd.onclick=fchDo;}}
 function fatVer(id){const f=FATS[id];if(!f||!f.doc)return toast('Esta fatura não tem documento anexado');
   const w=window.open('about:blank');if(!w)return toast('Permite janelas (pop-ups) para ver o documento');
   w.document.write(f.docTipo==='pdf'?'<embed src="'+f.doc+'" style="width:100%;height:100vh">':'<img src="'+f.doc+'" style="max-width:100%">');w.document.close();}
@@ -2696,49 +2739,127 @@ function paintFat(){const t=$('#fatTable');if(!t)return;fatWire();const list=Obj
       `<td>${f.nif?esc(f.nif)+'<div>'+(f.nifCNE?'<span class="ipill sim">NIF do CNE</span>':'<span class="ipill pend">outro NIF</span>')+'</div>':'<span class="note">-</span>'}${f.fornecedor?'<div class="note">'+esc(f.fornecedor)+'</div>':''}</td>`+
       `<td>${esc(f.quem||'')}</td><td class="fr"></td><td class="fd"></td><td class="fx"></td>`;
     const fr=tr.querySelector('.fr');const inp=document.createElement('input');inp.type='date';inp.value=f.reembolso||'';inp.style.width='140px';
-    inp.onchange=()=>db.collection('faturas').doc(f.id).set({reembolso:inp.value||''},{merge:true}).then(()=>toast(inp.value?'Reembolso registado':'Marcada por reembolsar')).catch(e=>toast('Erro: '+e.code));
+    inp.onchange=()=>{if(fchLocked(f.data)){inp.value=f.reembolso||'';return toast(fchMsg());}db.collection('faturas').doc(f.id).set({reembolso:inp.value||''},{merge:true}).then(()=>toast(inp.value?'Reembolso registado':'Marcada por reembolsar')).catch(e=>toast('Erro: '+e.code));};
     fr.appendChild(inp);if(!f.reembolso)fr.insertAdjacentHTML('beforeend','<div><span class="ipill nao">por reembolsar</span></div>');
     const fd=tr.querySelector('.fd');if(f.doc){const b=document.createElement('button');b.type='button';b.className='btn sm ghost';b.textContent='Ver';b.onclick=()=>fatVer(f.id);fd.appendChild(b);}else fd.innerHTML='<span class="note">-</span>';
     const fx=tr.querySelector('.fx');const bx=document.createElement('button');bx.type='button';bx.className='btn sm ghost';bx.textContent='×';bx.title='Apagar a fatura';
-    bx.onclick=()=>{if(confirm('Apagar esta fatura ('+(f.quem||'')+', '+(Number(f.valor)||0).toFixed(2)+' €)? Não dá para desfazer.'))db.collection('faturas').doc(f.id).delete().then(()=>toast('Fatura apagada')).catch(e=>toast('Erro: '+e.code));};
+    bx.onclick=()=>{if(fchLocked(f.data))return toast(fchMsg());if(confirm('Apagar esta fatura ('+(f.quem||'')+', '+(Number(f.valor)||0).toFixed(2)+' €)? Não dá para desfazer.'))db.collection('faturas').doc(f.id).delete().then(()=>toast('Fatura apagada')).catch(e=>toast('Erro: '+e.code));};
     fx.appendChild(bx);t.appendChild(tr);});
   t.insertAdjacentHTML('beforeend',`<tr><td><b>Total</b></td><td><b>${tot.toFixed(2).replace('.',',')} €</b></td><td colspan="5" class="note">por reembolsar: ${porR.toFixed(2).replace('.',',')} €</td></tr>`);}
 function paintEnt(){const box=$('#entList');if(!box)return;const list=Object.values(ENTRS).sort((a,b)=>String(b.data).localeCompare(String(a.data)));
   box.innerHTML=list.length?'':'<p class="note">Ainda sem donativos ou outras entradas.</p>';
   list.forEach(e=>{const d=document.createElement('div');d.className='mrow';d.innerHTML=`<span>${esc(String(e.data||'').split('-').reverse().join('/'))} · ${esc(e.desc||'')} · <b>${(Number(e.valor)||0).toFixed(2).replace('.',',')} €</b></span>`;
-    const bx=document.createElement('button');bx.type='button';bx.className='btn sm ghost';bx.textContent='×';bx.onclick=()=>{if(confirm('Apagar esta entrada?'))db.collection('entradas').doc(e.id).delete().catch(er=>toast('Erro: '+er.code));};
+    const bx=document.createElement('button');bx.type='button';bx.className='btn sm ghost';bx.textContent='×';bx.onclick=()=>{if(fchLocked(e.data))return toast(fchMsg());if(confirm('Apagar esta entrada?'))db.collection('entradas').doc(e.id).delete().catch(er=>toast('Erro: '+er.code));};
     d.appendChild(bx);box.appendChild(d);});}
 function isoFromPt(s){const m=String(s||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';}
 function extRows(de,ate){const inR=x=>x&&(!de||x>=de)&&(!ate||x<=ate);const rows=[];
   USERS.filter(u=>!u.servico).forEach(u=>{const pv=(EAREV[u.uid]||{}).pagv||{};Object.entries(pv).forEach(([pid,v])=>{const st=(pagRecords(u.uid)||{})[pid]||{};const p=pagList().find(x=>x.id===pid);
     const d=isoFromPt(v.vd)||isoFromPt(st.at)||'';if(!inR(d))return;
-    rows.push({tipo:'entrada',data:d,desc:'Pagamento · '+(p?p.ativ:pid)+' · '+(u.nome||''),valor:(st.valor!==undefined&&st.valor!==null?Number(st.valor):(p?Number(p.custo):0))||0});});});
+    rows.push({tipo:'entrada',data:d,desc:'Pagamento · '+(p?p.ativ:pid)+' · '+(u.nome||''),valor:(st.valor!==undefined&&st.valor!==null?Number(st.valor):(p?Number(p.valor):0))||0});});});
   Object.values(ENTRS).forEach(e=>{if(!inR(e.data))return;rows.push({tipo:'entrada',data:e.data,desc:'Donativo / entrada · '+(e.desc||''),valor:Number(e.valor)||0});});
   Object.values(FATS).forEach(f=>{if(!inR(f.data))return;rows.push({tipo:'despesa',data:f.data,desc:'Fatura · '+(f.fornecedor||(f.nif?'NIF '+f.nif:''))+(f.quem?' · pago por '+f.quem:'')+(f.reembolso?'':' · POR REEMBOLSAR'),valor:Number(f.valor)||0});});
+  Object.values(DEPS).forEach(x=>{if(!inR(x.data))return;rows.push({tipo:'dep',data:x.data,desc:'Depósito na conta bancária'+(x.quem?' · '+x.quem:''),valor:Number(x.valor)||0});});
   rows.sort((a,b)=>String(a.data).localeCompare(String(b.data)));return rows;}
-function extTotais(rows){const e=rows.filter(r=>r.tipo==='entrada').reduce((s,r)=>s+r.valor,0);const d=rows.filter(r=>r.tipo==='despesa').reduce((s,r)=>s+r.valor,0);return {e,d,saldo:e-d};}
+function extTotais(rows){const e=rows.filter(r=>r.tipo==='entrada').reduce((s,r)=>s+r.valor,0);const d=rows.filter(r=>r.tipo==='despesa').reduce((s,r)=>s+r.valor,0);const dep=rows.filter(r=>r.tipo==='dep').reduce((s,r)=>s+r.valor,0);return {e,d,dep,saldo:e-d};}
+function iniCaixa(){return Number((typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.saldoIniCaixa)||0)||0;}
+function iniBanco(){return Number((typeof CONFIG!=='undefined'&&CONFIG&&CONFIG.saldoIniBanco)||0)||0;}
+/* saldos acumulados desde o início (saldos iniciais + todos os movimentos) até à data 'ate' */
+function extSaldos(ate){const tt=extTotais(extRows('',ate));const caixa=iniCaixa()+tt.e-tt.d-tt.dep;const banco=iniBanco()+tt.dep;return {caixa,banco,total:caixa+banco};}
 function eur(v){return (Number(v)||0).toFixed(2).replace('.',',')+' €';}
-function paintExt(){const t=$('#extTable');if(!t)return;const rows=extRows($('#extDe').value,$('#extAte').value);const tt=extTotais(rows);
-  t.innerHTML='<tr><th>Data</th><th>Descrição</th><th>Entrada</th><th>Despesa</th></tr>'+
-    (rows.length?rows.map(r=>`<tr><td>${esc(String(r.data).split('-').reverse().join('/'))}</td><td>${esc(r.desc)}</td><td>${r.tipo==='entrada'?eur(r.valor):''}</td><td>${r.tipo==='despesa'?eur(r.valor):''}</td></tr>`).join(''):'<tr><td colspan="4" class="note">Sem movimentos no período.</td></tr>')+
-    `<tr><td></td><td><b>Totais</b></td><td><b>${eur(tt.e)}</b></td><td><b>${eur(tt.d)}</b></td></tr><tr><td></td><td><b>Saldo</b></td><td colspan="2"><b>${eur(tt.saldo)}</b></td></tr>`;}
-function extCsv(){const de=$('#extDe').value,ate=$('#extAte').value;const rows=extRows(de,ate);if(!rows.length)return toast('Sem movimentos no período');const tt=extTotais(rows);
-  const L=[['Data','Descrição','Entrada (€)','Despesa (€)']].concat(rows.map(r=>[r.data,r.desc,r.tipo==='entrada'?String(r.valor).replace('.',','):'',r.tipo==='despesa'?String(r.valor).replace('.',','):'']));
-  L.push(['','Totais',String(tt.e).replace('.',','),String(tt.d).replace('.',',')]);L.push(['','Saldo',String(tt.saldo).replace('.',','),'']);
+function paintExt(){const t=$('#extTable');if(!t)return;const ate=$('#extAte').value;const rows=extRows($('#extDe').value,ate);const tt=extTotais(rows);const sd=extSaldos(ate);const fa=esc(String(ate).split('-').reverse().join('/'));
+  t.innerHTML='<tr><th>Data</th><th>Descrição</th><th>Entrada</th><th>Despesa</th><th>Depósito</th></tr>'+
+    (rows.length?rows.map(r=>`<tr><td>${esc(String(r.data).split('-').reverse().join('/'))}</td><td>${esc(r.desc)}</td><td>${r.tipo==='entrada'?eur(r.valor):''}</td><td>${r.tipo==='despesa'?eur(r.valor):''}</td><td>${r.tipo==='dep'?eur(r.valor):''}</td></tr>`).join(''):'<tr><td colspan="5" class="note">Sem movimentos no período.</td></tr>')+
+    `<tr><td></td><td><b>Totais do período</b></td><td><b>${eur(tt.e)}</b></td><td><b>${eur(tt.d)}</b></td><td><b>${eur(tt.dep)}</b></td></tr>`+
+    `<tr><td></td><td><b>Saldo do período (entradas - despesas)</b></td><td colspan="3"><b>${eur(tt.saldo)}</b></td></tr>`+
+    `<tr><td></td><td><b>Saldo de caixa em ${fa}</b></td><td colspan="3"><b>${eur(sd.caixa)}</b></td></tr>`+
+    `<tr><td></td><td><b>Saldo de banco em ${fa}</b></td><td colspan="3"><b>${eur(sd.banco)}</b></td></tr>`+
+    `<tr><td></td><td><b>Saldo total em ${fa}</b> <span class="note">(inclui saldos iniciais)</span></td><td colspan="3"><b>${eur(sd.total)}</b></td></tr>`;}
+function extCsv(){const de=$('#extDe').value,ate=$('#extAte').value;const rows=extRows(de,ate);if(!rows.length)return toast('Sem movimentos no período');const tt=extTotais(rows);const sd=extSaldos(ate);
+  const num=v=>String(Math.round(v*100)/100).replace('.',',');
+  const L=[['Data','Descrição','Entrada (€)','Despesa (€)','Depósito (€)']].concat(rows.map(r=>[r.data,r.desc,r.tipo==='entrada'?num(r.valor):'',r.tipo==='despesa'?num(r.valor):'',r.tipo==='dep'?num(r.valor):'']));
+  L.push(['','Totais do período',num(tt.e),num(tt.d),num(tt.dep)]);L.push(['','Saldo do período',num(tt.saldo),'','']);
+  L.push(['','Saldo de caixa em '+ate,num(sd.caixa),'','']);L.push(['','Saldo de banco em '+ate,num(sd.banco),'','']);L.push(['','Saldo total em '+ate,num(sd.total),'','']);
   const csv='﻿'+L.map(l=>l.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(';')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='extrato-'+de+'-a-'+ate+'.csv';a.click();}
-function extPrint(){const de=$('#extDe').value,ate=$('#extAte').value;const rows=extRows(de,ate);const tt=extTotais(rows);
+function extPrint(){const de=$('#extDe').value,ate=$('#extAte').value;const rows=extRows(de,ate);const tt=extTotais(rows);const sd=extSaldos(ate);
   const fmt=s=>String(s||'').split('-').reverse().join('/');
   const w=window.open('about:blank');if(!w)return toast('Permite janelas (pop-ups) para imprimir');
   w.document.write(`<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><title>Extrato de conta</title><style>body{font:14px/1.5 Arial,sans-serif;color:#15284B;margin:28px}h1{font-size:20px;margin:0}h2{font-size:14px;font-weight:normal;margin:2px 0 16px;color:#44527A}table{border-collapse:collapse;width:100%}td,th{border:1px solid #C9D3E8;padding:6px 8px;font-size:13px;text-align:left}th{background:#EDF2FC}td.n,th.n{text-align:right}tfoot td{font-weight:bold}.rodape{margin-top:18px;font-size:12px;color:#44527A}</style></head><body>`+
     `<h1>Extrato de conta · Comunidade 25 · Agrupamento 73 Carnide</h1><h2>Empreendimento Bravery · de ${fmt(de)} a ${fmt(ate)}</h2>`+
-    `<table><thead><tr><th>Data</th><th>Descrição</th><th class="n">Entrada</th><th class="n">Despesa</th></tr></thead><tbody>`+
-    rows.map(r=>`<tr><td>${fmt(r.data)}</td><td>${r.desc.replace(/</g,'&lt;')}</td><td class="n">${r.tipo==='entrada'?eur(r.valor):''}</td><td class="n">${r.tipo==='despesa'?eur(r.valor):''}</td></tr>`).join('')+
-    `</tbody><tfoot><tr><td></td><td>Totais</td><td class="n">${eur(tt.e)}</td><td class="n">${eur(tt.d)}</td></tr><tr><td></td><td>Saldo</td><td class="n" colspan="2">${eur(tt.saldo)}</td></tr></tfoot></table>`+
+    `<table><thead><tr><th>Data</th><th>Descrição</th><th class="n">Entrada</th><th class="n">Despesa</th><th class="n">Depósito</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td>${fmt(r.data)}</td><td>${r.desc.replace(/</g,'&lt;')}</td><td class="n">${r.tipo==='entrada'?eur(r.valor):''}</td><td class="n">${r.tipo==='despesa'?eur(r.valor):''}</td><td class="n">${r.tipo==='dep'?eur(r.valor):''}</td></tr>`).join('')+
+    `</tbody><tfoot><tr><td></td><td>Totais do período</td><td class="n">${eur(tt.e)}</td><td class="n">${eur(tt.d)}</td><td class="n">${eur(tt.dep)}</td></tr>`+
+    `<tr><td></td><td>Saldo do período</td><td class="n" colspan="3">${eur(tt.saldo)}</td></tr>`+
+    `<tr><td></td><td>Saldo de caixa em ${fmt(ate)}</td><td class="n" colspan="3">${eur(sd.caixa)}</td></tr>`+
+    `<tr><td></td><td>Saldo de banco em ${fmt(ate)}</td><td class="n" colspan="3">${eur(sd.banco)}</td></tr>`+
+    `<tr><td></td><td>Saldo total em ${fmt(ate)} (inclui saldos iniciais)</td><td class="n" colspan="3">${eur(sd.total)}</td></tr></tfoot></table>`+
     `<p class="rodape">Gerado pela app Cartão BRAVERY em ${new Date().toLocaleDateString('pt-PT')} por ${(PROFILE.nome||'').replace(/</g,'&lt;')}.</p></body></html>`);
   w.document.close();setTimeout(()=>{try{w.print();}catch(e){}},400);}
-function paintFinEA(){const on=PROFILE.role==='ea'&&VIEW===ME.uid&&!PROFILE.servico;['fatCard','extCard'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=on?'':'none';});if(on){fatWire();paintFat();paintEnt();}}
-try{window.fatTest={fatParse:fatParse,nifValido:nifValido,extRows:extRows,extTotais:extTotais};}catch(e){}
+function paintFinEA(){const on=PROFILE.role==='ea'&&VIEW===ME.uid&&!PROFILE.servico;['fatCard','extCard','depCard','fchCard'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=on?'':'none';});if(on){fatWire();paintFat();paintEnt();paintDep();paintFch();const ic=$('#extIniCaixa'),ib=$('#extIniBanco');if(ic&&document.activeElement!==ic)ic.value=iniCaixa()||'';if(ib&&document.activeElement!==ib)ib.value=iniBanco()||'';}}
+
+/* ===== v64: DEPÓSITOS NA CONTA BANCÁRIA e CONCILIAÇÃO (fecho de contas) =====
+   depositos/{id} {data, valor, quemUid, quem, nota, doc (base64), docTipo, by, at} - passa dinheiro da caixa para o banco
+   fechos/{id} {de, ate, e, d, dep, saldoCaixa, saldoBanco, by, byUid, cargo, at, aberto, reab:[{at,by}]}
+   Fecham o Tesoureiro e a Guia de Equipa da Viriato (Cargo do Perfil); só a Guia de Equipa reabre; os saldos guardados no fecho nunca mudam. */
+let DEPS={},FCHS={},DEP_PEND=null;
+function eaCargoDe(uid){try{if(ME&&uid===ME.uid&&VIEW===ME.uid&&S&&S.id&&S.id.cargo)return S.id.cargo;}catch(e){}const c=(typeof CARDS!=='undefined'&&Array.isArray(CARDS)?CARDS:[]).find(x=>x.uid===uid)||{};if(c.id&&c.id.cargo)return c.id.cargo;const u=(typeof USERS!=='undefined'?USERS:[]).find(x=>x.uid===uid)||{};return u.cargo||'';}
+function fchPodeFechar(){const cg=eaCargoDe(ME.uid);return PROFILE.role==='ea'&&!PROFILE.servico&&(/tesoureir/i.test(cg)||/guia de equipa/i.test(cg));}
+function fchPodeReabrir(){return PROFILE.role==='ea'&&!PROFILE.servico&&/guia de equipa/i.test(eaCargoDe(ME.uid));}
+function fchFechados(){return Object.values(FCHS).filter(f=>!f.aberto).sort((a,b)=>String(a.ate).localeCompare(String(b.ate)));}
+function fchAte(){const l=fchFechados();return l.length?l[l.length-1].ate:'';}
+function fchLocked(iso){const a=fchAte();return !!(a&&iso&&iso<=a);}
+function fchMsg(){const a=fchAte();return 'Contas fechadas até '+String(a).split('-').reverse().join('/')+': só a Guia de Equipa da Viriato pode reabrir, na Conciliação de contas.';}
+function depQuemFill(){const sel=$('#depQuem');if(!sel)return;const eas=USERS.filter(u=>u.role==='ea'&&!u.servico).sort(ordNome);sel.innerHTML=eas.map(u=>`<option value="${u.uid}" ${u.uid===ME.uid?'selected':''}>${esc(u.nome||u.email||'')}</option>`).join('')+'<option value="outro">Outro…</option>';
+  sel.onchange=()=>{$('#depQuemOutro').style.display=sel.value==='outro'?'':'none';};sel.onchange();}
+function depFormReset(){DEP_PEND=null;const f=$('#depForm');if(!f)return;f.style.display='none';['depData','depValor','depQuemOutro','depNota'].forEach(i=>{const e=$('#'+i);if(e)e.value='';});$('#depMsg').textContent='';const fi=$('#depFile');if(fi)fi.value='';}
+async function depEscolhido(file){DEP_PEND=null;const msg=$('#depMsg');if(!file)return;
+  try{if(file.type==='application/pdf'){if(file.size>700*1024){msg.textContent='PDF demasiado grande (máx. ~700 KB): tira antes uma fotografia ao comprovativo.';const fi=$('#depFile');if(fi)fi.value='';return;}
+      const rd=new FileReader();const durl=await new Promise((ok,err)=>{rd.onerror=err;rd.onload=()=>ok(rd.result);rd.readAsDataURL(file);});DEP_PEND={doc:durl,tipo:'pdf'};msg.textContent='PDF anexado.';}
+    else{DEP_PEND={doc:await fatImg(file,1200,0.82),tipo:'img'};msg.textContent='Fotografia anexada.';}}
+  catch(e){msg.textContent='Não consegui ler o ficheiro: '+e.message;}}
+function depVer(id){const x=DEPS[id];if(!x||!x.doc)return toast('Este depósito não tem comprovativo anexado');
+  const w=window.open('about:blank');if(!w)return toast('Permite janelas (pop-ups) para ver o comprovativo');
+  w.document.write(x.docTipo==='pdf'?'<embed src="'+x.doc+'" style="width:100%;height:100vh">':'<img src="'+x.doc+'" style="max-width:100%">');w.document.close();}
+function paintDep(){const t=$('#depTable');if(!t)return;const list=Object.values(DEPS).sort((a,b)=>String(b.data).localeCompare(String(a.data)));
+  t.innerHTML='<tr><th>Data</th><th>Valor</th><th>Quem depositou</th><th>Comprovativo</th><th></th></tr>';
+  if(!list.length){t.innerHTML+='<tr><td colspan="5" class="note">Ainda sem depósitos.</td></tr>';return;}
+  let tot=0;list.forEach(x=>{tot+=Number(x.valor)||0;const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${esc(String(x.data||'').split('-').reverse().join('/'))}${x.nota?'<div class="note">'+esc(x.nota)+'</div>':''}</td><td><b>${eur(x.valor)}</b></td><td>${esc(x.quem||'')}</td><td class="dd"></td><td class="dx"></td>`;
+    const dd=tr.querySelector('.dd');if(x.doc){const b=document.createElement('button');b.type='button';b.className='btn sm ghost';b.textContent='Ver';b.onclick=()=>depVer(x.id);dd.appendChild(b);}else dd.innerHTML='<span class="note">-</span>';
+    const dx=tr.querySelector('.dx');const bx=document.createElement('button');bx.type='button';bx.className='btn sm ghost';bx.textContent='×';bx.title='Apagar o depósito';
+    bx.onclick=()=>{if(fchLocked(x.data))return toast(fchMsg());if(confirm('Apagar este depósito ('+eur(x.valor)+', '+(x.quem||'')+')? Não dá para desfazer.'))db.collection('depositos').doc(x.id).delete().then(()=>toast('Depósito apagado')).catch(e=>toast('Erro: '+e.code));};
+    dx.appendChild(bx);t.appendChild(tr);});
+  t.insertAdjacentHTML('beforeend',`<tr><td><b>Total</b></td><td><b>${eur(tot)}</b></td><td colspan="3"></td></tr>`);}
+function fchDo(){const ate=$('#fchAteIn').value;if(!ate)return toast('Escolhe a data do fecho');
+  if(!fchPodeFechar())return toast('Só o Tesoureiro ou a Guia de Equipa da Viriato podem fechar as contas');
+  const last=fchAte();if(last&&ate<=last)return toast('Já há um fecho até '+String(last).split('-').reverse().join('/')+': escolhe uma data posterior');
+  const de=last?(d=>{const x=new Date(d+'T12:00');x.setDate(x.getDate()+1);return isoLocal(x);})(last):'';
+  const rows=extRows(de,ate);const tt=extTotais(rows);const sd=extSaldos(ate);
+  if(!confirm('Fechar as contas de '+(de?String(de).split('-').reverse().join('/'):'início')+' até '+String(ate).split('-').reverse().join('/')+'?\nEntradas '+eur(tt.e)+' · Despesas '+eur(tt.d)+' · Depósitos '+eur(tt.dep)+'\nSaldo de caixa '+eur(sd.caixa)+' · Saldo de banco '+eur(sd.banco)+'\nDepois do fecho deixa de ser possível alterar faturas, pagamentos, donativos e depósitos até essa data.'))return;
+  db.collection('fechos').add({de,ate,e:tt.e,d:tt.d,dep:tt.dep,saldoCaixa:sd.caixa,saldoBanco:sd.banco,by:PROFILE.nome||'',byUid:ME.uid,cargo:eaCargoDe(ME.uid),at:new Date().toLocaleDateString('pt-PT'),aberto:false,reab:[]})
+    .then(()=>{toast('Contas fechadas até '+String(ate).split('-').reverse().join('/'));logEvent('Conciliação de contas','Contas fechadas até '+String(ate).split('-').reverse().join('/')+' por '+(PROFILE.nome||'')+' ('+eaCargoDe(ME.uid)+')',{ea:true});})
+    .catch(e=>toast(e.code==='permission-denied'?'Publica as novas regras do Firestore (v64) na consola':'Erro: '+e.code));}
+function fchReabrir(id){const f=FCHS[id];if(!f)return;
+  if(!fchPodeReabrir())return toast('Só a Guia de Equipa da Viriato pode reabrir as contas');
+  if(!confirm('Reabrir as contas fechadas até '+String(f.ate).split('-').reverse().join('/')+'? Os saldos guardados neste fecho não mudam; volta a ser possível editar os movimentos.'))return;
+  db.collection('fechos').doc(id).set({aberto:true,reab:(f.reab||[]).concat([{at:new Date().toLocaleDateString('pt-PT'),by:PROFILE.nome||''}])},{merge:true})
+    .then(()=>{toast('Contas reabertas');logEvent('Conciliação de contas','Contas reabertas ('+String(f.ate).split('-').reverse().join('/')+') por '+(PROFILE.nome||''),{ea:true});})
+    .catch(e=>toast('Erro: '+e.code));}
+function paintFch(){const t=$('#fchTable');if(!t)return;const note=$('#fchNote');const nw=$('#fchNew');
+  if(nw)nw.style.display=fchPodeFechar()?'':'none';
+  if(note)note.textContent=fchPodeFechar()?'':'Fechar as contas está reservado ao Tesoureiro e à Guia de Equipa da Viriato (Cargo escolhido no Perfil).';
+  const list=Object.values(FCHS).sort((a,b)=>String(b.ate).localeCompare(String(a.ate)));
+  t.innerHTML='<tr><th>Período</th><th>Entradas</th><th>Despesas</th><th>Depósitos</th><th>Saldo caixa</th><th>Saldo banco</th><th>Fechado por</th><th>Estado</th></tr>';
+  if(!list.length){t.innerHTML+='<tr><td colspan="8" class="note">Ainda sem fechos de contas.</td></tr>';return;}
+  const lastClosed=fchFechados().slice(-1)[0];
+  list.forEach(f=>{const tr=document.createElement('tr');const per=(f.de?String(f.de).split('-').reverse().join('/'):'início')+' a '+String(f.ate).split('-').reverse().join('/');
+    tr.innerHTML=`<td>${esc(per)}</td><td>${eur(f.e)}</td><td>${eur(f.d)}</td><td>${eur(f.dep)}</td><td><b>${eur(f.saldoCaixa)}</b></td><td><b>${eur(f.saldoBanco)}</b></td><td>${esc(f.by||'')}${f.cargo?'<div class="note">'+esc(f.cargo)+'</div>':''}<div class="note">${esc(f.at||'')}</div></td><td class="fe"></td>`;
+    const fe=tr.querySelector('.fe');
+    if(f.aberto){fe.innerHTML='<span class="ipill pend">Reaberto</span>'+((f.reab||[]).length?'<div class="note">'+esc((f.reab||[]).map(r=>r.at+' · '+r.by).join('; '))+'</div>':'');}
+    else{fe.innerHTML='<span class="ipill sim">Fechado</span>';
+      if(lastClosed&&f.id===lastClosed.id&&fchPodeReabrir()){const b=document.createElement('button');b.type='button';b.className='btn sm ghost';b.style.marginLeft='6px';b.textContent='Reabrir';b.onclick=()=>fchReabrir(f.id);fe.appendChild(b);}}
+    t.appendChild(tr);});}
+try{window.fatTest={fatParse:fatParse,nifValido:nifValido,extRows:extRows,extTotais:extTotais,extSaldos:extSaldos,fchAte:fchAte,fchLocked:fchLocked,eaCargoDe:eaCargoDe};}catch(e){}
 
 /* (angariação removida em v31) */
 function angList(){return [];}
